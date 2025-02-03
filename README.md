@@ -1,4 +1,4 @@
-# 알콩달콩 (AlkongDalkong) - 커플 다이어리 앱 📱💕
+# 알콩달콩 (AlcongDalcong) - 커플 다이어리 앱 📱💕
 
 ## 소개
 알콩달콩은 연인들을 위한 스마트한 다이어리 앱입니다. 소중한 추억을 기록하고, 데이트 일정을 관리하며, AI 기반의 데이트 장소 추천 기능을 제공합니다.
@@ -34,7 +34,7 @@
 
 ## 프로젝트 구조 📁
 ```
-AlkongDalkongAppClient/
+AlcongDalcongAppClient/
 ├── src/
 │ ├── components/
 │ ├── screens/
