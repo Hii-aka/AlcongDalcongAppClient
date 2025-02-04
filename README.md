@@ -27,7 +27,7 @@
 - Data Fetching: React Query, Axios
 - UI/UX: Tailwind CSS
 - AI/ML: OpenAI (llm)
-- Database: Firebase
+- Database: MySQL
 - Authentication: 
   - Kakao Login
   - Apple Login
