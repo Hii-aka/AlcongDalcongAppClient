@@ -15,7 +15,12 @@ const DiaryStackNavigator = () => {
     <Stack.Navigator>
         <Stack.Screen 
         name={diaryNavigations.DIARY_HOME} 
-        component={DiaryHomeScreen} />
+        component={DiaryHomeScreen} 
+        options={{
+            title: '',
+            headerShown: false,
+        }}
+        />
     </Stack.Navigator>
   )
 }

@@ -12,7 +12,13 @@ const Drawer = createDrawerNavigator<MainDrawerParamList>();
 const MainDrawerNavigator = () => {
   return (
     <Drawer.Navigator>
-        <Drawer.Screen name={mainNavigations.HOME} component={DiaryStackNavigator} />
+        <Drawer.Screen 
+          name={mainNavigations.HOME} 
+          component={DiaryStackNavigator} 
+          options={{
+            title: '알콩달콩',
+          }}
+        />
     </Drawer.Navigator>
   )
 }
