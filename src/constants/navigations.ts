@@ -8,7 +8,7 @@ const mainNavigations = {
 } as const;
 
 const diaryNavigations = {
-    DIARY_HOME: 'DiaryHome',
+    DIARY_HOME: '알콩달콩',
 } as const;
     
 export { authNavigations, mainNavigations, diaryNavigations };
