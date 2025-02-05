@@ -10,5 +10,12 @@ const mainNavigations = {
 const diaryNavigations = {
     DIARY_HOME: '알콩달콩',
 } as const;
+
+const mainTabNavigations = {
+    DIARY_HOME: 'DiaryHome',
+    CALENDAR_HOME: 'CalendarHome',
+    CHATTING_HOME: 'ChattingHome',
+    SETTING_HOME: 'SettingHome',
+} as const;
     
-export { authNavigations, mainNavigations, diaryNavigations };
+export { authNavigations, mainNavigations, diaryNavigations, mainTabNavigations };

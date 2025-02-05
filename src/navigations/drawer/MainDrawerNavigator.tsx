@@ -2,7 +2,7 @@ import {StyleSheet, View} from 'react-native';
 import { mainNavigations } from '@/constants';
 import { createDrawerNavigator } from '@react-navigation/drawer';   
 import DiaryStackNavigator from '../stack/DiaryStackNavigator';
-
+import MainTabNavigation from '../tab/MainTabNavigation';
 export type MainDrawerParamList = {
     [mainNavigations.HOME]: undefined;
 }
@@ -14,9 +14,10 @@ const MainDrawerNavigator = () => {
     <Drawer.Navigator>
         <Drawer.Screen 
           name={mainNavigations.HOME} 
-          component={DiaryStackNavigator} 
+          component={MainTabNavigation} 
           options={{
-            title: '알콩달콩',
+            title: '',
+            headerShown: false,
           }}
         />
     </Drawer.Navigator>
