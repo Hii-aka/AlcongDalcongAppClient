@@ -1,8 +1,24 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import { View, Text, TextInput, Pressable, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
+import InputField from '@/components/common/InputField';
+import useForm from '@/hooks/useForm';
+import validateUser from '@/utils/validate';
 export function AuthHomeScreen() {
+  const passwordRef = useRef<TextInput>(null);
+  const login = useForm({
+    initialValue: {
+      email: '',
+      password: '',
+    },
+    validate: validateUser,
+  });
+
+  const handleSubmit = () => {
+    console.log(login.values);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       <View className="flex-1 items-center justify-center px-4">
@@ -16,24 +32,38 @@ export function AuthHomeScreen() {
             <View className="space-y-4">
               <View>
                 <Text className="text-sm font-medium text-gray-700 mb-2">이메일</Text>
-                <TextInput
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                <InputField
+                  autoFocus
                   placeholder="이메일을 입력하세요"
+                  error={login.errors.email}
+                  touched={login.touched.email}
+                  inputMode="email"
+                  {...login.getTextInputProps('email')}
                 />
               </View>
               
               <View>
                 <Text className="text-sm font-medium text-gray-700 mb-2">비밀번호</Text>
-                <TextInput
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  secureTextEntry
+                <InputField
+                  ref={passwordRef}
                   placeholder="비밀번호를 입력하세요"
+                  secureTextEntry
+                  {...login.getTextInputProps('password')}
                 />
               </View>
 
-              <TouchableOpacity className="w-full bg-black py-2 px-4 rounded-md">
-                <Text className="text-white text-center">로그인</Text>
-              </TouchableOpacity>
+              <Pressable 
+                onPress={handleSubmit}
+                className="w-full bg-black py-2 px-4 rounded-md active:opacity-80"
+                style={({ pressed }) => [
+                  {
+                    transform: [{ scale: pressed ? 0.98 : 1 }],
+                    opacity: pressed ? 0.8 : 1,
+                  }
+                ]}
+              >
+                <Text className="text-white text-center font-bold">로그인</Text>
+              </Pressable>
             </View>
 
             <View className="mt-4 flex-row items-center justify-center">
