@@ -2,17 +2,17 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DiaryHomeScreen from '@/screens/diary/DiaryHomeScreen';
-import CalendarHomeScreen from '@/screens/calendar/CalendarHomeScreen';
 import ChattingHomeScreen from '@/screens/chatting/ChattingHomeScreen';
 import SettingHomeScreen from '@/screens/setting/SettingHomeScreen';    
 import { mainTabNavigations } from '@/constants';
 import { RouteProp } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
+import CalendarStackNavigator from '@/navigations/stack/CalendarStackNavigator';
 
 export type MainTabParamList = {
   [mainTabNavigations.DIARY_HOME]: undefined;
   [mainTabNavigations.CALENDAR_HOME]: undefined;
-  [mainTabNavigations.CHATTING_HOME]: undefined;
+  [mainTabNavigations.CHATTING_HOME]: undefined;        
   [mainTabNavigations.SETTING_HOME]: undefined;
 }
 
@@ -65,9 +65,10 @@ function MainTabNavigation() {
       <Tab.Screen name={mainTabNavigations.DIARY_HOME} component={DiaryHomeScreen} />
       <Tab.Screen 
         name={mainTabNavigations.CALENDAR_HOME} 
-        component={CalendarHomeScreen} 
+        component={CalendarStackNavigator} 
         options={{
             headerTitle: '데이트 캘린더',
+            headerShown: false,
         }}
       />
       <Tab.Screen name={mainTabNavigations.CHATTING_HOME} component={ChattingHomeScreen} />

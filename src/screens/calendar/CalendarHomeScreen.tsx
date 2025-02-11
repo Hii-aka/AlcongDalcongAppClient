@@ -1,11 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, View, Text, SafeAreaView, Pressable, ScrollView} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-interface CalendarHomeScreenProps {
+import AddCalendarHeaderRight from '@/components/calendar/AddCalendarHeaderRight';
+import { CalendarStackParamList } from '@/navigations/stack/CalendarStackNavigator';
+import { calendarNavigations } from '@/constants';
+import { StackScreenProps } from '@react-navigation/stack';
 
-}
+type CalendarHomeScreenProps = StackScreenProps<CalendarStackParamList, typeof calendarNavigations.CALENDAR_HOME>;
 
-function CalendarHomeScreen({}: CalendarHomeScreenProps) {
+
+function CalendarHomeScreen({ navigation }: CalendarHomeScreenProps) {
+
   const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
   
   const renderWeekdays = () => (
@@ -75,6 +80,18 @@ function CalendarHomeScreen({}: CalendarHomeScreenProps) {
     </View>
   );
 
+  const handleSubmit = () => {
+    navigation.navigate(calendarNavigations.CALENDAR_POST);
+  };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        AddCalendarHeaderRight(handleSubmit)
+      ),
+    });
+  }, [navigation]); 
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 p-4">
@@ -109,20 +126,6 @@ function CalendarHomeScreen({}: CalendarHomeScreenProps) {
             {renderScheduledDates()}
           </ScrollView>
         </View>
-
-        {/* Floating Action Button */}
-        <Pressable 
-          className="absolute bottom-6 right-6 w-14 h-14 bg-black rounded-full items-center justify-center shadow-lg"
-          style={{
-            elevation: 5, // Android shadow
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-          }}
-        >
-          <FontAwesome name="pencil" size={24} color="white" />
-        </Pressable>
       </View>
     </SafeAreaView>
   );

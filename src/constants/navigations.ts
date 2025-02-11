@@ -8,7 +8,7 @@ const mainNavigations = {
 } as const;
 
 const diaryNavigations = {
-    DIARY_HOME: '알콩달콩',
+    DIARY_HOME: 'DiaryHome',
 } as const;
 
 const mainTabNavigations = {
@@ -17,5 +17,16 @@ const mainTabNavigations = {
     CHATTING_HOME: 'ChattingHome',
     SETTING_HOME: 'SettingHome',
 } as const;
+
+const calendarNavigations = {
+    CALENDAR_HOME: 'CalendarHome',
+    CALENDAR_POST: 'CalendarPost',
+} as const;
     
-export { authNavigations, mainNavigations, diaryNavigations, mainTabNavigations };
+export { 
+    authNavigations, 
+    mainNavigations, 
+    diaryNavigations, 
+    mainTabNavigations, 
+    calendarNavigations 
+};
