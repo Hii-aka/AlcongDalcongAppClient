@@ -1,19 +1,19 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import DiaryHomeScreen from '@/screens/diary/DiaryHomeScreen';
 import ChattingHomeScreen from '@/screens/chatting/ChattingHomeScreen';
 import SettingHomeScreen from '@/screens/setting/SettingHomeScreen';    
 import { mainTabNavigations } from '@/constants';
 import { RouteProp } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import CalendarStackNavigator from '@/navigations/stack/CalendarStackNavigator';
+import DiaryStackNavigator from '@/navigations/stack/DiaryStackNavigator';
 
 export type MainTabParamList = {
-  [mainTabNavigations.DIARY_HOME]: undefined;
-  [mainTabNavigations.CALENDAR_HOME]: undefined;
-  [mainTabNavigations.CHATTING_HOME]: undefined;        
-  [mainTabNavigations.SETTING_HOME]: undefined;
+    [mainTabNavigations.DIARY_HOME]: undefined;
+    [mainTabNavigations.CALENDAR_HOME]: undefined;
+    [mainTabNavigations.CHATTING_HOME]: undefined;
+    [mainTabNavigations.SETTING_HOME]: undefined;
 }
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -62,7 +62,14 @@ function MainTabNavigation() {
             tabBarIcon: ({ focused }) => tabBarIcons(route, focused),
         })}
     >
-      <Tab.Screen name={mainTabNavigations.DIARY_HOME} component={DiaryHomeScreen} />
+      <Tab.Screen 
+        name={mainTabNavigations.DIARY_HOME} 
+        component={DiaryStackNavigator} 
+        options={{
+            headerTitle: '',
+            headerShown: false,
+        }}
+      />
       <Tab.Screen 
         name={mainTabNavigations.CALENDAR_HOME} 
         component={CalendarStackNavigator} 
