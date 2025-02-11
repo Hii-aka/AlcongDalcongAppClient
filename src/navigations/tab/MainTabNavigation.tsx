@@ -63,7 +63,13 @@ function MainTabNavigation() {
         })}
     >
       <Tab.Screen name={mainTabNavigations.DIARY_HOME} component={DiaryHomeScreen} />
-      <Tab.Screen name={mainTabNavigations.CALENDAR_HOME} component={CalendarHomeScreen} />
+      <Tab.Screen 
+        name={mainTabNavigations.CALENDAR_HOME} 
+        component={CalendarHomeScreen} 
+        options={{
+            headerTitle: '데이트 캘린더',
+        }}
+      />
       <Tab.Screen name={mainTabNavigations.CHATTING_HOME} component={ChattingHomeScreen} />
       <Tab.Screen name={mainTabNavigations.SETTING_HOME} component={SettingHomeScreen} />
     </Tab.Navigator>
