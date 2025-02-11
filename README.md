@@ -33,7 +33,7 @@
 
 - Frontend: React Native, Expo
 - State Management: Zustand
-- Data Fetching: React Query, Axios
+- Data Fetching: React Query, Ky
 - UI/UX: Tailwind CSS
 - AI/ML: OpenAI (llm)
 - Database: MySQL
