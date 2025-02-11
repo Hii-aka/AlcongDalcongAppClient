@@ -2,7 +2,10 @@ import React from 'react';
 import { View, Text, TextInput, Pressable, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
+import InputField from '@/components/common/InputField';
 export function AuthHomeScreen() {
+
+
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       <View className="flex-1 items-center justify-center px-4">
@@ -16,18 +19,17 @@ export function AuthHomeScreen() {
             <View className="space-y-4">
               <View>
                 <Text className="text-sm font-medium text-gray-700 mb-2">이메일</Text>
-                <TextInput
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                <InputField
                   placeholder="이메일을 입력하세요"
+                  inputMode="email"
                 />
               </View>
               
               <View>
                 <Text className="text-sm font-medium text-gray-700 mb-2">비밀번호</Text>
-                <TextInput
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  secureTextEntry
+                <InputField
                   placeholder="비밀번호를 입력하세요"
+                  secureTextEntry
                 />
               </View>
 
