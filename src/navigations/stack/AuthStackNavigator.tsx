@@ -16,6 +16,9 @@ const AuthStackNavigator = () => {
         <Stack.Screen 
         name={authNavigations.AUTH_HOME} 
         component={AuthHomeScreen} 
+        options={{
+            headerShown: false,
+        }}
         />
     </Stack.Navigator>
   )
