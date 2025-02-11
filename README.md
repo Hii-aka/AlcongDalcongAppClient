@@ -3,7 +3,14 @@
 ## 소개
 알콩달콩은 연인들을 위한 스마트한 다이어리 앱입니다. 소중한 추억을 기록하고, 데이트 일정을 관리하며, AI 기반의 데이트 장소 추천 기능을 제공합니다.
 
-![Image](https://github.com/user-attachments/assets/00480106-510b-4d11-b43e-45f2c47744f3)
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+    <img src="https://github.com/user-attachments/assets/2c394a9c-6963-4b78-97eb-2a5f20421d40" width="250" alt="Screenshot 1" />
+    <img src="https://github.com/user-attachments/assets/dc595dfb-632e-47e4-8be8-8e12624923e1" width="250" alt="Screenshot 2" />
+    <img src="https://github.com/user-attachments/assets/1fc8902f-e9b2-4c0d-8842-4c43d36a3fa9" width="250" alt="Screenshot 3" />
+    <img src="https://github.com/user-attachments/assets/c08ad025-6b0b-4cfd-99d3-f9f2434245cd" width="250" alt="Screenshot 4" />
+    <img src="https://github.com/user-attachments/assets/fbeb0c85-7676-46b4-80ec-762b155bf2ff" width="250" alt="Screenshot 5" />
+    <img src="https://github.com/user-attachments/assets/f47fe253-70bb-4c20-8c3e-4a618ec24878" width="250" alt="Screenshot 6" />
+</div>
 
 ## 주요 기능 ✨
 
