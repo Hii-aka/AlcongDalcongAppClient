@@ -9,6 +9,7 @@ const mainNavigations = {
 
 const diaryNavigations = {
     DIARY_HOME: 'DiaryHome',
+    DIARY_POST: 'DiaryPost',
 } as const;
 
 const mainTabNavigations = {

@@ -1,13 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {StyleSheet, View, Text, SafeAreaView, Image, Pressable, ScrollView} from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-
+import { FontAwesome5, FontAwesome } from '@expo/vector-icons';
+import AddDiaryHeaderRight from '@/components/diary/AddDiaryHeaderRight';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { DiaryStackParamList } from '@/navigations/stack/DiaryStackNavigator';
+import { diaryNavigations } from '@/constants';
 
 interface DiaryHomeScreenProps {
-
+    navigation: StackNavigationProp<DiaryStackParamList, typeof diaryNavigations.DIARY_HOME>;
 }
 
-function DiaryHomeScreen({}: DiaryHomeScreenProps) {
+// 기분 데이터 정의
+const moods = [
+  { id: 'happy', icon: 'grin-beam', text: '행복해' },
+  { id: 'good', icon: 'smile', text: '좋아요' },
+  { id: 'neutral', icon: 'meh', text: '그냥저냥' },
+  { id: 'sad', icon: 'frown', text: '슬퍼요' },
+  { id: 'angry', icon: 'angry', text: '화나요' },
+] as const;
+
+type MoodType = typeof moods[number]['id'];
+
+function DiaryHomeScreen({navigation}: DiaryHomeScreenProps) {
+  const [selectedMood, setSelectedMood] = useState<MoodType | null>(null);
+
+  const handleSubmit = () => {
+    navigation.navigate(diaryNavigations.DIARY_POST);
+  }
+
+  const handleMoodSelect = (moodId: MoodType) => {
+    setSelectedMood(moodId);
+    // TODO: 여기에 기분 저장 로직 추가
+  };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => AddDiaryHeaderRight(handleSubmit),
+    });
+  }, []);
   return (
     <SafeAreaView className="pt-14 pb-16">
       <ScrollView>
@@ -17,7 +47,7 @@ function DiaryHomeScreen({}: DiaryHomeScreenProps) {
             <View className='relative w-16 h-16'>
               <Image className='rounded-full object-cover w-full h-full' />
               <View className='absolute -right-2 bottom-0 w-6 h-6 bg-custom rounded-full flex items-center justify-center'>
-                <FontAwesome name="heart" size={12} color="red" />
+                <FontAwesome5 name="heart" size={12} color="red" />
               </View>
             </View>
             <View>
@@ -33,36 +63,28 @@ function DiaryHomeScreen({}: DiaryHomeScreenProps) {
         <View className='bg-white rounded-lg shadow-sm p-4'>
           <Text className='text-xl font-bold mb-2'>오늘의 기분</Text>
           <View className='flex-row justify-between'>
-            <Pressable className='items-center'>
-              <View className='w-12 h-12 rounded-full bg-gray-100 items-center justify-center'>
-                <FontAwesome name='smile-o' size={24} color='gray' />
-              </View>
-              <Text className='text-sm text-gray-600'>행복해</Text>
-            </Pressable>
-            <Pressable className='items-center'>
-              <View className='w-12 h-12 rounded-full bg-gray-100 items-center justify-center'>
-                <FontAwesome name='smile-o' size={24} color='gray' />
-              </View>
-              <Text className='text-sm text-gray-600'>좋아요</Text>
-            </Pressable>
-            <Pressable className='items-center'>
-              <View className='w-12 h-12 rounded-full bg-gray-100 items-center justify-center'>
-                <FontAwesome name='smile-o' size={24} color='gray' />
-              </View>
-              <Text className='text-sm text-gray-600'>그냥저냥</Text>
-            </Pressable>
-            <Pressable className='items-center'>
-              <View className='w-12 h-12 rounded-full bg-gray-100 items-center justify-center'>
-                <FontAwesome name='smile-o' size={24} color='gray' />
-              </View>
-              <Text className='text-sm text-gray-600'>슬퍼요</Text>
-            </Pressable>
-            <Pressable className='items-center'>
-              <View className='w-12 h-12 rounded-full bg-gray-100 items-center justify-center'>
-                <FontAwesome name='smile-o' size={24} color='gray' />
-              </View>
-              <Text className='text-sm text-gray-600'>화나요</Text>
-            </Pressable>
+            {moods.map((mood) => (
+              <Pressable 
+                key={mood.id}
+                className='items-center'
+                onPress={() => handleMoodSelect(mood.id)}
+              >
+                <View className={`w-12 h-12 rounded-full items-center justify-center ${
+                  selectedMood === mood.id ? 'bg-pink-400' : 'bg-gray-100'
+                }`}>
+                  <FontAwesome5 
+                    name={mood.icon as any} 
+                    size={24} 
+                    color={selectedMood === mood.id ? 'white' : 'gray'} 
+                  />
+                </View>
+                <Text className={`text-sm ${
+                  selectedMood === mood.id ? 'text-pink-400' : 'text-gray-600'
+                }`}>
+                  {mood.text}
+                </Text>
+              </Pressable>
+            ))}
           </View>
         </View>
       </View>
