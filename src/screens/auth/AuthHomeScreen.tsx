@@ -5,7 +5,9 @@ import { FontAwesome } from '@expo/vector-icons';
 import InputField from '@/components/common/InputField';
 import useForm from '@/hooks/useForm';
 import validateUser from '@/utils/validate';
+import useAuth from '@/hooks/queries/useAuth';
 export function AuthHomeScreen() {
+  const {loginMutation} = useAuth();
   const passwordRef = useRef<TextInput>(null);
   const login = useForm({
     initialValue: {
@@ -17,6 +19,7 @@ export function AuthHomeScreen() {
 
   const handleSubmit = () => {
     console.log(login.values);
+    loginMutation.mutate({email: login.values.email, password: login.values.password});
   };
 
   return (
