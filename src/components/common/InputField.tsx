@@ -27,11 +27,9 @@ const InputField = forwardRef(
 
       return (
           <Pressable onPress={handlePressInput}>
-           
                 <TextInput
                     ref={ref ? mergeRefs(innerRef, ref) : innerRef}
                     editable={!disabled}
-                    
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     autoCapitalize="none"
                     spellCheck={false}
@@ -43,7 +41,6 @@ const InputField = forwardRef(
                   className="text-red-500 text-sm"
                   >{error}</Text>
               )}
-        
           </Pressable>
       );
     },
