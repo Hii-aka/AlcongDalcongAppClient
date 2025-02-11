@@ -21,4 +21,14 @@ function validateUser(values: UserInformation) {
     return errors;
   }
 
-  export default validateUser;
+  function validateSignup(values: UserInformation & {passwordConfirm: string}) {
+    const errors = validateUser(values);
+    const signupErrors = {...errors, passwordConfirm:''};
+  
+    if (values.password !== values.passwordConfirm) {
+      signupErrors.passwordConfirm = '비밀번호가 일치하지 않습니다.';
+    }
+    return signupErrors;
+  }
+
+  export { validateUser, validateSignup };
