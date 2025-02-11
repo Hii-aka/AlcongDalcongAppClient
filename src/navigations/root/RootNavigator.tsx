@@ -3,8 +3,7 @@ import MainDrawerNavigator from "@/navigations/drawer/MainDrawerNavigator";
 import AuthStackNavigator from "@/navigations/stack/AuthStackNavigator";
 import useAuth from "@/hooks/queries/useAuth";
 function RootNavigator() {
-  const {isAuthenticated} = useAuth();
-  console.log(isAuthenticated);
+  const {isAuthenticated, isLoginLoading} = useAuth();
   return (
     <>
       {isAuthenticated ? <MainDrawerNavigator /> : <AuthStackNavigator />}

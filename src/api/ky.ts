@@ -51,7 +51,7 @@ export const api = {
   },
 
   // DELETE 요청
-  async delete(endpoint: string) {
-    return client.delete(endpoint).json();
+  async delete<T>(endpoint: string) {
+    return client.delete(endpoint).json<T>();
   }
 };

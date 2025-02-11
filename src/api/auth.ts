@@ -28,6 +28,17 @@ const login = async ({email, password}: RequestBody) => {
     }
 };
 
+const logout = async () => {
+    try {
+        const response = await api.delete<ApiResponse<string>>('auth/logout');
+        console.log(response);
+        return response;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
 type RefreshTokenResponse = {
     accessToken: string;
     refreshToken: string;
@@ -48,4 +59,4 @@ const getAccessToken = async () => {
     }
 };
 
-export {signUp, login, getAccessToken};
+export {signUp, login, getAccessToken, logout};
