@@ -4,9 +4,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import InputField from '@/components/common/InputField';
 import useForm from '@/hooks/useForm';
-import validateUser from '@/utils/validate';
+import { validateUser } from '@/utils';
 import useAuth from '@/hooks/queries/useAuth';
+import { authNavigations } from '@/constants';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AuthStackParamList } from '@/navigations/stack/AuthStackNavigator';
+import { useNavigation } from '@react-navigation/native';
+
 export function AuthHomeScreen() {
+  const navigation = useNavigation<StackNavigationProp<AuthStackParamList>>();
   const {loginMutation} = useAuth();
   const passwordRef = useRef<TextInput>(null);
   const login = useForm({
@@ -73,7 +79,7 @@ export function AuthHomeScreen() {
               <Text className="text-sm text-gray-600 mr-2">
                 아직 회원이 아니신가요?
               </Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate(authNavigations.SIGNUP)}>
                 <Text className="text-sm font-bold text-black">회원가입</Text>
               </TouchableOpacity>
             </View>
