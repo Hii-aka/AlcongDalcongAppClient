@@ -1,9 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { signUp, login, getAccessToken } from "../../api/auth";
+import { signUp, login, getAccessToken, logout } from "../../api/auth";
 import { UseMutationCustomOptions } from "@/types/common";
 import { queryKeys, numbers } from "@/constants";
 import { useEffect } from "react";
 import { secureStorage } from "@/utils/expoSecureStore";
+import queryClient from "@/api/queryClient";
 function useSignUp(mutationOptions?: UseMutationCustomOptions) {
     return useMutation({
         mutationFn: signUp,
@@ -36,11 +37,27 @@ function useLogin(mutationOptions?: UseMutationCustomOptions) {
     return useMutation({
         mutationFn: login,
         onSuccess: async (data: LoginResponse) => {
-            console.log('login success');
             await secureStorage.setItem('accessToken', data.data.tokens.accessToken);
             await secureStorage.setItem('refreshToken', data.data.tokens.refreshToken);
-            console.log('accessToken', data.data.tokens.accessToken);
-            console.log('refreshToken', data.data.tokens.refreshToken);
+        },
+        onSettled: () => {
+            queryClient.refetchQueries({
+                queryKey: [queryKeys.AUTH],
+            });
+        },
+        ...mutationOptions,
+    });
+}
+
+function useLogout(mutationOptions?: UseMutationCustomOptions) {
+    return useMutation({
+        mutationFn: logout,
+        onSuccess: async () => {
+            await secureStorage.removeItem('accessToken');
+            await secureStorage.removeItem('refreshToken');
+            queryClient.resetQueries({
+                queryKey: [queryKeys.AUTH],
+            });
         },
         ...mutationOptions,
     });
@@ -87,12 +104,14 @@ function useAuth() {
     const isLoginLoading = loginMutation.isPending || refreshTokenQuery.isPending;
     console.log('isAuthenticated', isAuthenticated);
     console.log('isLoginLoading', isLoginLoading);
+    const logoutMutation = useLogout();
 
     return {
         isAuthenticated,
         signUpMutation,
         loginMutation,
         isLoginLoading,
+        logoutMutation,
     }
 }
 
