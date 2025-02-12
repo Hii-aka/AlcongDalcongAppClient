@@ -9,7 +9,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="diary/index"
+        name="diary"
         options={{
           title: '일기',
           tabBarIcon: ({ color, size }) => (
@@ -18,7 +18,7 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="calendar/index"
+        name="calendar"
         options={{
           title: '캘린더',
           tabBarIcon: ({ color, size }) => (
