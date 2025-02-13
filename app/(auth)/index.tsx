@@ -6,6 +6,8 @@ import { validateUser } from '../../utils/validate';
 import { Link } from 'expo-router';
 import useAuth from '../../hooks/queries/useAuth';
 import { router } from 'expo-router';
+import CustomButton from '../../components/CustomButton';
+
 export default function AuthHome() {
   const {loginMutation} = useAuth();
   const passwordRef = useRef<TextInput>(null);
@@ -61,19 +63,11 @@ export default function AuthHome() {
                   {...login.getTextInputProps('password')}
                 />
               </View>
-
-              <Pressable 
+              <CustomButton
                 onPress={handleSubmit}
-                className="w-full bg-black py-2 px-4 rounded-md active:opacity-80"
-                style={({ pressed }) => [
-                  {
-                    transform: [{ scale: pressed ? 0.98 : 1 }],
-                    opacity: pressed ? 0.8 : 1,
-                  }
-                ]}
-              >
-                 <Text className="text-white text-center font-bold">로그인</Text>
-              </Pressable>
+                label="로그인"
+              />
+            </View>
             </View>
 
             <View className="mt-4 flex-row items-center justify-center">
@@ -88,7 +82,6 @@ export default function AuthHome() {
             </View>
           </View>
         </View>
-      </View>
-    </View>
+      </View>  
   );
 } 
