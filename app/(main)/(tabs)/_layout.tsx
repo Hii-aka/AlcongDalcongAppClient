@@ -12,6 +12,7 @@ export default function TabsLayout() {
         name="diary"
         options={{
           title: '일기',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="book-outline" size={size} color={color} />
           ),
@@ -21,6 +22,7 @@ export default function TabsLayout() {
         name="calendar"
         options={{
           title: '캘린더',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar-outline" size={size} color={color} />
           ),

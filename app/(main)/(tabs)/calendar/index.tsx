@@ -113,9 +113,6 @@ export default function CalendarHome() {
         <View className="flex-1">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-lg font-bold">예정된 데이트</Text>
-            <Pressable onPress={() => router.push('/calendar/post')}>
-              <FontAwesome name="plus" size={20} color="#666" />
-            </Pressable>
           </View>
           <ScrollView 
             className="flex-1" 
