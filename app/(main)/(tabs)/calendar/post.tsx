@@ -1,8 +1,16 @@
-import React from 'react';
-import { View, Text, TextInput, ScrollView, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, ScrollView, Pressable, FlatList } from 'react-native';
 import { router } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
+
+import SearchLocationScreen from '@/components/date/SearchLocationScreen';
+
 
 export default function CalendarPost() {
+  
+
+ 
+
   const handleSave = () => {
     // TODO: 일정 저장 로직 구현
     router.back();
@@ -53,14 +61,8 @@ export default function CalendarPost() {
               </View>
             </View>
 
-            <View>
-              <Text className="text-sm font-medium text-gray-700 mb-1">
-                장소
-              </Text>
-              <TextInput
-                className="w-full border border-gray-200 rounded-lg px-3 py-2"
-                placeholder="만날 장소를 입력하세요"
-              />
+            <View className="relative">
+              <SearchLocationScreen />
             </View>
 
             <View>
