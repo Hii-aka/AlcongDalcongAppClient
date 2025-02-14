@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, Pressable, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome5, FontAwesome } from '@expo/vector-icons';
-import { router } from 'expo-router';
-
+import DiaryList from '@/components/diary/DiaryList';
 // 기분 데이터 정의
 const moods = [
   { id: 'happy', icon: 'grin-beam', text: '행복해' },
@@ -79,33 +77,7 @@ export default function DiaryHome() {
         <View className='px-4'>
           <Text className='text-xl font-bold mb-4'>최근 일기</Text>
           <View className='space-y-4'>
-            <Pressable onPress={() => router.push('/diary/post')}>
-              <View className='bg-white rounded-lg shadow-sm overflow-hidden'>
-                <Image className='w-full h-48 object-cover' />
-                <View className='p-4'>
-                  <View className='flex items-center justify-between mb-2'>
-                    <Text className='text-sm text-gray-600'>2024.02.14</Text>
-                    <FontAwesome name="heart" size={12} color="black" />
-                  </View>
-                  <Text className='text-lg font-semibold mb-2'>발렌타인데이 카페 데이트</Text>
-                  <Text className='text-gray-600 text-sm line-clamp-2'>오늘은 발렌타인데이 카페에 가서 커피를 마셨어요. 카페에서 커피를 마시면서 좋은 시간을 보냈어요. 오늘은 발렌타인데이 카페에 가서 커피를 마셨어요. 카페에서 커피를 마시면서 좋은 시간을 보냈어요. 오늘은 발렌타인데이 카페에 가서 커피를 마셨어요. 카페에서 커피를 마시면서 좋은 시간을 보냈어요.</Text>
-                </View>
-              </View>
-            </Pressable>
-
-            <Pressable onPress={() => router.push('/diary/post')}>
-              <View className='bg-white rounded-lg shadow-sm overflow-hidden'>
-                <Image className='w-full h-48 object-cover' />
-                <View className='p-4'>
-                  <View className='flex items-center justify-between mb-2'>
-                    <Text className='text-sm text-gray-600'>2024.02.13</Text>
-                    <FontAwesome name="heart" size={12} color="black" />
-                  </View>
-                  <Text className='text-lg font-semibold mb-2'>남산타워 야경 구경</Text>
-                  <Text className='text-gray-600 text-sm line-clamp-2'>오늘은 남산타워에서 야경을 보았어요. 반짝이는 도시의 불빛이 정말 예뻤어요. 사랑의 자물쇠도 걸고 왔답니다.</Text>
-                </View>
-              </View>
-            </Pressable>
+            <DiaryList />
           </View>
         </View>
       </ScrollView>
