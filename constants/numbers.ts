@@ -3,7 +3,7 @@ const numbers = {
 
     MIN_CALENDAR_YEAR: 2000,
     MAX_CALENDAR_YEAR: 2050,
-    CALENDAR_YEAR_SELECTOR_COLUMN: 3,
+    CALENDAR_YEAR_SELECTOR_COLUMN: 4,
 } as const;
 
 export {numbers};

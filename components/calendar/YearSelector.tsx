@@ -31,10 +31,15 @@ function YearSelector({
   if (!isVisible) return null;
 
   return (
-    <View className="absolute w-full">
-      <View className="items-center bg-white">
+    <View className="absolute w-full shadow-lg">
+      <View className="items-center bg-white rounded-t-2xl">
+        <View className="w-full px-4 py-3 border-b border-gray-100">
+          <Text className="text-lg font-semibold text-center text-gray-800">
+            연도 선택
+          </Text>
+        </View>
         <FlatList
-          className="max-h-[200px] bg-white"
+          className="w-full px-2 py-2 bg-white"
           showsVerticalScrollIndicator={false}
           contentOffset={{ x: 0, y: scrollY }}
           initialNumToRender={currentyear - numbers.MIN_CALENDAR_YEAR}
@@ -52,40 +57,52 @@ function YearSelector({
             <Pressable
               key={item.num}
               onPress={() => onChangeYear(item.num)}
-              className={`w-20 h-10 p-2.5 m-1.5 border rounded 
+              className={`w-[24%] h-12 mx-[0.5%] my-1 rounded-xl 
                 items-center justify-center
+                active:opacity-70
                 ${currentyear === item.num 
-                  ? 'bg-pink-700 border-pink-700' 
-                  : 'border-gray-500'
+                  ? 'bg-blue-500 shadow-sm' 
+                  : 'bg-gray-50 hover:bg-gray-100'
                 }`}
             >
               <Text
-                className={`text-base font-medium
+                className={`text-base
                   ${currentyear === item.num 
-                    ? 'text-white font-semibold' 
-                    : 'text-gray-700'
+                    ? 'text-white font-bold' 
+                    : 'text-gray-600 font-medium'
                   }`}
               >
                 {item.num}
               </Text>
+              {currentyear === item.num && (
+                <View className="absolute right-1.5 top-1.5">
+                  <MaterialIcons
+                    name="check-circle"
+                    size={14}
+                    color="white"
+                  />
+                </View>
+              )}
             </Pressable>
           )}
           keyExtractor={item => String(item.num)}
-          numColumns={numbers.CALENDAR_YEAR_SELECTOR_COLUMN}
+          numColumns={4}
+          className="h-[200px]"
         />
       </View>
       <Pressable 
         className="flex-row bg-white p-4 items-center justify-center 
-          border-t border-b border-gray-500"
+          border-t border-gray-100 rounded-b-2xl
+          active:bg-gray-50"
         onPress={hide}
       >
-        <Text className="text-black text-base font-semibold">
+        <Text className="text-blue-500 text-base font-semibold mr-1">
           닫기
         </Text>
         <MaterialIcons
-          name="keyboard-arrow-up"
-          size={20}
-          color="black"
+          name="keyboard-arrow-down"
+          size={24}
+          color="#3b82f6"
         />
       </Pressable>
     </View>
