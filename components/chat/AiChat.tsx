@@ -1,36 +1,16 @@
-import {FlatList, Pressable, Text, TextInput, View} from "react-native";
+import {FlatList, Text, View} from "react-native";
 import {useRef, useState} from "react";
-import {Ionicons} from "@expo/vector-icons";
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
 import {faRobot} from '@fortawesome/free-solid-svg-icons'
-
-type Message = {
-    id: number;
-    sender: "AI" | "me";
-    text: string;
-};
+import InputWindow from "@/components/chat/InputWindow";
+import {Message} from "@/app/(main)/(tabs)/chat";
 
 const AiChat = () => {
     const [messagesWithAi, setMessagesWithAi] = useState<Message[]>([
         {id: 1, sender: "AI", text: "안녕하세요! 데이트 코스를 추천해 드릴까요?"}
     ]);
 
-    const [aiInput, setAiInput] = useState<string>("");
     const flatListRef = useRef<FlatList>(null);
-
-    const handleSendAiMessage = () => {
-        if (!aiInput.trim()) {
-            return;
-        }
-
-        setMessagesWithAi((prev) => [
-            ...prev,
-            {id: Date.now(), sender: "me", text: aiInput}
-        ]);
-        setAiInput("");
-
-        setTimeout(() => flatListRef.current?.scrollToEnd({animated: true}), 100);
-    };
 
     return (
         <View className="flex-1 bg-gray-100 px-4">
@@ -59,17 +39,7 @@ const AiChat = () => {
                     contentContainerStyle={{flexGrow: 1, justifyContent: 'flex-start', paddingBottom: 60}}
                 />
 
-                <View className="flex flex-row items-center border-t pt-2 border-gray-300">
-                    <TextInput
-                        className="flex-1 border rounded-md px-3 py-2 bg-gray-200"
-                        placeholder="AI에게 질문하기"
-                        value={aiInput}
-                        onChangeText={setAiInput}
-                    />
-                    <Pressable onPress={handleSendAiMessage} className="ml-2 bg-blue-500 p-2 rounded-md">
-                        <Ionicons name="send" size={20} color="white"/>
-                    </Pressable>
-                </View>
+                <InputWindow setMessages={setMessagesWithAi} flatListRef={flatListRef} placeholder="AI에게 질문하기"/>
             </View>
         </View>
     );
