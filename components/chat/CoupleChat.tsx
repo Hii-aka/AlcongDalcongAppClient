@@ -30,9 +30,16 @@ const CoupleChat = () => {
                     data={messagesWithPartner}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({item}) => (
-                        <View
-                            className={`p-2 rounded-lg mb-2 ${item.sender === 'me' ? 'bg-black self-end' : 'bg-gray-300 self-start'}`}>
-                            <Text className={item.sender === 'me' ? "text-white" : "text-black"}>{item.text}</Text>
+                        <View className={item.sender === 'me' ? "" : "flex flex-row gap-2 items-start"}>
+                            {item.sender !== 'me' && (
+                                <View className="w-8 h-8 rounded-full bg-pink-200 flex items-center justify-center">
+                                    <Ionicons name="heart" size={12} color="#FFFFFF"/>
+                                </View>
+                            )}
+                            <View
+                                className={`p-2 rounded-lg mb-2 ${item.sender === 'me' ? 'bg-black self-end' : 'bg-gray-300 self-start'}`}>
+                                <Text className={item.sender === 'me' ? "text-white" : "text-black"}>{item.text}</Text>
+                            </View>
                         </View>
                     )}
                     style={{flex: 1}}
