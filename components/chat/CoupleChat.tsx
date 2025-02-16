@@ -1,12 +1,8 @@
-import {FlatList, Pressable, Text, TextInput, View} from "react-native";
+import {FlatList, Text, View} from "react-native";
 import {useRef, useState} from "react";
 import {Ionicons} from "@expo/vector-icons";
-
-type Message = {
-    id: number;
-    sender: "partner" | "me";
-    text: string;
-};
+import InputWindow from "@/components/chat/InputWindow";
+import {Message} from "@/app/(main)/(tabs)/chat";
 
 const CoupleChat = () => {
     const [messagesWithPartner, setMessagesWithPartner] = useState<Message[]>([
@@ -14,22 +10,7 @@ const CoupleChat = () => {
         {id: 2, sender: "me", text: "파스타 어때?"}
     ]);
 
-    const [partnerInput, setPartnerInput] = useState<string>("");
     const flatListRef = useRef<FlatList>(null);
-
-    const handleSendPartnerMessage = () => {
-        if (!partnerInput.trim()) {
-            return;
-        }
-
-        setMessagesWithPartner((prev) => [
-            ...prev,
-            {id: Date.now(), sender: "me", text: partnerInput}
-        ]);
-        setPartnerInput("");
-
-        setTimeout(() => flatListRef.current?.scrollToEnd({animated: true}), 100);
-    };
 
     return (
         <View className="flex-1 bg-gray-100 px-4">
@@ -58,17 +39,7 @@ const CoupleChat = () => {
                     contentContainerStyle={{flexGrow: 1, justifyContent: 'flex-start', paddingBottom: 60}}
                 />
 
-                <View className="flex flex-row items-center border-t pt-2 border-gray-300">
-                    <TextInput
-                        className="flex-1 border rounded-md px-3 py-2 bg-gray-200"
-                        placeholder="메시지를 입력하세요"
-                        value={partnerInput}
-                        onChangeText={setPartnerInput}
-                    />
-                    <Pressable onPress={handleSendPartnerMessage} className="ml-2 bg-blue-500 p-2 rounded-md">
-                        <Ionicons name="send" size={20} color="white"/>
-                    </Pressable>
-                </View>
+                <InputWindow setMessages={setMessagesWithPartner} flatListRef={flatListRef} placeholder="메시지를 입력하세요"/>
             </View>
         </View>
     );
