@@ -30,9 +30,17 @@ const AiChat = () => {
                     data={messagesWithAi}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({item}) => (
-                        <View
-                            className={`p-2 rounded-lg mb-2 ${item.sender === 'me' ? 'bg-black self-end' : 'bg-blue-100 self-start'}`}>
-                            <Text className={item.sender === 'me' ? "text-white" : "text-black"}>{item.text}</Text>
+                        <View className={item.sender === 'me' ? "" : "flex flex-row gap-2 items-start"}>
+                            {item.sender !== 'me' && (
+                                <View className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center">
+                                    <FontAwesomeIcon icon={faRobot} size={12} color="#000000"/>
+                                </View>
+                            )}
+
+                            <View
+                                className={`p-2 rounded-lg mb-2 ${item.sender === 'me' ? 'bg-black self-end' : 'bg-blue-100 self-start'}`}>
+                                <Text className={item.sender === 'me' ? "text-white" : "text-black"}>{item.text}</Text>
+                            </View>
                         </View>
                     )}
                     style={{flex: 1}}
