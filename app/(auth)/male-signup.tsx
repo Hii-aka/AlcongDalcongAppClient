@@ -6,12 +6,15 @@ import { FormProvider } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import PasswordInput from '@/components/input/PasswordInput';
 import PasswordConfirmInput from '@/components/input/PasswordConfirmInput';
-import { signUp } from '@/api/auth';
+import { signUpMale } from '@/api/auth';
+import NicknameInput from '@/components/input/NicknameInput';
+import useAuth from '@/hooks/queries/useAuth';
 
 type SignupForm = {
   email: string;
   password: string;
   passwordConfirm: string;
+  nickname: string;
 };
 
   export default function MaleSignup() {
@@ -20,21 +23,15 @@ type SignupForm = {
       email: '',
       password: '',
       passwordConfirm: '',
+      nickname: '',
     },
   });
 
+  const {signUpMaleMutation} = useAuth(); 
+
   const onSubmit = async (data: SignupForm) => {
-    const {email, password, passwordConfirm} = data;
-    console.log(data);
-    try {
-      const response = await signUp({email, password});
-      console.log(response);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      console.log('가입 완료');
-    }
-    // TODO: Implement signup logic
+    const {email, password, nickname} = data;
+    signUpMaleMutation.mutate({email, password, nickname});
   };
   
   return (
@@ -46,6 +43,7 @@ type SignupForm = {
             <FormProvider {...signup}>  
             <View className="space-y-4">
               <EmailInput />
+              <NicknameInput /> 
               <PasswordInput submitBehavior="submit" />
               <PasswordConfirmInput />
               <Pressable 

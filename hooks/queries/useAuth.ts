@@ -1,13 +1,54 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { signUp, login, getAccessToken, logout } from "../../api/auth";
+import { signUpMale, signUpFemale, login, getAccessToken, logout } from "../../api/auth";
 import { useEffect } from "react";
 import { secureStorage } from "../../utils/expo.securestore";
 import queryClient from "../../api/query.client";
 import { UseMutationCustomOptions, UseQueryCustomOptions } from "../../types/common";
 import { queryKeys, numbers } from "../../constants";
-function useSignUp(mutationOptions?: UseMutationCustomOptions) {
+import { router } from "expo-router";
+import Toast from "react-native-toast-message";
+function useSignUpMale (mutationOptions?: UseMutationCustomOptions) {
     return useMutation({
-        mutationFn: signUp,
+        mutationFn: signUpMale,
+        onSuccess: () => {
+            router.push('/');
+        },
+        onError: (error: any) => {
+            try {
+                if (error.response.status === 409) {
+                    console.log('이미 존재하는 계정입니다.');
+                    Toast.show({
+                        text1: '이미 존재하는 계정입니다.',
+                        type: 'error',
+                    });
+                }
+
+            } catch (e) {
+                console.log('Error parsing:', e);
+            }
+        },
+        ...mutationOptions,
+    });
+}
+
+function useSignUpFemale(mutationOptions?: UseMutationCustomOptions) {
+    return useMutation({
+        mutationFn: signUpFemale,
+        onSuccess: () => {
+            router.push('/');
+        },
+        onError: (error: any) => {
+            try {
+                if (error.response.status === 409) {
+                    Toast.show({
+                        text1: '이미 존재하는 계정입니다.',
+                        type: 'error',
+                    });
+                }
+            } catch (e) {
+                console.log('Error parsing:', e);
+            }
+        },
         ...mutationOptions,
     });
 }
@@ -97,7 +138,8 @@ function useGetRefreshToken() {
 }
 
 function useAuth() {
-    const signUpMutation = useSignUp();
+    const signUpMaleMutation = useSignUpMale();
+    const signUpFemaleMutation = useSignUpFemale();
     const refreshTokenQuery = useGetRefreshToken();
     const loginMutation = useLogin();
     const isAuthenticated = loginMutation.isSuccess || refreshTokenQuery.isSuccess;
@@ -108,7 +150,8 @@ function useAuth() {
 
     return {
         isAuthenticated,
-        signUpMutation,
+        signUpMaleMutation,
+        signUpFemaleMutation,
         loginMutation,
         isLoginLoading,
         logoutMutation,

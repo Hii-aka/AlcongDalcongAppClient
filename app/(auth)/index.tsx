@@ -1,5 +1,5 @@
-import React, {useRef} from 'react';
-import { View, Text, TextInput, Pressable, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
 import useAuth from '../../hooks/queries/useAuth';
 import { router } from 'expo-router';
@@ -15,7 +15,6 @@ type LoginForm = {
 
 export default function AuthHome() {
   const {loginMutation} = useAuth();
-  const passwordRef = useRef<TextInput>(null);
   const login = useForm<LoginForm>({
     defaultValues: {
       email: '',
