@@ -4,18 +4,40 @@ import { secureStorage } from "../utils/expo.securestore";
 type RequestBody = {
     email: string;
     password: string;
+    nickname: string;
 };
 
-const signUp = async ({email, password}: RequestBody) => {
+// const signUp = async ({email, password}: RequestBody) => {
+//     try {
+//         const response = await api.post<ApiResponse<string>>('auth/signup', {email, password});
+//         console.log(response);
+//         return response;
+//     } catch (error) {
+//         console.error(error);
+//         throw error;
+//     }
+// };
+
+const signUpMale = async ({email, password, nickname}: RequestBody) => {
     try {
-        const response = await api.post<ApiResponse<string>>('auth/signup', {email, password});
-        console.log(response);
+        const response = await api.post<ApiResponse<string>>('auth/signup/male', {email, password, nickname});
         return response;
     } catch (error) {
         console.error(error);
         throw error;
     }
 };
+
+const signUpFemale = async ({email, password, nickname}: RequestBody) => {
+    try {
+        const response = await api.post<ApiResponse<string>>('auth/signup/female', {email, password, nickname});
+        console.log(response);
+        return response;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};  
 
 const login = async ({email, password}: RequestBody) => {
     try {
@@ -59,4 +81,4 @@ const getAccessToken = async () => {
     }
 };
 
-export {signUp, login, getAccessToken, logout};
+export {signUpMale, signUpFemale, login, getAccessToken, logout};
