@@ -1,27 +1,31 @@
 import React, {useRef} from 'react';
 import { View, Text, TextInput, Pressable, TouchableOpacity } from 'react-native';
-import InputField from '../../components/input/InputField';
-import useForm from '../../hooks/useForm';
-import { validateUser } from '../../utils/validate';
 import { Link } from 'expo-router';
 import useAuth from '../../hooks/queries/useAuth';
 import { router } from 'expo-router';
 import CustomButton from '../../components/CustomButton';
+import { FormProvider, useForm } from 'react-hook-form';
+import EmailInput from '@/components/input/EmailInput';
+import PasswordInput from '@/components/input/PasswordInput';
+
+type LoginForm = {
+  email: string;
+  password: string;
+};
 
 export default function AuthHome() {
   const {loginMutation} = useAuth();
   const passwordRef = useRef<TextInput>(null);
-  const login = useForm({
-    initialValue: {
+  const login = useForm<LoginForm>({
+    defaultValues: {
       email: '',
       password: '',
     },
-    validate: validateUser,
   });
 
-  const handleSubmit = () => {
-    console.log(login.values);
-    loginMutation.mutate({email: login.values.email, password: login.values.password}, {
+  const onSubmit = (data: LoginForm) => {
+    const {email, password} = data;
+    loginMutation.mutate({email, password}, {
       onSuccess: () => {
         router.push('/(main)/(tabs)/diary');
       },
@@ -41,33 +45,16 @@ export default function AuthHome() {
           </View>
 
           <View className="bg-white rounded-lg shadow-sm p-6 w-full">
+            <FormProvider {...login}>
             <View className="space-y-4">
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">이메일</Text>
-                <InputField
-                  autoFocus
-                  placeholder="이메일을 입력하세요"
-                  error={login.errors.email}
-                  touched={login.touched.email}
-                  inputMode="email"
-                  {...login.getTextInputProps('email')}
-                />
-              </View>
-              
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">비밀번호</Text>
-                <InputField
-                  ref={passwordRef}
-                  placeholder="비밀번호를 입력하세요"
-                  secureTextEntry
-                  {...login.getTextInputProps('password')}
-                />
-              </View>
+              <EmailInput />
+              <PasswordInput />
               <CustomButton
-                onPress={handleSubmit}
+                onPress={login.handleSubmit(onSubmit)}
                 label="로그인"
               />
             </View>
+            </FormProvider>
             </View>
 
             <View className="mt-4 flex-row items-center justify-center">

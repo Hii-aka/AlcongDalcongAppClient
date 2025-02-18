@@ -42,7 +42,7 @@ type SignupForm = {
       <ScrollView className="flex-1 px-4">
         <View className="py-14 max-w-md mx-auto w-full">
           <View className="bg-white rounded-lg p-6">
-            <Text className="text-2xl font-bold text-center mb-6">회원가입</Text>
+            <Text className="text-2xl font-bold text-center mb-6">남성 회원가입</Text>
             <FormProvider {...signup}>  
             <View className="space-y-4">
               <EmailInput />
