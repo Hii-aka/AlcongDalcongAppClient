@@ -1,22 +1,39 @@
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
 import InputField from '../../components/input/InputField';
-import useForm from '../../hooks/useForm';
 import { router } from 'expo-router';
-import { validateSignup } from '../../utils/validate';
+import EmailInput from '../../components/input/EmailInput';
+import { FormProvider } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import PasswordInput from '@/components/input/PasswordInput';
+import PasswordConfirmInput from '@/components/input/PasswordConfirmInput';
+import { signUp } from '@/api/auth';
 
+type SignupForm = {
+  email: string;
+  password: string;
+  passwordConfirm: string;
+};
 
   export default function FemaleSignup() {
-  const signup = useForm({
-    initialValue: {
+  const signup = useForm<SignupForm>({
+    defaultValues: {
       email: '',
       password: '',
       passwordConfirm: '',
     },
-    validate: validateSignup,
   });
 
-  const handleSubmit = () => {
-    console.log(signup.values);
+  const onSubmit = async (data: SignupForm) => {
+    const {email, password, passwordConfirm} = data;
+    console.log(data);
+    try {
+      const response = await signUp({email, password});
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      console.log('가입 완료');
+    }
     // TODO: Implement signup logic
   };
   
@@ -25,66 +42,15 @@ import { validateSignup } from '../../utils/validate';
       <ScrollView className="flex-1 px-4">
         <View className="py-14 max-w-md mx-auto w-full">
           <View className="bg-white rounded-lg p-6">
-            <Text className="text-2xl font-bold text-center mb-6">회원가입</Text>
-            
+            <Text className="text-2xl font-bold text-center mb-6">여성 회원가입</Text>
+            <FormProvider {...signup}>  
             <View className="space-y-4">
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-1">이메일</Text>
-                <InputField
-                  placeholder="이메일을 입력하세요"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  error={signup.errors.email}
-                  touched={signup.touched.email}
-                  {...signup.getTextInputProps('email')}
-                />
-              </View>
-
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-1">비밀번호</Text>
-                <InputField
-                  placeholder="비밀번호를 입력하세요"
-                  secureTextEntry
-                  error={signup.errors.password}
-                  touched={signup.touched.password}
-                  {...signup.getTextInputProps('password')}
-                />
-              </View>
-
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-1">비밀번호 확인</Text>
-                <InputField
-                  placeholder="비밀번호를 다시 입력하세요"
-                  secureTextEntry
-                  error={signup.errors.passwordConfirm}
-                  touched={signup.touched.passwordConfirm}
-                  {...signup.getTextInputProps('passwordConfirm')}
-                />
-              </View>
-
-              {/* <View>
-                <Text className="text-sm font-medium text-gray-700 mb-1">이름</Text>
-                <InputField
-                  placeholder="이름을 입력하세요"
-                  error={signup.errors.name}
-                  touched={signup.touched.name}
-                  {...signup.getTextInputProps('name')}
-                />
-              </View>
-
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-1">생년월일</Text>
-                <InputField
-                  placeholder="YYYY-MM-DD"
-                  error={signup.errors.birthDate}
-                  touched={signup.touched.birthDate}
-                  {...signup.getTextInputProps('birthDate')}
-                />
-              </View> */}
-
+              <EmailInput />
+              <PasswordInput submitBehavior="submit" />
+              <PasswordConfirmInput />
               <Pressable 
                 className="w-full bg-black py-3 rounded-lg mt-6"
-                onPress={handleSubmit}
+                onPress={signup.handleSubmit(onSubmit)}
                 style={({ pressed }) => [
                   {
                     transform: [{ scale: pressed ? 0.98 : 1 }],
@@ -102,6 +68,7 @@ import { validateSignup } from '../../utils/validate';
                 </Pressable>
               </View>
             </View>
+            </FormProvider>
           </View>
         </View>
       </ScrollView>
