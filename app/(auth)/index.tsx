@@ -1,6 +1,6 @@
 import React, {useRef} from 'react';
 import { View, Text, TextInput, Pressable, TouchableOpacity } from 'react-native';
-import InputField from '../../components/InputField';
+import InputField from '../../components/input/InputField';
 import useForm from '../../hooks/useForm';
 import { validateUser } from '../../utils/validate';
 import { Link } from 'expo-router';
@@ -74,7 +74,7 @@ export default function AuthHome() {
               <Text className="text-sm text-gray-600 mr-2">
                 아직 회원이 아니신가요?
               </Text>
-              <Link href="/(auth)/signup" asChild>
+              <Link href="/(auth)/gender" asChild>
                 <TouchableOpacity>
                   <Text className="text-sm font-bold text-black">회원가입</Text>
                 </TouchableOpacity>

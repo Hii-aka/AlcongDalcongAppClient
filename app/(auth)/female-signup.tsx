@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { validateSignup } from '../../utils/validate';
 
 
-export default function Signup() {
+  export default function FemaleSignup() {
   const signup = useForm({
     initialValue: {
       email: '',

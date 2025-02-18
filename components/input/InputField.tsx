@@ -1,11 +1,11 @@
-import React, {ForwardedRef, ReactNode, forwardRef, useRef} from 'react';
+import React, {ReactNode, ForwardedRef, forwardRef} from 'react';
 import {
   TextInput,
   TextInputProps,
   Text,
   Pressable,
+  View,
 } from 'react-native';
-import { mergeRefs } from '../utils/common';
 
 
 interface InputFieldProps extends TextInputProps {
@@ -13,23 +13,26 @@ interface InputFieldProps extends TextInputProps {
   error?: string;
   touched?: boolean;
   icon?: ReactNode;
+  label?: string;
 }
 
-const InputField = forwardRef(
-    (
-        {disabled = false, error, touched, icon = null, ...props}: InputFieldProps,
-        ref?: ForwardedRef<TextInput>,
-    ) => {
-      const innerRef = useRef<TextInput | null>(null);
+function InputField({
+  disabled = false,
+   error, 
+   icon = null, 
+   label, 
+   ...props
+  }: InputFieldProps, ref: ForwardedRef<TextInput>) {
 
       const handlePressInput = () => {
-        innerRef.current?.focus();
       };
 
       return (
+        <View>
+          <Text className="text-sm font-medium text-gray-700 mb-1">{label}</Text>
           <Pressable onPress={handlePressInput}>
                 <TextInput
-                    ref={ref ? mergeRefs(innerRef, ref) : innerRef}
+                    ref={ref}
                     editable={!disabled}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     autoCapitalize="none"
@@ -37,12 +40,12 @@ const InputField = forwardRef(
                     autoCorrect={false}
                     {...props}
                 />
-              {touched && Boolean(error) && (
+              {Boolean(error) && (
                   <Text className="text-red-500 text-sm">{error}</Text>
               )}
           </Pressable>
+        </View>
       );
-    },
-);
+}
 
-export default InputField;
+export default forwardRef(InputField);

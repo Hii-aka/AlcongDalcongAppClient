@@ -4,8 +4,7 @@ import { useEffect } from "react";
 import { secureStorage } from "../../utils/expo.securestore";
 import queryClient from "../../api/query.client";
 import { UseMutationCustomOptions, UseQueryCustomOptions } from "../../types/common";
-import { queryKeys } from "../../constants/key";
-import { numbers } from "../../constants/numbers";
+import { queryKeys, numbers } from "../../constants";
 function useSignUp(mutationOptions?: UseMutationCustomOptions) {
     return useMutation({
         mutationFn: signUp,
