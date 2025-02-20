@@ -4,7 +4,7 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
 function DayOfWeeks() {
     return (
-        <View className='flex-row border-b border-gray-100 mb-2'>
+        <View className='flex-row border-b border-pink-100 mb-2'>
             {WEEKDAYS.map((day, index) => (
                 <View key={index} className='flex-1 items-center py-3'>
                     <Text 

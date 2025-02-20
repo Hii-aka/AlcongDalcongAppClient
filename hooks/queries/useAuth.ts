@@ -1,15 +1,21 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { signUpMale, signUpFemale, login, getAccessToken, logout } from "../../api/auth";
+import { signUp, login, getAccessToken, logout, getMe } from "../../api/auth";
 import { useEffect } from "react";
 import { secureStorage } from "../../utils/expo.securestore";
 import queryClient from "../../api/query.client";
-import { UseMutationCustomOptions, UseQueryCustomOptions } from "../../types/common";
 import { queryKeys, numbers } from "../../constants";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
-function useSignUpMale (mutationOptions?: UseMutationCustomOptions) {
+import { UseMutationCustomOptions, UseQueryCustomOptions } from "../../types/common";
+
+type RequestBody = {
+    email: string;
+    password: string;
+};
+
+function useSignUp (mutationOptions?: UseMutationCustomOptions) {
     return useMutation({
-        mutationFn: signUpMale,
+        mutationFn: signUp,
         onSuccess: () => {
             router.push('/');
         },
@@ -31,28 +37,6 @@ function useSignUpMale (mutationOptions?: UseMutationCustomOptions) {
     });
 }
 
-function useSignUpFemale(mutationOptions?: UseMutationCustomOptions) {
-    return useMutation({
-        mutationFn: signUpFemale,
-        onSuccess: () => {
-            router.push('/');
-        },
-        onError: (error: any) => {
-            try {
-                if (error.response.status === 409) {
-                    Toast.show({
-                        text1: '이미 존재하는 계정입니다.',
-                        type: 'error',
-                    });
-                }
-            } catch (e) {
-                console.log('Error parsing:', e);
-            }
-        },
-        ...mutationOptions,
-    });
-}
-
 type User = {
     id: string;
     loginType: string;
@@ -64,22 +48,12 @@ type User = {
     deletedAt?: string;
 };
 
-type LoginResponse = {
-    data: {
-        user: User;
-        tokens: {
-            accessToken: string;
-            refreshToken: string;
-        };
-    };
-};
-
 function useLogin(mutationOptions?: UseMutationCustomOptions) {
     return useMutation({
         mutationFn: login,
-        onSuccess: async (data: LoginResponse) => {
-            await secureStorage.setItem('accessToken', data.data.tokens.accessToken);
-            await secureStorage.setItem('refreshToken', data.data.tokens.refreshToken);
+        onSuccess: async (data) => {
+                await secureStorage.setItem('accessToken', data.tokens.accessToken);
+                await secureStorage.setItem('refreshToken', data.tokens.refreshToken);
         },
         onSettled: () => {
             queryClient.refetchQueries({
@@ -104,6 +78,14 @@ function useLogout(mutationOptions?: UseMutationCustomOptions) {
     });
 }
 
+function useGetMe(queryOptions?: UseQueryCustomOptions) {
+    return useQuery({
+        queryFn: getMe,
+        queryKey: [queryKeys.AUTH, queryKeys.GET_ME],
+        ...queryOptions,
+    });
+}
+
 function useGetRefreshToken() {
     const {data, isSuccess, isError, isPending} = useQuery({
         queryFn: getAccessToken,
@@ -116,9 +98,9 @@ function useGetRefreshToken() {
 
     useEffect(() => {
         (async () => {
-            if (isSuccess && data?.data) {
-                await secureStorage.setItem('accessToken', data.data.accessToken);
-                await secureStorage.setItem('refreshToken', data.data.refreshToken);
+            if (isSuccess && data) {
+                await secureStorage.setItem('accessToken', data.accessToken);
+                await secureStorage.setItem('refreshToken', data.refreshToken);
             }
         })();
     }, [isSuccess, data]);
@@ -138,22 +120,19 @@ function useGetRefreshToken() {
 }
 
 function useAuth() {
-    const signUpMaleMutation = useSignUpMale();
-    const signUpFemaleMutation = useSignUpFemale();
+    const signUpMutation = useSignUp();
     const refreshTokenQuery = useGetRefreshToken();
+    const getMeQuery = useGetMe({
+        enabled: refreshTokenQuery.isSuccess,
+    });
+    const isAuthenticated = getMeQuery.isSuccess;
     const loginMutation = useLogin();
-    const isAuthenticated = loginMutation.isSuccess || refreshTokenQuery.isSuccess;
-    const isLoginLoading = loginMutation.isPending || refreshTokenQuery.isPending;
-    console.log('isAuthenticated', isAuthenticated);
-    console.log('isLoginLoading', isLoginLoading);
     const logoutMutation = useLogout();
 
     return {
         isAuthenticated,
-        signUpMaleMutation,
-        signUpFemaleMutation,
+        signUpMutation,
         loginMutation,
-        isLoginLoading,
         logoutMutation,
     }
 }
