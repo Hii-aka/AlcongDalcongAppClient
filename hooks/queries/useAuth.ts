@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { signUp, login, getAccessToken, logout, getMe } from "../../api/auth";
 import { useEffect } from "react";
 import { secureStorage } from "../../utils/expo.securestore";
-import queryClient from "../../api/query.client";
+import queryClient from "../../api/queryClient";
 import { queryKeys, numbers } from "../../constants";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
@@ -86,37 +86,27 @@ function useGetMe(queryOptions?: UseQueryCustomOptions) {
     });
 }
 
-function useGetRefreshToken() {
-    const {data, isSuccess, isError, isPending} = useQuery({
-        queryFn: getAccessToken,
+function useGetRefreshToken(queryOptions?: UseQueryCustomOptions) {
+    return useQuery({
+        queryFn: async () => {
+            try {
+                const refreshToken = await secureStorage.getItem('refreshToken');
+                if (!refreshToken) {
+                    throw new Error('No refresh token');
+                }
+                return getAccessToken();
+            } catch (error) {
+                await secureStorage.removeItem('accessToken');
+                await secureStorage.removeItem('refreshToken');
+                throw error;
+            }
+        },
         queryKey: [queryKeys.AUTH, queryKeys.GET_ACCESS_TOKEN],
         staleTime: numbers.ACCESS_TOKEN_REFRESH_TIME,
         refetchInterval: numbers.ACCESS_TOKEN_REFRESH_TIME,
-        refetchOnReconnect: true,
-        refetchIntervalInBackground: true,
+        retry: false,
+        ...queryOptions,
     });
-
-    useEffect(() => {
-        (async () => {
-            if (isSuccess && data) {
-                await secureStorage.setItem('accessToken', data.accessToken);
-                await secureStorage.setItem('refreshToken', data.refreshToken);
-            }
-        })();
-    }, [isSuccess, data]);
-
-    useEffect(() => {
-        if (isError) {
-            console.log('refresh token error');
-            secureStorage.removeItem('accessToken');
-            secureStorage.removeItem('refreshToken');
-        }
-    }, [isError]);
-    return {
-        isSuccess,
-        isError,
-        isPending,
-    }
 }
 
 function useAuth() {
