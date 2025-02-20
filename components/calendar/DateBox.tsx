@@ -1,5 +1,6 @@
 import React from 'react';
 import {Pressable, View, Text} from 'react-native';
+import {FontAwesome5} from '@expo/vector-icons';
 
 interface DateBoxProps {
     date: number;
@@ -26,21 +27,27 @@ function DateBox({
         >
             {date > 0 && (
                 <View className={`flex-1 items-center justify-center rounded-full
-                    ${isToday ? 'bg-black' : ''}
-                    ${selectedDate === date ? 'bg-gray-200' : ''}`}
-            >
-                <Text 
-                    className={`text-base
-                        ${isToday ? 'text-white font-bold' : ''}
-                        ${isPreviousMonth ? 'text-gray-300' : 'text-gray-500'}
-                        ${!isToday && !isPreviousMonth && selectedDate === date ? 'font-semibold' : ''}`}
+                    ${isToday ? 'bg-pink-100 border-2 border-pink-400' : ''}
+                    ${selectedDate === date && !isToday ? 'bg-pink-50' : ''}`}
                 >
-                    {date}
-                </Text>
-                {hasSchedule && (
-                    <View className="absolute bottom-0 w-1.5 h-1.5 bg-custom rounded-full" />
-                )}
-            </View>
+                    <Text 
+                        className={`text-base
+                            ${isToday ? 'text-pink-500 font-bold' : ''}
+                            ${isPreviousMonth ? 'text-gray-300' : 'text-gray-600'}
+                            ${!isToday && !isPreviousMonth && selectedDate === date ? 'text-pink-500 font-semibold' : ''}`}
+                    >
+                        {date}
+                    </Text>
+                    {hasSchedule && (
+                        <View className="absolute -bottom-1">
+                            <FontAwesome5 
+                                name="heart" 
+                                size={8} 
+                                color={isToday ? '#EC4899' : '#EC4899'} 
+                            />
+                        </View>
+                    )}
+                </View>
             )}
         </Pressable>
     );

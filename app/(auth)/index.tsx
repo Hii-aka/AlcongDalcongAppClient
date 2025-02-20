@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
 import useAuth from '../../hooks/queries/useAuth';
@@ -14,7 +14,14 @@ type LoginForm = {
 };
 
 export default function AuthHome() {
-  const {loginMutation} = useAuth();
+  const {loginMutation, isAuthenticated} = useAuth();
+  
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/(main)/(tabs)/diary');
+    }
+  }, [isAuthenticated]);
+
   const login = useForm<LoginForm>({
     defaultValues: {
       email: '',
@@ -60,7 +67,7 @@ export default function AuthHome() {
               <Text className="text-sm text-gray-600 mr-2">
                 아직 회원이 아니신가요?
               </Text>
-              <Link href="/(auth)/gender" asChild>
+              <Link href="/(auth)/signup" asChild>
                 <TouchableOpacity>
                   <Text className="text-sm font-bold text-black">회원가입</Text>
                 </TouchableOpacity>

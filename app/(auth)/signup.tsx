@@ -1,12 +1,10 @@
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
-import InputField from '../../components/input/InputField';
 import { router } from 'expo-router';
 import EmailInput from '../../components/input/EmailInput';
 import { FormProvider } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import PasswordInput from '@/components/input/PasswordInput';
 import PasswordConfirmInput from '@/components/input/PasswordConfirmInput';
-import { signUpMale } from '@/api/auth';
 import NicknameInput from '@/components/input/NicknameInput';
 import useAuth from '@/hooks/queries/useAuth';
 
@@ -17,7 +15,7 @@ type SignupForm = {
   nickname: string;
 };
 
-  export default function MaleSignup() {
+  export default function Signup() {
   const signup = useForm<SignupForm>({
     defaultValues: {
       email: '',
@@ -39,7 +37,7 @@ type SignupForm = {
       <ScrollView className="flex-1 px-4">
         <View className="py-14 max-w-md mx-auto w-full">
           <View className="bg-white rounded-lg p-6">
-            <Text className="text-2xl font-bold text-center mb-6">남성 회원가입</Text>
+            <Text className="text-2xl font-bold text-center mb-6">회원가입</Text>
             <FormProvider {...signup}>  
             <View className="space-y-4">
               <EmailInput />

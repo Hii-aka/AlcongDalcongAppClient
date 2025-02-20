@@ -5,6 +5,12 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query';
 
+type ApiResponse<T> = {
+  data?: T;
+  message: string;
+  status: number;
+};
+
 // ky의 HTTPError를 확장한 커스텀 에러 타입
 type ResponseError = HTTPError & {
   response: {
@@ -25,4 +31,4 @@ type UseQueryCustomOptions<TQueryFnData = unknown, TData = TQueryFnData> = Omit<
 >;
 
 
-export type {ResponseError, UseMutationCustomOptions, UseQueryCustomOptions};
+export type {ResponseError, UseMutationCustomOptions, UseQueryCustomOptions, ApiResponse};

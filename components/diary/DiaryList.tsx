@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, FlatList} from 'react-native';
+import {FlatList, ListRenderItem} from 'react-native';
 import DiaryItem from './DiaryItem';
 
 const dummyData = [
@@ -19,17 +19,20 @@ const dummyData = [
   },
 ]
 
+interface DiaryListProps {
+  ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
+}
 
-function DiaryList() {
+function DiaryList({ListHeaderComponent}: DiaryListProps) {
   return (
     <FlatList
       data={dummyData}
       renderItem={({item}) => <DiaryItem diary={item} />}
+      ListHeaderComponent={ListHeaderComponent}
+      contentContainerStyle={{paddingBottom: 20}}
     />
-  )
+  );
 }
-
-const styles = StyleSheet.create({});
 
 export default DiaryList;
 

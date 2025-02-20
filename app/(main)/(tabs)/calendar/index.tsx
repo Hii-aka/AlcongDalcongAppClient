@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView } from "react-native";
+import { View, SafeAreaView } from "react-native";
 import Calendar from "@/components/calendar/Calendar";
 import { useEffect, useState } from "react";
 import { getMonthYearDetails, getNewMonthYear } from "@/utils/date";
@@ -30,17 +30,23 @@ export default function CalendarHome() {
     }, []);
 
     return (
-        <SafeAreaView>
-            <Calendar
-                monthYear={monthYear}
-                selectedDate={selectedDate}
-                schedules={schedules}
-                moveToToday={moveToToday}
-                onPressDate={handlePressDate}
-                onChangeMonth={handleChangeMonth}
-            />
-            
-                <ScheduledDate />
+        <SafeAreaView className="flex-1 bg-white">
+            <View className="flex-1">
+                <View className="flex-shrink-0">
+                    <Calendar
+                        monthYear={monthYear}
+                        selectedDate={selectedDate}
+                        schedules={schedules}
+                        moveToToday={moveToToday}
+                        onPressDate={handlePressDate}
+                        onChangeMonth={handleChangeMonth}
+                    />
+                </View>
+                
+                <View className="flex-1">
+                    <ScheduledDate />
+                </View>
+            </View>
         </SafeAreaView>
     );
 }
