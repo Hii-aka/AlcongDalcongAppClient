@@ -37,7 +37,7 @@ export default function ProfileHome() {
                     <View className="relative">
                         <View className="w-24 h-24 rounded-full border-4 border-pink-100 shadow-md overflow-hidden">
                             <Image 
-                                source={{ uri: "https://images.unsplash.com/photo-1600486913747-55e5470d6f40" }}
+                                source={require('@/assets/images/default-profile.png')}
                                 className="w-full h-full"
                             />
                         </View>
