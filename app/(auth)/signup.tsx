@@ -25,11 +25,11 @@ type SignupForm = {
     },
   });
 
-  const {signUpMaleMutation} = useAuth(); 
+  const {signUpMutation} = useAuth(); 
 
   const onSubmit = async (data: SignupForm) => {
     const {email, password, nickname} = data;
-    signUpMaleMutation.mutate({email, password, nickname});
+    signUpMutation.mutate({email, password, nickname});
   };
   
   return (

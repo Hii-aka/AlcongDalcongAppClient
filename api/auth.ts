@@ -2,12 +2,18 @@ import { api } from "./ky";
 import { secureStorage } from "../utils/expo.securestore";
 import { Profile, ApiResponse } from "@/types";
 
-type RequestBody = {
+type SignUpRequestBody = {
+    email: string;
+    password: string;
+    nickname: string;
+};
+
+type LoginRequestBody = {
     email: string;
     password: string;
 };
 
-const signUp = async ({email, password}: RequestBody) => {
+const signUp = async ({email, password, nickname}: SignUpRequestBody) => {
     try {
         const {data} = await api.post<ApiResponse<string>>('auth/signup', {email, password});
         return data;
@@ -17,7 +23,7 @@ const signUp = async ({email, password}: RequestBody) => {
     }
 };
 
-const login = async ({email, password}: RequestBody) => {
+const login = async ({email, password}: LoginRequestBody) => {
     try {
         const {data} = await api.post<ApiResponse<string>>('auth/login', {email, password});
         return data;
