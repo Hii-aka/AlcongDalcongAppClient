@@ -1,44 +1,31 @@
 import React, {useState, useCallback} from 'react';
-import {StyleSheet, TextInput, View, Text} from 'react-native';
+import {StyleSheet, TextInput, View, TouchableWithoutFeedback, Keyboard, Platform, Text, Dimensions} from 'react-native';
 import useSearchLocation from '@/hooks/useSearchLocation';
 import { debounce } from 'lodash';
 import SearchRegionResult from './SearchRegionResult';
+import { RegionInfo } from '@/hooks/useSearchLocation';
+import { MaterialIcons } from '@expo/vector-icons';
 
 interface SearchLocationScreenProps {
-
+    onLocationSelect?: (location: RegionInfo) => void;
 }
 
-// 임시 장소 검색 결과 타입
-interface PlaceResult {
-    id: string;
-    name: string;
-    address: string;
-  }
-
-   // 실제 구현 시에는 API 호출로 대체
-   const mockSearchResults: PlaceResult[] = [
-    { id: '1', name: '스타벅스 강남점', address: '서울 강남구 테헤란로 1' },
-    { id: '2', name: '스타벅스 역삼점', address: '서울 강남구 테헤란로 2' },
-    { id: '3', name: '투썸플레이스 강남점', address: '서울 강남구 테헤란로 3' },
-  ];
-
-function SearchLocationScreen({}: SearchLocationScreenProps){
+function SearchLocationScreen({ onLocationSelect }: SearchLocationScreenProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
-
+    const [selectedLocation, setSelectedLocation] = useState<RegionInfo | null>(null);
+    
     // 디바운스된 검색 쿼리를 위한 상태
     const [debouncedQuery, setDebouncedQuery] = useState('');
     
     // API 호출 결과 사용
-    const { regionInfo, hasMore, handleLoadMore, isLoading } = useSearchLocation(debouncedQuery);
-
-    console.log('hasMore', hasMore);
+    const { regionInfo, hasMore, handleLoadMore, isLoading, error } = useSearchLocation(debouncedQuery);
 
     // 디바운스된 쿼리 업데이트 함수
     const updateDebouncedQuery = useCallback(
         debounce((text: string) => {
             setDebouncedQuery(text);
-        }, 500),
+        }, 300),
         []
     );
 
@@ -46,36 +33,107 @@ function SearchLocationScreen({}: SearchLocationScreenProps){
         setSearchQuery(text);
         setIsSearching(true);
         updateDebouncedQuery(text);
+        setSelectedLocation(null);
     };
 
-    const handleSelectPlace = (place: any) => {
+    const handleSelectPlace = (place: RegionInfo) => {
         setSearchQuery(place.place_name);
+        setSelectedLocation(place);
         setIsSearching(false);
+        onLocationSelect?.(place);
+        Keyboard.dismiss();
+    };
+
+    const handleCloseSearch = () => {
+        setIsSearching(false);
+        Keyboard.dismiss();
     };
 
     return (
-        <View>
-            <Text className="text-sm font-medium text-gray-700 mb-1">
-                장소
-            </Text>
-            <TextInput
-                value={searchQuery}
-                onChangeText={handleSearch}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2"
-                placeholder="만날 장소를 입력하세요"
-                onFocus={() => setIsSearching(true)}
-            />
+        <View style={styles.container}>
             {isSearching && (
-                <SearchRegionResult 
-                    regionInfo={regionInfo} 
-                    handleSelectPlace={handleSelectPlace} 
-                    isLoading={isLoading}
-                    onLoadMore={handleLoadMore}
-                    hasMore={hasMore}
-                />
+                <TouchableWithoutFeedback onPress={handleCloseSearch}>
+                    <View style={styles.backdrop} />
+                </TouchableWithoutFeedback>
             )}
+            <View style={[styles.contentContainer, isSearching && styles.activeContent]}>
+                <View style={styles.inputWrapper}>
+                    <TextInput
+                        value={searchQuery}
+                        onChangeText={handleSearch}
+                        className="w-full border border-pink-100 rounded-xl px-4 py-3 bg-pink-50/30"
+                        placeholder="만날 장소를 입력하세요"
+                        onFocus={() => setIsSearching(true)}
+                        autoComplete="off"
+                        autoCorrect={false}
+                        placeholderTextColor="#9CA3AF"
+                    />
+                    <SearchRegionResult 
+                        regionInfo={regionInfo} 
+                        handleSelectPlace={handleSelectPlace} 
+                        isLoading={isLoading}
+                        onLoadMore={handleLoadMore}
+                        hasMore={hasMore}
+                        error={error}
+                        visible={isSearching}
+                        onClose={handleCloseSearch}
+                    />
+                </View>
+                {selectedLocation && !isSearching && (
+                    <View className="mt-2 flex-row items-start bg-pink-50/50 p-3 rounded-lg border border-pink-100">
+                        <MaterialIcons 
+                            name="place" 
+                            size={16} 
+                            color="#4B5563"
+                            style={{ marginTop: 2, marginRight: 8 }} 
+                        />
+                        <View className="flex-1">
+                            <Text className="text-sm font-medium text-gray-800">
+                                {selectedLocation.place_name}
+                            </Text>
+                            <Text className="text-xs text-gray-500 mt-0.5">
+                                {selectedLocation.address_name}
+                            </Text>
+                            {selectedLocation.road_address_name && (
+                                <Text className="text-xs text-gray-400 mt-0.5">
+                                    {selectedLocation.road_address_name}
+                                </Text>
+                            )}
+                        </View>
+                    </View>
+                )}
+            </View>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        width: '100%',
+        position: 'relative',
+    },
+    contentContainer: {
+        width: '100%',
+        position: 'relative',
+    },
+    activeContent: {
+        zIndex: Platform.OS === 'ios' ? 2 : undefined,
+        elevation: Platform.OS === 'android' ? 2 : undefined,
+    },
+    inputWrapper: {
+        width: '100%',
+        position: 'relative',
+    },
+    backdrop: {
+        position: 'absolute',
+        top: -1000,
+        left: -1000,
+        right: -1000,
+        bottom: -1000,
+        backgroundColor: 'transparent',
+        zIndex: Platform.OS === 'ios' ? 1 : undefined,
+        elevation: Platform.OS === 'android' ? 1 : undefined,
+    }
+});
 
 export default SearchLocationScreen;
