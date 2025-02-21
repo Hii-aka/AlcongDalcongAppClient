@@ -1,56 +1,72 @@
 import React from 'react';
-import {Pressable, View, Text} from 'react-native';
-import {FontAwesome5} from '@expo/vector-icons';
+import { View, Text, Pressable } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { COLORS } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
 
 interface DateBoxProps {
-    date: number;
-    isToday: boolean;
-    hasSchedule: boolean;
-    selectedDate: number;
-    onPressDate: (date: number) => void;
-    isPreviousMonth?: boolean;
+  date: number;
+  isToday: boolean;
+  hasSchedule: boolean;
+  selectedDate: number;
+  onPressDate: (date: number) => void;
 }
 
-function DateBox({
-    date,
-    isToday,
-    hasSchedule,
-    selectedDate,
-    onPressDate,
-    isPreviousMonth
-}: DateBoxProps) {
-    
-    return (
-        <Pressable 
-            onPress={() => onPressDate(date)}
-            className="w-[14.28%] aspect-square p-1"
-        >
-            {date > 0 && (
-                <View className={`flex-1 items-center justify-center rounded-full
-                    ${isToday ? 'bg-pink-100 border-2 border-pink-400' : ''}
-                    ${selectedDate === date && !isToday ? 'bg-pink-50' : ''}`}
-                >
-                    <Text 
-                        className={`text-base
-                            ${isToday ? 'text-pink-500 font-bold' : ''}
-                            ${isPreviousMonth ? 'text-gray-300' : 'text-gray-600'}
-                            ${!isToday && !isPreviousMonth && selectedDate === date ? 'text-pink-500 font-semibold' : ''}`}
-                    >
-                        {date}
-                    </Text>
-                    {hasSchedule && (
-                        <View className="absolute -bottom-1">
-                            <FontAwesome5 
-                                name="heart" 
-                                size={8} 
-                                color={isToday ? '#EC4899' : '#EC4899'} 
-                            />
-                        </View>
-                    )}
-                </View>
-            )}
-        </Pressable>
-    );
+function DateBox({ date, isToday, hasSchedule, selectedDate, onPressDate }: DateBoxProps) {
+  if (date < 1) return <View style={{ flex: 1, aspectRatio: 1 }} />;
+
+  const isSelected = date === selectedDate;
+  
+  return (
+    <Pressable
+      onPress={() => onPressDate(date)}
+      style={{ flex: 1 }}
+    >
+      <View className={`
+        aspect-square items-center justify-center m-0.5 rounded-2xl
+        ${isSelected ? 'overflow-hidden' : ''}
+        ${!isSelected && hasSchedule ? 'bg-pink-50' : ''}
+      `}>
+        {isSelected ? (
+          <LinearGradient
+            colors={[COLORS.love, COLORS.primary]}
+            className="absolute w-full h-full"
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          />
+        ) : null}
+        
+        <View className={`
+          items-center justify-center
+          ${isToday && !isSelected ? 'bg-pink-100 rounded-full p-1' : ''}
+        `}>
+          <Text className={`
+            text-base font-medium
+            ${isSelected ? 'text-white' : 'text-gray-700'}
+            ${date === 1 ? 'mt-1' : ''}
+          `}>
+            {date}
+          </Text>
+          
+          {hasSchedule && !isSelected && (
+            <View className="absolute -bottom-3">
+              <Ionicons 
+                name="heart" 
+                size={12} 
+                color={COLORS.love}
+              />
+            </View>
+          )}
+          
+          {isToday && !isSelected && (
+            <View className="absolute -top-1 -right-1">
+              <View className="bg-pink-500 rounded-full w-2 h-2" />
+            </View>
+          )}
+        </View>
+      </View>
+    </Pressable>
+  );
 }
 
 export default DateBox;

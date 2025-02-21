@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
-import {StyleSheet, View, Text, SafeAreaView, ScrollView, Pressable, FlatList} from 'react-native';
+import React from 'react';
+import { View, Text, Pressable, FlatList, Animated } from 'react-native';
 import { isSameAsCurrentDate, MonthYear } from '@/utils/date';
 import DayOfWeeks from './DayOfWeeks';
 import { Ionicons } from '@expo/vector-icons';
 import DateBox from './DateBox';
 import useModal from '@/hooks/useModal';
 import YearSelector from './YearSelector';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { COLORS, SHADOWS } from '@/constants/theme';
 
 interface CalendarProps<T> {
     monthYear: MonthYear;
@@ -33,83 +34,100 @@ function Calendar<T>({
         yearSelector.hide();
     }
 
-  return (
-   <View className='bg-white'>
-    <View className='p-4'>
-      <View className="flex-row justify-between items-center mb-6">
-        <Pressable 
-          className="w-10 h-10 items-center justify-center rounded-full active:bg-pink-50"
-          onPress={() => onChangeMonth(-1)}
-        >
-          <Ionicons name="chevron-back" size={24} color="#EC4899" />   
-        </Pressable>
-        <Pressable 
-          className="flex-row items-center space-x-2 px-4 py-2 rounded-full bg-pink-50"
-          onPress={yearSelector.show}
-        >
-          <FontAwesome5 name="heart" size={16} color="#EC4899" />
-          <Text className="text-xl font-bold text-gray-800">
-            {year}년 {month}월
-          </Text>
-        </Pressable>
-        <Pressable 
-          className="w-10 h-10 items-center justify-center rounded-full active:bg-pink-50"
-          onPress={() => onChangeMonth(1)}
-        >
-          <Ionicons name="chevron-forward" size={24} color="#EC4899" />
-        </Pressable>
-      </View> 
+    return (
+        <View className="flex-1 bg-white">
+            <LinearGradient
+                colors={[COLORS.backgroundAlt, COLORS.background]}
+                className="pt-4"
+            >
+                <View className="px-6 pb-4">
+                    <View className="flex-row justify-between items-center mb-6">
+                        <Pressable 
+                            className="w-12 h-12 items-center justify-center rounded-full active:bg-pink-50"
+                            onPress={() => onChangeMonth(-1)}
+                            style={({ pressed }) => [
+                                pressed && { backgroundColor: COLORS.backgroundAlt },
+                                SHADOWS.small
+                            ]}
+                        >
+                            <Ionicons name="chevron-back" size={24} color={COLORS.love} />   
+                        </Pressable>
 
-      <View className='bg-white rounded-2xl shadow-sm p-4 mb-6 border border-pink-100'>
-        <DayOfWeeks />
-        <View>
-          <FlatList
-            data={Array.from({length: lastDate + firstDayOfMonth}, (_, index) => ({
-              id: index,
-              date: index - firstDayOfMonth + 1,
-            }))}
-            renderItem={({item}) => (
-              <DateBox
-                date={item.date}
-                isToday={isSameAsCurrentDate(year, month, item.date)}
-                hasSchedule={schedules[item.date]?.length > 0}
-                selectedDate={selectedDate}
-                onPressDate={onPressDate}
-              />
-            )}
-            keyExtractor={item => String(item.id)}
-            numColumns={7}
-          />
-        </View>
-        
-        <Pressable
-          className="mt-4 flex-row items-center justify-center space-x-2 py-2 px-4 rounded-full bg-pink-50 self-center"
-          onPress={moveToToday}
-        >
-          <View className="flex-row items-center">
-            <FontAwesome5 name="calendar-alt" size={16} color="#EC4899" />
-            <FontAwesome5 
-              name="heart" 
-              size={12} 
-              color="#EC4899" 
-              style={{ marginLeft: -6, marginTop: -8 }} 
+                        <Pressable 
+                            className="flex-row items-center px-6 py-3 rounded-full bg-white"
+                            onPress={yearSelector.show}
+                            style={SHADOWS.small}
+                        >
+                            <Ionicons name="calendar" size={20} color={COLORS.love} />
+                            <Text className="text-xl font-bold text-gray-800 ml-2">
+                                {year}년 {month}월
+                            </Text>
+                            <View className="absolute -right-1 -top-1">
+                                <Ionicons name="heart" size={16} color={COLORS.love} />
+                            </View>
+                        </Pressable>
+
+                        <Pressable 
+                            className="w-12 h-12 items-center justify-center rounded-full active:bg-pink-50"
+                            onPress={() => onChangeMonth(1)}
+                            style={({ pressed }) => [
+                                pressed && { backgroundColor: COLORS.backgroundAlt },
+                                SHADOWS.small
+                            ]}
+                        >
+                            <Ionicons name="chevron-forward" size={24} color={COLORS.love} />
+                        </Pressable>
+                    </View>
+
+                    <View className="bg-white rounded-3xl p-4 shadow-sm border border-pink-100">
+                        <DayOfWeeks />
+                        <View>
+                            <FlatList
+                                scrollEnabled={false}
+                                data={Array.from({length: lastDate + firstDayOfMonth}, (_, index) => ({
+                                    id: index,
+                                    date: index - firstDayOfMonth + 1,
+                                }))}
+                                renderItem={({item}) => (
+                                    <DateBox
+                                        date={item.date}
+                                        isToday={isSameAsCurrentDate(year, month, item.date)}
+                                        hasSchedule={schedules[item.date]?.length > 0}
+                                        selectedDate={selectedDate}
+                                        onPressDate={onPressDate}
+                                    />
+                                )}
+                                keyExtractor={item => String(item.id)}
+                                numColumns={7}
+                            />
+                        </View>
+                    </View>
+
+                    <Pressable
+                        className="mt-6 flex-row items-center justify-center space-x-2 py-3 px-6 
+                            rounded-full bg-white self-center"
+                        style={SHADOWS.small}
+                        onPress={moveToToday}
+                    >
+                        <Ionicons name="today" size={20} color={COLORS.love} />
+                        <Text className="text-base font-semibold text-gray-800">
+                            오늘로 이동
+                        </Text>
+                        <View className="absolute -right-1 -top-1">
+                            <Ionicons name="heart" size={16} color={COLORS.love} />
+                        </View>
+                    </Pressable>
+                </View>
+            </LinearGradient>
+
+            <YearSelector
+                isVisible={yearSelector.isVisible}
+                currentyear={year}
+                onChangeYear={handleChangeYear}
+                hide={yearSelector.hide}
             />
-          </View>
-          <Text className="text-pink-500 font-medium">오늘의 데이트</Text>
-        </Pressable>
-      </View>
-    </View>
-
-    <YearSelector
-      isVisible={yearSelector.isVisible}
-      currentyear={year}
-      onChangeYear={handleChangeYear}
-      hide={yearSelector.hide}
-    />
-   </View>
-  )
+        </View>
+    );
 }
-
-const styles = StyleSheet.create({});
 
 export default Calendar;

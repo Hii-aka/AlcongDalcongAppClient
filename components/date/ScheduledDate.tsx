@@ -1,126 +1,75 @@
-import { router } from 'expo-router';
 import React from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { View, Text, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, SHADOWS } from '@/constants/theme';
 
-interface ScheduledDateProps {}
-
-function ScheduledDate({}: ScheduledDateProps) {
-  return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        padding: 16,
-        paddingBottom: 20,
-      }}
-    >   
-      <View className="mb-4">
-        <View className="flex-row items-center mb-2">
-          <FontAwesome5 name="heart" size={16} color="#EC4899" />
-          <Text className="text-lg font-bold ml-2 text-gray-800">
-            다가오는 데이트
-          </Text>
-        </View>
-      </View>
-
-      <View className="space-y-3">
-        {[
-          { 
-            date: '2월 14일', 
-            event: '강남 CGV 영화보기', 
-            time: '19:00',
-            icon: 'film',
-            color: '#EC4899', // pink
-          },
-          { 
-            date: '2월 17일', 
-            event: '이태원 맛집투어', 
-            time: '18:30',
-            icon: 'utensils',
-            color: '#8B5CF6', // violet
-          },
-        ].map(({ date, event, time, icon, color }) => (
-          <Pressable 
-            key={date} 
-            className="bg-white rounded-2xl border border-pink-100 shadow-sm overflow-hidden"
-            onPress={() => router.push('/calendar/post')}
-          >
-            <View className="p-4">
-              <View className="flex-row items-start">
-                <View className="w-12 h-12 bg-pink-50 rounded-xl items-center justify-center mr-4">
-                  <FontAwesome5 name={icon} size={20} color={color} />
-                </View>
-                
-                <View className="flex-1">
-                  <View className="flex-row items-center mb-1">
-                    <FontAwesome5 name="calendar-alt" size={16} color="#EC4899" />
-                    <FontAwesome5 name="heart" size={12} color="#EC4899" style={{ marginLeft: -6, marginTop: -8 }} />
-                  </View>
-                  
-                  <View className="flex-row items-center">
-                    <FontAwesome5 name="map-marker-alt" size={12} color="#EC4899" />
-                    <Text className="text-base text-gray-600 ml-2">
-                      {event}
-                    </Text>
-                  </View>
-                </View>
-
-                <Pressable 
-                  className="p-2 rounded-full active:bg-pink-50"
-                  onPress={(e) => {
-                    e.stopPropagation();
-                    router.push('/calendar/post');
-                  }}
-                >
-                  <FontAwesome5 
-                    name="pencil-alt" 
-                    size={16} 
-                    color="#EC4899" 
-                  />
-                </Pressable>
-              </View>
-
-              <View className="flex-row items-center mt-3 pt-3 border-t border-pink-50">
-                <FontAwesome5 
-                  name="clock" 
-                  size={12} 
-                  color="#EC4899" 
-                />
-                <Text className="text-sm text-gray-500 ml-2">
-                  데이트까지 3일 남았어요
-                </Text>
-                <FontAwesome5 
-                  name="heart" 
-                  size={12} 
-                  color="#EC4899" 
-                  className="ml-1"
-                />
-              </View>
-            </View>
-          </Pressable>
-        ))}
-      </View>
-
-      {/* 데이트 없는 경우 */}
-      {false && (
-        <View className="items-center justify-center py-8">
-          <FontAwesome5 name="heart" size={40} color="#E5E7EB" />
-          <Text className="text-gray-400 mt-4 text-base">
-            예정된 데이트가 없어요
-          </Text>
-          <Pressable 
-            className="mt-4 flex-row items-center bg-pink-500 px-4 py-2 rounded-full"
-            onPress={() => router.push('/calendar/post')}
-          >
-            <FontAwesome5 name="heart" size={14} color="white" />
-            <Text className="text-white font-medium ml-2">
-              새로운 데이트 추가하기
-            </Text>
-          </Pressable>
-        </View>
-      )}
-    </ScrollView>
-  );
+interface Schedule {
+  id: number;
+  title: string;
+  time: string;
+  location: string;
 }
 
-export default ScheduledDate;
+interface ScheduledDateProps {
+  selectedDate: number;
+  schedules: Schedule[];
+}
+
+export default function ScheduledDate({ selectedDate, schedules }: ScheduledDateProps) {
+  if (!selectedDate) return null;
+
+  return (
+    <View className="mt-4">
+      <View className="flex-row items-center mb-4">
+        <Ionicons name="calendar" size={20} color={COLORS.love} />
+        <Text className="text-lg font-bold text-gray-800 ml-2">
+          {selectedDate}일의 데이트
+        </Text>
+      </View>
+
+      <View>
+        {schedules.length > 0 ? (
+          schedules.map((schedule) => (
+            <Pressable
+              key={schedule.id}
+              className="bg-white rounded-2xl p-4 mb-3 border border-pink-100"
+              style={SHADOWS.small}
+            >
+              <Text className="text-lg font-semibold text-gray-800 mb-2">
+                {schedule.title}
+              </Text>
+              
+              <View className="space-y-2">
+                <View className="flex-row items-center">
+                  <Ionicons name="time" size={16} color={COLORS.love} />
+                  <Text className="text-gray-600 ml-2">
+                    {schedule.time}
+                  </Text>
+                </View>
+                
+                <View className="flex-row items-center">
+                  <Ionicons name="location" size={16} color={COLORS.love} />
+                  <Text className="text-gray-600 ml-2">
+                    {schedule.location}
+                  </Text>
+                </View>
+              </View>
+
+              <View className="absolute -right-1 -top-1">
+                <Ionicons name="heart" size={16} color={COLORS.love} />
+              </View>
+            </Pressable>
+          ))
+        ) : (
+          <View className="bg-white rounded-2xl p-6 items-center border border-pink-100">
+            <Ionicons name="calendar-outline" size={48} color={COLORS.love} />
+            <Text className="text-base text-gray-600 mt-3 text-center">
+              아직 데이트 일정이 없어요{'\n'}
+              새로운 데이트를 계획해보세요!
+            </Text>
+          </View>
+        )}
+      </View>
+    </View>
+  );
+}
