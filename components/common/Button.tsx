@@ -1,110 +1,187 @@
 import React from 'react';
-import { Pressable, Text, PressableProps, View } from 'react-native';
-import { LinearGradient, LinearGradientProps } from 'expo-linear-gradient';
-import Animated, { 
-  useAnimatedStyle, 
-  useSharedValue, 
-  withSpring 
-} from 'react-native-reanimated';
-import { theme } from '@/constants/theme';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, View } from 'react-native';
+import { COLORS, BUTTON_STYLES, TYPOGRAPHY, SPACING } from '../../constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
-
-type ButtonContainerProps = PressableProps & Partial<LinearGradientProps>;
-
-interface ButtonProps extends Omit<ButtonContainerProps, 'colors'> {
-  variant?: 'primary' | 'secondary' | 'outline';
-  size?: 'sm' | 'md' | 'lg';
-  label: string;
+interface ButtonProps {
+  onPress: () => void;
+  title: string;
+  variant?: 'primary' | 'secondary' | 'outline' | 'love';
+  size?: 'small' | 'medium' | 'large';
+  icon?: keyof typeof Ionicons.glyphMap;
+  iconPosition?: 'left' | 'right';
   isLoading?: boolean;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+  disabled?: boolean;
 }
 
-export function Button({ 
+export function Button({
+  onPress,
+  title,
   variant = 'primary',
-  size = 'md',
-  label,
-  isLoading,
-  leftIcon,
-  rightIcon,
-  style,
-  ...props 
+  size = 'medium',
+  icon,
+  iconPosition = 'left',
+  isLoading = false,
+  disabled = false,
 }: ButtonProps) {
-  const scale = useSharedValue(1);
-  
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }]
-  }));
-
-  const getVariantStyles = () => {
+  const getGradientColors = () => {
     switch (variant) {
       case 'primary':
-        return {
-          container: 'bg-gradient-to-r from-pink-500 to-rose-500',
-          text: 'text-white font-semibold'
-        };
+        return ['#FF7595', '#FF5983'];
       case 'secondary':
-        return {
-          container: 'bg-pink-50',
-          text: 'text-pink-600 font-medium'
-        };
-      case 'outline':
-        return {
-          container: 'bg-transparent border border-pink-200',
-          text: 'text-pink-600 font-medium'
-        };
+        return ['#A575FF', '#9359FF'];
+      case 'love':
+        return ['#FF91AA', '#FF7595'];
+      default:
+        return undefined;
     }
   };
 
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'sm':
-        return 'py-2 px-4 text-sm';
-      case 'md':
-        return 'py-3 px-6 text-base';
-      case 'lg':
-        return 'py-4 px-8 text-lg';
+  const gradientColors = getGradientColors();
+  const ButtonContainer = gradientColors ? LinearGradient : View;
+  const containerProps = gradientColors
+    ? {
+        colors: gradientColors,
+        start: { x: 0, y: 0 },
+        end: { x: 1, y: 0 },
+      }
+    : {};
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <ActivityIndicator
+          color={variant === 'outline' ? COLORS.primary : COLORS.background}
+        />
+      );
     }
+
+    const iconSize = size === 'small' ? 16 : size === 'large' ? 24 : 20;
+    const iconColor = variant === 'outline' ? COLORS.primary : COLORS.background;
+    
+    return (
+      <View style={styles.contentContainer}>
+        {icon && iconPosition === 'left' && (
+          <Ionicons name={icon} size={iconSize} color={iconColor} style={styles.iconLeft} />
+        )}
+        <Text style={[
+          styles.text,
+          styles[`${variant}Text`],
+          styles[`${size}Text`],
+          disabled && styles.disabledText,
+        ]}>
+          {title}
+        </Text>
+        {icon && iconPosition === 'right' && (
+          <Ionicons name={icon} size={iconSize} color={iconColor} style={styles.iconRight} />
+        )}
+      </View>
+    );
   };
-
-  const variantStyles = getVariantStyles();
-  const sizeStyles = getSizeStyles();
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.98);
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1);
-  };
-
-  const ButtonContainer = variant === 'primary' ? AnimatedLinearGradient : AnimatedPressable;
-  const containerProps = variant === 'primary' ? {
-    colors: theme.gradients.accent as readonly [string, string],
-    start: { x: 0, y: 0 },
-    end: { x: 1, y: 0 }
-  } : {};
 
   return (
-    <ButtonContainer
-      className={`
-        rounded-2xl items-center justify-center flex-row
-        ${variantStyles.container}
-        ${sizeStyles}
-      `}
-      style={[animatedStyle, style]}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      {...containerProps}
-      {...props}
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={disabled || isLoading}
+      activeOpacity={0.8}
+      style={styles.touchable}
     >
-      {leftIcon && <View className="mr-2">{leftIcon}</View>}
-      <Text className={`${variantStyles.text} ${sizeStyles}`}>
-        {isLoading ? '로딩중...' : label}
-      </Text>
-      {rightIcon && <View className="ml-2">{rightIcon}</View>}
-    </ButtonContainer>
+      <ButtonContainer
+        style={[
+          styles.button,
+          styles[variant],
+          styles[size],
+          disabled && styles.disabled,
+        ]}
+        {...containerProps}
+      >
+        {renderContent()}
+      </ButtonContainer>
+    </TouchableOpacity>
   );
-} 
+}
+
+const styles = StyleSheet.create({
+  touchable: {
+    borderRadius: BUTTON_STYLES.borderRadius,
+    overflow: 'hidden',
+  },
+  button: {
+    ...BUTTON_STYLES,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contentContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primary: {
+    backgroundColor: COLORS.primary,
+  },
+  secondary: {
+    backgroundColor: COLORS.secondary,
+  },
+  outline: {
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: COLORS.primary,
+  },
+  love: {
+    backgroundColor: COLORS.love,
+  },
+  small: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minHeight: 36,
+  },
+  medium: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    minHeight: 48,
+  },
+  large: {
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    minHeight: 56,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  text: {
+    ...TYPOGRAPHY.body,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  primaryText: {
+    color: COLORS.background,
+  },
+  secondaryText: {
+    color: COLORS.background,
+  },
+  outlineText: {
+    color: COLORS.primary,
+  },
+  loveText: {
+    color: COLORS.background,
+  },
+  smallText: {
+    fontSize: 14,
+  },
+  mediumText: {
+    fontSize: 16,
+  },
+  largeText: {
+    fontSize: 18,
+  },
+  disabledText: {
+    color: COLORS.textLight,
+  },
+  iconLeft: {
+    marginRight: SPACING.xs,
+  },
+  iconRight: {
+    marginLeft: SPACING.xs,
+  },
+}); 
