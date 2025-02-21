@@ -78,7 +78,6 @@ export default function AuthHome() {
                 <CustomButton
                   onPress={login.handleSubmit(onSubmit)}
                   label="로그인"
-                  isLoading={loginMutation.isPending}
                   className="mt-2"
                 />
               </View>
