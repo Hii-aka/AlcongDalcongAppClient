@@ -1,103 +1,108 @@
-import { Animated, Pressable, View, Text } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { useMemo } from "react";
-import { useCallback } from "react";
-import { MOODS, MoodType } from "@/constants/moods";
+import React from 'react';
+import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { COLORS, SHADOWS, SPACING } from '../../constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { MoodType, MOODS } from '../../constants/moods';
 
 interface MoodSelectorProps {
-    selectedMood: MoodType | null;
-    onMoodSelect: (mood: MoodType) => void;
-  }
+  selectedMood: MoodType | null;
+  onMoodSelect: (mood: MoodType) => void;
+}
+
+const MOOD_ICONS = {
+  happy: 'heart',
+  good: 'heart-circle',
+  neutral: 'heart-outline',
+  sad: 'heart-dislike',
+  angry: 'heart-dislike-circle',
+} as const;
 
 export default function MoodSelector({ selectedMood, onMoodSelect }: MoodSelectorProps) {
-
-    const scaleAnimation = useMemo(() => new Animated.Value(1), []);
-
-  const handleMoodSelect = useCallback((moodId: MoodType) => {
-    Animated.sequence([
-      Animated.spring(scaleAnimation, {
-        toValue: 1.15,
-        useNativeDriver: true,
-        speed: 30,
-        bounciness: 12,
-      }),
-      Animated.spring(scaleAnimation, {
-        toValue: 1,
-        useNativeDriver: true,
-        speed: 30,
-      }),
-    ]).start();
-
-    onMoodSelect(moodId);
-  }, [onMoodSelect, scaleAnimation]);   
-    return (
-        <View className='px-5 mb-6'>
-        <View className='bg-white rounded-2xl shadow-sm p-5 border border-pink-100'>
-          <View className='flex-row items-center mb-4'>
-            <FontAwesome5 name="heart" size={20} color="#EC4899" />
-            <Text className='text-xl font-bold ml-2'>오늘 내 마음은...</Text>
-          </View>
-          
-          <View className='flex-row justify-between'>
-            {MOODS.map((mood) => (
-              <Pressable 
-                key={mood.id}
-                className='items-center'
-                onPress={() => handleMoodSelect(mood.id)}
-                accessible={true}
-                accessibilityLabel={`기분 선택: ${mood.text}`}
-              >
-                <Animated.View 
-                  className={`w-14 h-14 rounded-full items-center justify-center mb-2`}
-                  style={{
-                    backgroundColor: 'white',
-                    transform: [{ scale: selectedMood === mood.id ? scaleAnimation : 1 }],
-                    borderWidth: 2,
-                    borderColor: selectedMood === mood.id ? mood.activeColor : '#FEE2E2',
-                    shadowColor: mood.activeColor,
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: selectedMood === mood.id ? 0.3 : 0,
-                    shadowRadius: 6,
-                    elevation: selectedMood === mood.id ? 4 : 1,
-                  }}
-                >
-                  <FontAwesome5 
-                    name={mood.icon as any} 
-                    size={24}
-                    color={selectedMood === mood.id ? mood.activeColor : '#FDA4AF'} 
-                  />
-                </Animated.View>
-                <Text 
-                  className={`text-sm font-medium text-center`}
-                  style={{ 
-                    color: selectedMood === mood.id ? mood.activeColor : '#FDA4AF',
-                    fontSize: 13,
-                  }}
-                >
-                  {mood.text}
-                </Text>
-                {selectedMood === mood.id && (
-                  <View className='absolute -top-1 -right-1 bg-white rounded-full p-0.5'>
-                    <FontAwesome5 
-                      name="heart" 
-                      size={10} 
-                      color={mood.activeColor} 
-                      solid 
-                    />
-                  </View>
-                )}
-              </Pressable>
-            ))}
-          </View>
-          
-          {selectedMood && (
-            <View className='mt-4 bg-pink-50 rounded-xl p-3'>
-              <Text className='text-pink-600 text-center text-sm'>
-                오늘도 우리의 소중한 하루 ♥
-              </Text>
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>오늘의 기분</Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.moodList}
+      >
+        {MOODS.map((mood) => (
+          <Pressable
+            key={mood.id}
+            style={({ pressed }) => [
+              styles.moodItem,
+              selectedMood === mood.id && styles.selectedMood,
+              pressed && styles.pressedMood,
+            ]}
+            onPress={() => onMoodSelect(mood.id)}
+          >
+            <View style={[
+              styles.iconContainer,
+              selectedMood === mood.id && styles.selectedIconContainer,
+              { backgroundColor: mood.bgColor },
+            ]}>
+              <Ionicons
+                name={MOOD_ICONS[mood.id as keyof typeof MOOD_ICONS]}
+                size={24}
+                color={selectedMood === mood.id ? COLORS.background : mood.activeColor}
+              />
             </View>
-          )}
-        </View>
-      </View>
-    );
+            <Text style={[
+              styles.moodText,
+              selectedMood === mood.id && styles.selectedMoodText,
+              { color: selectedMood === mood.id ? mood.activeColor : COLORS.textLight },
+            ]}>
+              {mood.text}
+            </Text>
+          </Pressable>
+        ))}
+      </ScrollView>
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: SPACING.md,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.text,
+    marginBottom: SPACING.sm,
+    paddingHorizontal: SPACING.xl,
+  },
+  moodList: {
+    paddingHorizontal: SPACING.xl,
+    gap: SPACING.sm,
+  },
+  moodItem: {
+    alignItems: 'center',
+    gap: SPACING.xs,
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...SHADOWS.small,
+  },
+  selectedIconContainer: {
+    backgroundColor: COLORS.love,
+  },
+  moodText: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  selectedMoodText: {
+    fontWeight: '600',
+  },
+  selectedMood: {
+    transform: [{ scale: 1.05 }],
+  },
+  pressedMood: {
+    opacity: 0.8,
+    transform: [{ scale: 0.95 }],
+  },
+});
