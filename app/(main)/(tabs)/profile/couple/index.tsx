@@ -22,7 +22,7 @@ interface CoupleForm {
 export default function CoupleConnect() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const createCoupleMutation = useCreateCouple();
-  const form = useForm<CoupleForm>({
+  const coupleForm = useForm<CoupleForm>({
     defaultValues: {
       receiverEmail: '',
       firstMetDate: '',
@@ -82,7 +82,7 @@ export default function CoupleConnect() {
 
             {/* 메인 폼 */}
             <View className="bg-white p-6 rounded-2xl shadow-sm">
-              <FormProvider {...form}>
+              <FormProvider {...coupleForm}>
                 <View className="space-y-6">
                   {/* 이메일 입력 */}
                   <EmailInput />
@@ -103,7 +103,7 @@ export default function CoupleConnect() {
                       <TextInput
                         placeholder="커플 닉네임을 입력하세요"
                         className="flex-1 ml-2 text-base"
-                        onChangeText={(text) => form.setValue('coupleNickname', text)}
+                        onChangeText={(text) => coupleForm.setValue('coupleNickname', text)}
                         returnKeyType="done"
                       />
                     </Pressable>
@@ -111,9 +111,9 @@ export default function CoupleConnect() {
 
                   {/* 제출 버튼 */}
                   <CustomButton
-                    onPress={form.handleSubmit(onSubmit)}
+                    onPress={coupleForm.handleSubmit(onSubmit)}
                     label={isSubmitting ? "신청 중..." : "커플 신청하기"}
-                    disabled={isSubmitting || !form.watch('receiverEmail') || !form.watch('firstMetDate')}
+                    disabled={isSubmitting || !coupleForm.watch('receiverEmail') || !coupleForm.watch('firstMetDate')}
                     className="mt-6"
                   >
                     {isSubmitting && (
