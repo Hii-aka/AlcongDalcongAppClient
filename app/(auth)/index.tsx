@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
 import { Link } from 'expo-router';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import useAuth from '../../hooks/queries/useAuth';
 import { router } from 'expo-router';
-import CustomButton from '../../components/CustomButton';
 import { FormProvider, useForm } from 'react-hook-form';
-import EmailInput from '@/components/input/EmailInput';
-import PasswordInput from '@/components/input/PasswordInput';
+import { LinearGradient } from 'expo-linear-gradient';
+import { COLORS, SHADOWS, SPACING } from '../../constants/theme';
+import { Button } from '../../components/common/Button';
 import Toast from 'react-native-toast-message';
-
+import PasswordInput from '../../components/input/PasswordInput';
+import EmailInput from '../../components/input/EmailInput';
 type LoginForm = {
   email: string;
   password: string;
@@ -24,7 +25,7 @@ export default function AuthHome() {
     }
   }, [isAuthenticated]);
 
-  const login = useForm<LoginForm>({
+  const loginForm = useForm<LoginForm>({
     defaultValues: {
       email: '',
       password: '',
@@ -50,76 +51,150 @@ export default function AuthHome() {
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-gray-50"
+      style={{ flex: 1 }}
     >
-      <View className="flex-1 items-center justify-center px-6">
-        <View className="w-full max-w-sm">
-          <View className="items-center mb-8">
-            <View className="w-20 h-20 mb-4 bg-pink-100 rounded-2xl items-center justify-center">
-              <FontAwesome5 
-                name="heart" 
-                size={32} 
-                color="#F472B6"
-              />
-            </View>
-            <Text className="text-3xl font-bold text-gray-900 mb-2">
-              알콩달콩
-            </Text>
-            <Text className="text-gray-600 text-center leading-5">
-              소중한 추억을 기록하는{'\n'}커플 다이어리
-            </Text>
-          </View>
-
-          <View className="bg-white rounded-2xl shadow-sm p-6 w-full border border-gray-100">
-            <FormProvider {...login}>
-              <View className="space-y-4">
-                <EmailInput />
-                <PasswordInput />
-                <CustomButton
-                  onPress={login.handleSubmit(onSubmit)}
-                  label="로그인"
-                  className="mt-2"
+      <LinearGradient
+        colors={[COLORS.backgroundAlt, COLORS.background]}
+        style={{ flex: 1 }}
+      >
+        <View style={{ 
+          flex: 1, 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          padding: SPACING.xl 
+        }}>
+          <View style={{ width: '100%', maxWidth: 360 }}>
+            <View style={{ alignItems: 'center', marginBottom: SPACING.xl }}>
+              <View style={[
+                { 
+                  width: 80, 
+                  height: 80, 
+                  marginBottom: SPACING.md,
+                  borderRadius: 24,
+                  backgroundColor: COLORS.love,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                },
+                SHADOWS.medium
+              ]}>
+                <Ionicons 
+                  name="heart" 
+                  size={40} 
+                  color={COLORS.background}
                 />
               </View>
-            </FormProvider>
+              <Text style={{ 
+                fontSize: 32,
+                fontWeight: 'bold',
+                color: COLORS.text,
+                marginBottom: SPACING.xs,
+              }}>
+                알콩달콩
+              </Text>
+              <Text style={{ 
+                fontSize: 16,
+                color: COLORS.textLight,
+                textAlign: 'center',
+                lineHeight: 24,
+              }}>
+                소중한 추억을 기록하는{'\n'}커플 다이어리
+              </Text>
+            </View>
 
-            {loginMutation.isError && (
-              <View className="mt-3 bg-red-50 rounded-lg p-3">
-                <Text className="text-red-600 text-sm text-center">
-                  이메일 또는 비밀번호가 올바르지 않습니다
-                </Text>
+            <View style={[
+              { 
+                backgroundColor: COLORS.background,
+                borderRadius: 24,
+                padding: SPACING.xl,
+                borderWidth: 1,
+                borderColor: COLORS.border,
+              },
+              SHADOWS.small
+            ]}>
+              <FormProvider {...loginForm}>
+              <View style={{ gap: SPACING.md }}>
+                <EmailInput />
+                <PasswordInput />
+                <Button
+                  onPress={loginForm.handleSubmit(onSubmit)}
+                  title="로그인"
+                  variant="love"
+                  size="large"
+                  icon="log-in"
+                  isLoading={loginMutation.isPending}
+                />
               </View>
-            )}
-          </View>
+              </FormProvider>
+              {loginMutation.isError && (
+                <View style={{ 
+                  marginTop: SPACING.sm,
+                  backgroundColor: COLORS.error + '15',
+                  borderRadius: 12,
+                  padding: SPACING.sm,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: SPACING.xs,
+                }}>
+                  <Ionicons name="alert-circle" size={20} color={COLORS.error} />
+                  <Text style={{ color: COLORS.error, fontSize: 14 }}>
+                    이메일 또는 비밀번호가 올바르지 않습니다
+                  </Text>
+                </View>
+              )}
+            </View>
 
-          <View className="mt-6 flex-row items-center justify-center">
-            <Text className="text-gray-600 mr-2">
-              아직 회원이 아니신가요?
-            </Text>
-            <Link href="/(auth)/signup" asChild>
+            <View style={{ 
+              marginTop: SPACING.xl,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <Text style={{ color: COLORS.textLight, marginRight: SPACING.xs }}>
+                아직 회원이 아니신가요?
+              </Text>
+              <Link href="/(auth)/signup" asChild>
+                <TouchableOpacity 
+                  style={{
+                    backgroundColor: COLORS.backgroundAlt,
+                    paddingHorizontal: SPACING.sm,
+                    paddingVertical: SPACING.xs,
+                    borderRadius: 99,
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <Text style={{ 
+                    fontWeight: '600',
+                    color: COLORS.love,
+                  }}>
+                    회원가입
+                  </Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
+
+            <View style={{ 
+              marginTop: SPACING.md,
+              flexDirection: 'row',
+              justifyContent: 'center',
+            }}>
               <TouchableOpacity 
-                className="bg-gray-50 px-3 py-2 rounded-full"
+                style={{
+                  paddingHorizontal: SPACING.md,
+                  paddingVertical: SPACING.xs,
+                }}
                 activeOpacity={0.7}
               >
-                <Text className="font-bold text-pink-500">
-                  회원가입
+                <Text style={{ 
+                  fontSize: 14,
+                  color: COLORS.textLight,
+                }}>
+                  비밀번호 찾기
                 </Text>
               </TouchableOpacity>
-            </Link>
-          </View>
-
-          <View className="mt-4 flex-row justify-center">
-            <TouchableOpacity 
-              className="px-4 py-2"
-              activeOpacity={0.7}
-            >
-              <Text className="text-sm text-gray-500">
-                비밀번호 찾기
-              </Text>
-            </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </LinearGradient>
     </KeyboardAvoidingView>
   );
 } 

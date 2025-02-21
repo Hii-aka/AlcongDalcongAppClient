@@ -1,9 +1,8 @@
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
-import InputField from './InputField';
 import { useFormContext } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
-
+import regax from '@/constants/regax';
+import { Input } from '../common/Input';
 function EmailInput() {
     const {control, setFocus} = useFormContext();   
   return (
@@ -13,19 +12,21 @@ function EmailInput() {
         rules={{
             required: '이메일을 입력해주세요.',
             pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                value: regax.EMAIL,
                 message: '이메일 형식이 올바르지 않습니다.',
             },
         }}
         render={({field: {onChange, value}, fieldState: {error}}) => (
-            <InputField
+            <Input
                 autoFocus
                 label="이메일"
                 placeholder="이메일을 입력해주세요."
-                inputMode="email"
+                icon="mail"
+                keyboardType="email-address"
                 onChangeText={onChange}
                 returnKeyType="next"
                 submitBehavior="submit"
+                autoCapitalize="none"
                 onSubmitEditing={() => setFocus('password')}
                 value={value}
                 error={error?.message}
