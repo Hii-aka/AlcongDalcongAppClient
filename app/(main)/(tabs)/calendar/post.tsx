@@ -8,6 +8,7 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import SearchLocationScreen from '@/components/date/SearchLocationScreen';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { formatDate, formatTime, formatDateTime } from '@/utils';
 
 dayjs.locale('ko');
 
@@ -20,14 +21,6 @@ export default function CalendarPost() {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
   const [tempTime, setTempTime] = useState(new Date());
-
-  const formatDate = (date: Date) => {
-    return dayjs(date).format('YYYY년 MM월 DD일');
-  };
-
-  const formatTime = (time: Date) => {
-    return dayjs(time).format('HH:mm');
-  };
 
   const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     if (Platform.OS === 'android') {
@@ -141,11 +134,12 @@ export default function CalendarPost() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white" style={{ position: 'relative' }}>
       <ScrollView 
         className="flex-1" 
         contentContainerStyle={{ padding: 16 }}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <View className="bg-white rounded-2xl shadow-sm p-5 mb-4 border border-pink-100">
           <View className="flex-row items-center mb-6">
@@ -198,7 +192,7 @@ export default function CalendarPost() {
               </View>
             </View>
 
-            <View className="relative">
+            <View>
               <Text className="text-sm font-medium text-gray-700 mb-2 flex-row items-center">
                 <Ionicons name="location" size={12} color={COLORS.love} className="mr-1" />
                 {" "}어디서 만날까요?
@@ -251,7 +245,7 @@ export default function CalendarPost() {
                 <View className="flex-row items-center mt-2">
                   <Ionicons name="calendar" size={12} color={COLORS.love} />
                   <Text className="text-sm text-gray-600 ml-2">
-                    {dayjs('2024-02-14 14:00').format('YYYY년 MM월 DD일 A h:mm')}
+                    {formatDateTime(new Date('2024-02-14 14:00'))}
                   </Text>
                 </View>
                 <View className="flex-row items-center mt-1">
