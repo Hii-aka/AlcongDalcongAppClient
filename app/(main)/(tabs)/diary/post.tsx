@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, Pressable, Image } from 'react-native';
+import { View, Text, TextInput, ScrollView, Pressable, Image, Platform, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FontAwesome } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { COLORS, SHADOWS } from '@/constants/theme';
+import { Button } from '@/components/common/Button';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+
+dayjs.locale('ko');
 
 interface ImageInfo {
   uri: string;
@@ -13,9 +21,44 @@ interface ImageInfo {
 
 export default function DiaryPost() {
   const [images, setImages] = useState<ImageInfo[]>([]);
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [tempDate, setTempDate] = useState(new Date());
+
+  const formatDate = (date: Date) => {
+    return dayjs(date).format('YYYY년 MM월 DD일');
+  };
+
+  const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
+    if (selectedDate) {
+      if (Platform.OS === 'ios') {
+        setTempDate(selectedDate);
+      } else {
+        setDate(selectedDate);
+      }
+    }
+  };
+
+  const handleIOSConfirm = () => {
+    setDate(tempDate);
+    setShowDatePicker(false);
+  };
+
+  const handleIOSCancel = () => {
+    setTempDate(date);
+    setShowDatePicker(false);
+  };
+
+  const showPicker = () => {
+    setShowDatePicker(true);
+  };
 
   const pickImage = async () => {
-    // 권한 요청
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
     if (status !== 'granted') {
@@ -23,7 +66,6 @@ export default function DiaryPost() {
       return;
     }
 
-    // 이미지 선택
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
@@ -57,128 +99,241 @@ export default function DiaryPost() {
   };
 
   return (
-    <View className="flex-1 bg-gray-50" edges={['bottom']}>
-      <ScrollView 
-        className="flex-1" 
-        contentContainerStyle={{ padding: 16 }}
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView className="flex-1 bg-white">
+      <LinearGradient
+        colors={[COLORS.backgroundAlt, COLORS.background]}
+        className="flex-1"
       >
-        <View className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-lg font-bold">일기 작성하기</Text>
-          </View>
-
-          <View className="space-y-4">
-            <View>
-              <Text className="text-sm font-medium text-gray-700 mb-1">
-                제목
-              </Text>
-              <TextInput
-                className="w-full border border-gray-200 rounded-lg px-3 py-2"
-                placeholder="일기 제목을 입력하세요"
-              />
-            </View>
-
-            <View>
-              <Text className="text-sm font-medium text-gray-700 mb-1">
-                날짜
-              </Text>
-              <TextInput
-                className="w-full border border-gray-200 rounded-lg px-3 py-2"
-                placeholder="YYYY-MM-DD"
-              />
-            </View>
-
-            <View>
-              <Text className="text-sm font-medium text-gray-700 mb-3">
-                사진 추가
-              </Text>
-              <View className="space-y-4">
-                {images.length > 0 && (
-                  <View className="flex-row flex-wrap gap-2">
-                    {images.map((image, index) => (
-                      <View key={image.uri} className="relative">
-                        <Image
-                          source={{ uri: image.uri }}
-                          className="w-20 h-20 rounded-lg"
-                        />
-                        <Pressable
-                          onPress={() => removeImage(index)}
-                          className="absolute -top-2 -right-2 bg-gray-800 rounded-full p-1"
-                        >
-                          <FontAwesome name="times" size={12} color="white" />
-                        </Pressable>
-                      </View>
-                    ))}
-                  </View>
-                )}
-                
-                {images.length < 5 && (
-                  <Pressable 
-                    onPress={pickImage}
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-6 items-center"
-                  >
-                    <View className="space-y-2 items-center">
-                      <FontAwesome name="camera" size={24} color="#9CA3AF" />
-                      <Text className="text-sm text-gray-500 text-center">
-                        이미지를 선택하여 업로드
-                      </Text>
-                      <Text className="text-xs text-gray-400 text-center">
-                        {images.length}/5장 업로드됨
-                      </Text>
-                    </View>
-                  </Pressable>
-                )}
-              </View>
-            </View>
-
-            <View>
-              <Text className="text-sm font-medium text-gray-700 mb-1">
-                일기 내용
-              </Text>
-              <TextInput
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 h-48"
-                multiline
-                numberOfLines={8}
-                placeholder="오늘 하루를 기록해보세요"
-                textAlignVertical="top"
-              />
-            </View>
-
-            <Pressable 
-              className="w-full bg-custom py-3 rounded-lg"
-              onPress={handleSave}
-            >
-              <Text className="text-white text-center font-medium">
-                일기 저장하기
-              </Text>
-            </Pressable>
-          </View>
+        <View className="flex-row items-center justify-between p-4 border-b border-pink-100">
+          <Pressable 
+            onPress={() => router.back()}
+            className="p-2"
+          >
+            <Ionicons name="arrow-back" size={24} color={COLORS.love} />
+          </Pressable>
+          <Text className="text-xl font-bold text-gray-800">
+            우리의 일기 작성
+          </Text>
+          <View className="w-10" />
         </View>
 
-        <View className="bg-white rounded-lg shadow-sm p-4">
-          <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-lg font-bold">최근 일기</Text>
-          </View>
-          
-          <View className="border border-gray-200 rounded-lg p-4">
-            <View className="flex-row justify-between items-start">
+        <ScrollView 
+          className="flex-1" 
+          contentContainerStyle={{ padding: 16 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="bg-white rounded-3xl shadow-sm p-6 border border-pink-100">
+            <View className="space-y-6">
               <View>
-                <Text className="font-medium">행복했던 데이트</Text>
-                <Text className="text-sm text-gray-500 mt-1">
-                  2024년 2월 14일
-                </Text>
-                <Text className="text-sm text-gray-500">
-                  오늘 롯데월드에서 정말 즐거운 시간을 보냈어요...
-                </Text>
+                <View className="flex-row items-center mb-2">
+                  <Ionicons name="pencil" size={20} color={COLORS.love} />
+                  <Text className="text-base font-semibold text-gray-700 ml-2">
+                    제목
+                  </Text>
+                </View>
+                <TextInput
+                  className="w-full border-2 border-pink-100 rounded-2xl px-4 py-3 text-gray-700"
+                  placeholder="특별한 순간의 제목을 입력하세요"
+                  value={title}
+                  onChangeText={setTitle}
+                />
               </View>
-              <Pressable className="px-2">
-                <FontAwesome name="ellipsis-v" size={16} color="#9CA3AF" />
-              </Pressable>
+
+              <View>
+                <View className="flex-row items-center mb-2">
+                  <View className="relative">
+                    <Ionicons name="today-outline" size={20} color={COLORS.love} />
+                    <View className="absolute -right-1 -top-1">
+                      <Ionicons name="heart" size={10} color={COLORS.love} />
+                    </View>
+                  </View>
+                  <Text className="text-base font-semibold text-gray-700 ml-2">
+                    날짜
+                  </Text>
+                </View>
+                <Pressable
+                  onPress={() => setShowDatePicker(true)}
+                  className="w-full border-2 border-pink-100 rounded-2xl px-4 py-3 flex-row items-center justify-between"
+                >
+                  <Text className="text-gray-700">
+                    {formatDate(date)}
+                  </Text>
+                  <Ionicons name="calendar" size={20} color={COLORS.love} />
+                </Pressable>
+
+                {Platform.OS === 'ios' ? (
+                  <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={showDatePicker}
+                    onRequestClose={handleIOSCancel}
+                  >
+                    <Pressable 
+                      className="flex-1 justify-center items-center bg-black/30"
+                      onPress={handleIOSCancel}
+                    >
+                      <Pressable 
+                        className="bg-white rounded-3xl w-11/12 overflow-hidden"
+                        onPress={(e) => e.stopPropagation()}
+                        style={SHADOWS.medium}
+                      >
+                        <View className="flex-row items-center justify-between p-4 border-b border-pink-100">
+                          <Pressable 
+                            onPress={handleIOSCancel}
+                            className="px-4 py-2"
+                          >
+                            <Text className="text-gray-500 font-medium">취소</Text>
+                          </Pressable>
+                          <Text className="text-base font-semibold text-gray-800">날짜 선택</Text>
+                          <Pressable 
+                            onPress={handleIOSConfirm}
+                            className="px-4 py-2"
+                          >
+                            <Text className="text-pink-500 font-medium">완료</Text>
+                          </Pressable>
+                        </View>
+                        <View className="p-4 items-center">
+                          <DateTimePicker
+                            value={tempDate}
+                            mode="date"
+                            display="spinner"
+                            onChange={handleDateChange}
+                            locale="ko-KR"
+                            style={{ height: 200 }}
+                          />
+                          <View className="absolute -top-1 -right-1">
+                            <Ionicons name="heart" size={16} color={COLORS.love} />
+                          </View>
+                        </View>
+                      </Pressable>
+                    </Pressable>
+                  </Modal>
+                ) : (
+                  showDatePicker && (
+                    <Modal
+                      animationType="fade"
+                      transparent={true}
+                      visible={showDatePicker}
+                      onRequestClose={() => setShowDatePicker(false)}
+                    >
+                      <Pressable 
+                        className="flex-1 justify-center items-center bg-black/30"
+                        onPress={() => setShowDatePicker(false)}
+                      >
+                        <View 
+                          className="bg-white rounded-3xl p-4 w-11/12"
+                          style={SHADOWS.medium}
+                        >
+                          <DateTimePicker
+                            value={date}
+                            mode="date"
+                            display="spinner"
+                            onChange={handleDateChange}
+                            locale="ko-KR"
+                            style={{ height: 200 }}
+                          />
+                          <View className="absolute -top-1 -right-1">
+                            <Ionicons name="heart" size={16} color={COLORS.love} />
+                          </View>
+                        </View>
+                      </Pressable>
+                    </Modal>
+                  )
+                )}
+              </View>
+
+              <View>
+                <View className="flex-row items-center mb-2">
+                  <View className="relative">
+                    <Ionicons name="images-outline" size={20} color={COLORS.love} />
+                    <View className="absolute -right-1 -top-1">
+                      <Ionicons name="heart" size={10} color={COLORS.love} />
+                    </View>
+                  </View>
+                  <Text className="text-base font-semibold text-gray-700 ml-2">
+                    추억의 사진
+                  </Text>
+                </View>
+                
+                <View className="space-y-4">
+                  {images.length > 0 && (
+                    <ScrollView 
+                      horizontal 
+                      showsHorizontalScrollIndicator={false}
+                      className="flex-row"
+                      contentContainerStyle={{ gap: 8 }}
+                    >
+                      {images.map((image, index) => (
+                        <View key={image.uri} className="relative">
+                          <Image
+                            source={{ uri: image.uri }}
+                            className="w-24 h-24 rounded-2xl"
+                          />
+                          <Pressable
+                            onPress={() => removeImage(index)}
+                            className="absolute -top-2 -right-2 bg-pink-500 rounded-full w-6 h-6 items-center justify-center"
+                            style={SHADOWS.small}
+                          >
+                            <Ionicons name="close-outline" size={16} color="white" />
+                          </Pressable>
+                        </View>
+                      ))}
+                    </ScrollView>
+                  )}
+                  
+                  {images.length < 5 && (
+                    <Pressable 
+                      onPress={pickImage}
+                      className="border-2 border-dashed border-pink-100 rounded-2xl p-6 items-center"
+                    >
+                      <View className="items-center">
+                        <Ionicons name="images-outline" size={32} color={COLORS.love} />
+                        <Text className="text-base text-gray-600 text-center mt-2">
+                          소중한 추억을 선택해주세요
+                        </Text>
+                        <Text className="text-sm text-pink-400 text-center mt-1">
+                          {images.length}/5장의 사진
+                        </Text>
+                      </View>
+                    </Pressable>
+                  )}
+                </View>
+              </View>
+
+              <View>
+                <View className="flex-row items-center mb-2">
+                  <View className="relative">
+                    <Ionicons name="heart-outline" size={20} color={COLORS.love} />
+                    <View className="absolute -right-1 -top-1">
+                      <Ionicons name="heart" size={10} color={COLORS.love} />
+                    </View>
+                  </View>
+                  <Text className="text-base font-semibold text-gray-700 ml-2">
+                    우리의 이야기
+                  </Text>
+                </View>
+                <TextInput
+                  className="w-full border-2 border-pink-100 rounded-2xl p-4 min-h-[200] text-gray-700"
+                  multiline
+                  numberOfLines={8}
+                  placeholder="오늘 하루 서로에게 전하고 싶은 마음을 적어보세요..."
+                  textAlignVertical="top"
+                  value={content}
+                  onChangeText={setContent}
+                />
+              </View>
+
+              <Button
+                title="추억 저장하기"
+                onPress={handleSave}
+                variant="love"
+                size="large"
+                icon="heart"
+              />
             </View>
           </View>
-        </View>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </LinearGradient>
+    </SafeAreaView>
   );
 } 

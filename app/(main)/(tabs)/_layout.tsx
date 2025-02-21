@@ -49,7 +49,7 @@ export default function TabLayout() {
                 options={{
                     title: '채팅',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="chatbubble-ellipses" size={size} color={color} />
+                        <Ionicons name="heart-circle" size={size} color={color} />
                     ),
                 }}
             />

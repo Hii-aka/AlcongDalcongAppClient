@@ -43,6 +43,10 @@ export default function CalendarHome() {
     const [monthYear, setMonthYear] = useState(currentMonthYear);
     const [selectedDate, setSelectedDate] = useState(0);
 
+    // TODO: 실제 연인 연결 상태를 가져오는 로직으로 대체
+    const [isConnected, setIsConnected] = useState(false);
+    const [daysCount, setDaysCount] = useState(100);
+
     const handlePressDate = (date: number) => {
         setSelectedDate(date);
     };
@@ -59,6 +63,10 @@ export default function CalendarHome() {
 
     useEffect(() => { 
       moveToToday();
+      // TODO: 연인 연결 상태 확인 로직
+      setTimeout(() => {
+        setIsConnected(true);
+      }, 1000);
     }, []);
 
     return (
@@ -79,14 +87,18 @@ export default function CalendarHome() {
                         moveToToday={moveToToday}
                         onPressDate={handlePressDate}
                         onChangeMonth={handleChangeMonth}
+                        isConnected={isConnected}
+                        daysCount={daysCount}
                     />
                     
-                    <View className="px-6">
-                        <ScheduledDate 
-                            selectedDate={selectedDate} 
-                            schedules={SAMPLE_SCHEDULES[selectedDate] || []}
-                        />
-                    </View>
+                    {isConnected && selectedDate > 0 && (
+                        <View className="px-6">
+                            <ScheduledDate 
+                                selectedDate={selectedDate} 
+                                schedules={SAMPLE_SCHEDULES[selectedDate] || []}
+                            />
+                        </View>
+                    )}
                 </ScrollView>
             </LinearGradient>
         </SafeAreaView>

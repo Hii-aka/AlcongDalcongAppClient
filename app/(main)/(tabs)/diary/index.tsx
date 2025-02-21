@@ -1,109 +1,110 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, Pressable, ScrollView, Animated } from 'react-native';
+import { View, Text, Image, Pressable, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { COLORS, SHADOWS, SPACING } from '../../../../constants/theme';
 import DiaryList from '@/components/diary/DiaryList';
 import { ProfileCard } from '@/components/diary/ProfileCard';
 import MoodSelector from '@/components/diary/MoodSelector';
-import { MOODS, MoodType } from '@/constants/moods';
-import { Link } from 'expo-router';
+import { MoodType } from '@/constants/moods';
+import { COLORS, SHADOWS } from '@/constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 
 export default function DiaryHome() {
   const [selectedMood, setSelectedMood] = useState<MoodType | null>(null);
+  // TODO: 실제 연인 연결 상태를 가져오는 로직으로 대체
+  const [isConnected, setIsConnected] = useState(false);
 
-  const HeaderComponent = useCallback(() => (
-    <View style={{ paddingBottom: SPACING.md }}>
+  React.useEffect(() => {
+    // TODO: 실제 연인 연결 상태 확인 로직
+    setTimeout(() => {
+      setIsConnected(true);
+    }, 1000);
+  }, []);
+
+  const UnconnectedView = () => (
+    <View className="flex-1 bg-white">
       <LinearGradient
         colors={[COLORS.backgroundAlt, COLORS.background]}
-        style={{ paddingTop: SPACING.xl }}
+        className="flex-1 pt-4 px-6"
       >
-        <ProfileCard daysCount={365} daysUntilAnniversary={7} />
-        <MoodSelector 
-          selectedMood={selectedMood}
-          onMoodSelect={setSelectedMood}
-        />
-        <View style={{ 
-          paddingHorizontal: SPACING.xl,
-          marginBottom: SPACING.md,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-          <Text style={{ 
-            fontSize: 20,
-            fontWeight: 'bold',
-            color: COLORS.text,
-          }}>
-            최근 일기
-          </Text>
-          <Link href="/(main)/(tabs)/diary/all" asChild>
-            <Pressable 
-              style={({ pressed }) => [
-                {
-                  paddingVertical: SPACING.xs,
-                  paddingHorizontal: SPACING.sm,
-                  borderRadius: 99,
-                  backgroundColor: pressed ? COLORS.backgroundAlt : COLORS.background,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: SPACING.xs,
-                  ...SHADOWS.small,
-                },
-              ]}
-              accessible={true}
-              accessibilityLabel="전체 일기 보기"
+        <View className="flex-1 items-center justify-center">
+          <View className="bg-white rounded-3xl p-8 shadow-sm border border-pink-100 items-center w-full">
+            <Ionicons name="book" size={64} color={COLORS.love} />
+            <Text className="text-xl font-bold text-gray-800 mt-4 text-center">
+              아직 연인과 연결되지 않았어요
+            </Text>
+            <Text className="text-base text-gray-600 mt-2 text-center">
+              연인과 함께 소중한 추억을{'\n'}
+              기록하고 공유해보세요
+            </Text>
+            <Pressable
+              className="mt-6 bg-white rounded-full py-3 px-6 border border-pink-100"
+              style={SHADOWS.small}
+              onPress={() => router.push('/connect')}
             >
-              <Text style={{ 
-                fontSize: 14,
-                color: COLORS.love,
-                fontWeight: '600',
-              }}>
-                전체보기
+              <Text className="text-base font-semibold text-pink-500">
+                연인 연결하기
               </Text>
-              <Ionicons 
-                name="chevron-forward" 
-                size={16} 
-                color={COLORS.love}
-              />
             </Pressable>
-          </Link>
+          </View>
         </View>
       </LinearGradient>
     </View>
+  );
+
+  const HeaderComponent = useCallback(() => (
+    <View className="pt-4">
+      <ProfileCard daysCount={365} daysUntilAnniversary={7} />
+      <MoodSelector 
+        selectedMood={selectedMood}
+        onMoodSelect={setSelectedMood}
+      />
+      <View className="px-6 mb-4 flex-row justify-between items-center">
+        <View className="flex-row items-center">
+          <Ionicons name="book" size={24} color={COLORS.love} />
+          <Text className="text-xl font-bold text-gray-800 ml-2">
+            우리의 일기
+          </Text>
+        </View>
+        <Pressable 
+          className="flex-row items-center py-2 px-4 rounded-full bg-white"
+          style={SHADOWS.small}
+          onPress={() => router.push('/diary/all')}
+        >
+          <Text className="text-base font-medium text-gray-600 mr-1">
+            전체보기
+          </Text>
+          <Ionicons name="chevron-forward" size={16} color={COLORS.love} />
+        </Pressable>
+      </View>
+    </View>
   ), [selectedMood]);
 
+  if (!isConnected) {
+    return <UnconnectedView />;
+  }
+
   return (
-    <View style={{ 
-      flex: 1,
-      backgroundColor: COLORS.background,
-    }}>
-      <DiaryList ListHeaderComponent={HeaderComponent} />
-      <Link href="/(main)/(tabs)/diary/post" asChild>
+    <View className="flex-1 bg-white">
+      <LinearGradient
+        colors={[COLORS.backgroundAlt, COLORS.background]}
+        className="flex-1"
+      >
+        <DiaryList 
+          ListHeaderComponent={HeaderComponent}
+          contentContainerStyle={{ paddingBottom: 24 }}
+        />
         <Pressable
-          style={({ pressed }) => [
-            {
-              position: 'absolute',
-              right: SPACING.xl,
-              bottom: SPACING.xl,
-              width: 56,
-              height: 56,
-              borderRadius: 28,
-              backgroundColor: COLORS.love,
-              alignItems: 'center',
-              justifyContent: 'center',
-              transform: [{ scale: pressed ? 0.95 : 1 }],
-              ...SHADOWS.medium,
-            },
-          ]}
+          className="absolute right-6 bottom-6 w-14 h-14 rounded-full bg-pink-500 items-center justify-center"
+          style={SHADOWS.medium}
+          onPress={() => router.push('/diary/post')}
         >
-          <Ionicons 
-            name="add" 
-            size={32} 
-            color={COLORS.background}
-          />
+          <Ionicons name="add" size={32} color="white" />
+          <View className="absolute -right-1 -top-1">
+            <Ionicons name="heart" size={16} color={COLORS.love} />
+          </View>
         </Pressable>
-      </Link>
+      </LinearGradient>
     </View>
   );
 } 

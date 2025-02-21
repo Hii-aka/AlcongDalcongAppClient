@@ -50,7 +50,7 @@ function YearSelector({
       <View className="items-center bg-white rounded-t-2xl">
         <View className="w-full px-4 py-4 border-b border-pink-100">
           <View className="flex-row items-center justify-center">
-            <FontAwesome5 name="calendar-heart" size={18} color="#EC4899" />
+            <FontAwesome5 name="calendar" size={18} color="#EC4899" />
             <Text className="text-lg font-bold ml-2 text-gray-800">
               연도 선택
             </Text>
