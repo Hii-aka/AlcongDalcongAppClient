@@ -10,17 +10,18 @@ interface DateBoxProps {
   hasSchedule: boolean;
   selectedDate: number;
   onPressDate: (date: number) => void;
+  width: number;
 }
 
-function DateBox({ date, isToday, hasSchedule, selectedDate, onPressDate }: DateBoxProps) {
-  if (date < 1) return <View style={{ flex: 1, aspectRatio: 1 }} />;
+function DateBox({ date, isToday, hasSchedule, selectedDate, onPressDate, width }: DateBoxProps) {
+  if (date < 1) return <View style={{ width, aspectRatio: 1 }} />;
 
   const isSelected = date === selectedDate;
   
   return (
     <Pressable
       onPress={() => onPressDate(date)}
-      style={{ flex: 1 }}
+      style={{ width }}
     >
       <View className={`
         aspect-square items-center justify-center m-0.5 rounded-2xl

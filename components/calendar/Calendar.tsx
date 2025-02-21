@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Pressable, FlatList, Animated } from 'react-native';
+import React, { useCallback } from 'react';
+import { View, Text, Pressable, Dimensions } from 'react-native';
 import { isSameAsCurrentDate, MonthYear } from '@/utils/date';
 import DayOfWeeks from './DayOfWeeks';
 import { Ionicons } from '@expo/vector-icons';
@@ -33,6 +33,27 @@ function Calendar<T>({
         onChangeMonth((selectedYear - year) * 12);
         yearSelector.hide();
     }
+
+    // 화면 너비에서 패딩을 제외한 실제 캘린더 너비 계산
+    const screenWidth = Dimensions.get('window').width;
+    const calendarPadding = 48; // 좌우 패딩 24 * 2
+    const contentPadding = 32; // 캘린더 내부 패딩 16 * 2
+    const calendarWidth = screenWidth - calendarPadding - contentPadding;
+    const dateBoxWidth = Math.floor(calendarWidth / 7); // 7일로 나누어 각 날짜 박스의 너비 계산
+
+    // 달력 데이터 생성
+    const calendarDays = Array.from({ length: 42 }, (_, index) => {
+        const date = index - firstDayOfMonth + 1;
+        return {
+            id: index,
+            date: date > 0 && date <= lastDate ? date : 0
+        };
+    });
+
+    // 주 단위로 데이터 분할
+    const weeks = Array.from({ length: 6 }, (_, weekIndex) => 
+        calendarDays.slice(weekIndex * 7, (weekIndex + 1) * 7)
+    );
 
     return (
         <View className="flex-1 bg-white">
@@ -82,24 +103,21 @@ function Calendar<T>({
                     <View className="bg-white rounded-3xl p-4 shadow-sm border border-pink-100">
                         <DayOfWeeks />
                         <View>
-                            <FlatList
-                                scrollEnabled={false}
-                                data={Array.from({length: lastDate + firstDayOfMonth}, (_, index) => ({
-                                    id: index,
-                                    date: index - firstDayOfMonth + 1,
-                                }))}
-                                renderItem={({item}) => (
-                                    <DateBox
-                                        date={item.date}
-                                        isToday={isSameAsCurrentDate(year, month, item.date)}
-                                        hasSchedule={schedules[item.date]?.length > 0}
-                                        selectedDate={selectedDate}
-                                        onPressDate={onPressDate}
-                                    />
-                                )}
-                                keyExtractor={item => String(item.id)}
-                                numColumns={7}
-                            />
+                            {weeks.map((week, weekIndex) => (
+                                <View key={weekIndex} className="flex-row justify-between">
+                                    {week.map((day) => (
+                                        <DateBox
+                                            key={day.id}
+                                            date={day.date}
+                                            isToday={isSameAsCurrentDate(year, month, day.date)}
+                                            hasSchedule={schedules[day.date]?.length > 0}
+                                            selectedDate={selectedDate}
+                                            onPressDate={onPressDate}
+                                            width={dateBoxWidth}
+                                        />
+                                    ))}
+                                </View>
+                            ))}
                         </View>
                     </View>
 
