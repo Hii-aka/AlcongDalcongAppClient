@@ -10,6 +10,7 @@ export default function MainLayout() {
           title: '홈',
         }}
       />
+      
     </Drawer>
   );
 } 

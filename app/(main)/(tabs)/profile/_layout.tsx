@@ -15,7 +15,7 @@ export default function ProfileLayout() {
                     title: '커플 연결 관리',
                     headerShown: true,
                     headerLeft: () => (
-                        <Pressable onPress={() => router.back()}>
+                        <Pressable onPress={() => router.replace("/profile")}>
                             <Ionicons name="arrow-back" size={24} color="black" />
                         </Pressable>
                     ),

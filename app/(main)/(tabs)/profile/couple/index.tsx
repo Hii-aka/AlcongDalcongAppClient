@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, KeyboardAvoidingView, Platform, ScrollView, Pressable, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, KeyboardAvoidingView, Platform, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { FormProvider, useForm } from 'react-hook-form';
+import { Link, router } from 'expo-router';
 import CustomButton from '@/components/CustomButton';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
@@ -19,7 +19,7 @@ interface CoupleForm {
   coupleNickname: string;
 }
 
-export default function CoupleConnection() {
+export default function CoupleConnect() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const createCoupleMutation = useCreateCouple();
   const form = useForm<CoupleForm>({
@@ -44,7 +44,18 @@ export default function CoupleConnection() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-gray-50" edges={['bottom']}>
+      <View className="flex-row border-b border-gray-200 bg-white">
+        <Pressable className="flex-1 py-3 items-center border-b-2 border-pink-500">
+          <Text className="text-pink-500 font-semibold">커플 연결하기</Text>
+        </Pressable>
+        <Pressable 
+          className="flex-1 py-3 items-center"
+          onPress={() => router.navigate("/profile/couple/requests")}
+        >
+          <Text className="text-gray-500">받은 신청</Text>
+        </Pressable>
+      </View>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
@@ -58,15 +69,14 @@ export default function CoupleConnection() {
                 style={({ pressed }) => [
                   pressed && { transform: [{ scale: 0.95 }] }
                 ]}
-                onPress={() => {/* 애니메이션 효과 */}}
               >
                 <FontAwesome name="heart" size={32} color="#EC4899" />
               </Pressable>
-              <Text className="text-3xl font-bold text-center text-custom mb-2">
-                커플 연결
+              <Text className="text-2xl font-bold text-center text-gray-800 mb-2">
+                연인과 연결하기
               </Text>
               <Text className="text-gray-500 text-center px-6">
-                상대방과 함께 특별한 추억을 만들어보세요
+                상대방의 이메일을 입력하여 커플 신청을 보내세요
               </Text>
             </View>
 
@@ -77,10 +87,8 @@ export default function CoupleConnection() {
                   {/* 이메일 입력 */}
                   <EmailInput />
 
-                  {/* 기념일 입력 */}
-                    <View>
-                    <DatePicker />
-                    </View>
+                  {/* 처음 만난 날짜 */}
+                  <DatePicker />
 
                   {/* 커플 닉네임 */}
                   <View>
@@ -89,8 +97,7 @@ export default function CoupleConnection() {
                       <Text className="text-gray-400 text-sm font-normal"> (선택)</Text>
                     </Text>
                     <Pressable 
-                      className="flex-row items-center border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 active:bg-gray-100"
-                      onPress={() => {/* 포커스 효과 */}}
+                      className="flex-row items-center border border-gray-200 rounded-xl px-4 py-3 bg-gray-50"
                     >
                       <MaterialIcons name="favorite" size={20} color="#9CA3AF" />
                       <TextInput
@@ -105,7 +112,7 @@ export default function CoupleConnection() {
                   {/* 제출 버튼 */}
                   <CustomButton
                     onPress={form.handleSubmit(onSubmit)}
-                    label={isSubmitting ? "연결 중..." : "연결하기"}
+                    label={isSubmitting ? "신청 중..." : "커플 신청하기"}
                     disabled={isSubmitting || !form.watch('receiverEmail') || !form.watch('firstMetDate')}
                     className="mt-6"
                   >
@@ -134,4 +141,4 @@ export default function CoupleConnection() {
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-}
+} 
