@@ -5,4 +5,9 @@ const createCouple = async ({receiverEmail, firstMetDate}: {receiverEmail: strin
     return data;
 };
 
-export {createCouple};
+const getCouple = async () => {
+    const {data} = await api.get<ApiResponse<Couple>>('couples');
+    return data;
+};
+
+export {createCouple, getCouple};

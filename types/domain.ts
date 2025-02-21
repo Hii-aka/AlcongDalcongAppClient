@@ -11,4 +11,11 @@ interface Profile {
     deletedAt?: string;
 }
 
-export type {Profile};
+interface Couple {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt?: string;
+}
+
+export type {Profile, Couple};

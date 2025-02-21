@@ -1,5 +1,5 @@
+import React, { useState } from 'react';
 import { View, Text, Pressable, Platform, Modal } from "react-native";
-import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { MaterialIcons } from "@expo/vector-icons";
 import dayjs from "dayjs";
@@ -66,31 +66,37 @@ function DatePickerModal({ visible, onClose, onConfirm, value, onChange }: DateP
 }
 
 // 메인 DatePicker 컴포넌트
-function DatePicker() {
-  const [showDatePicker, setShowDatePicker] = useState(false);
+export default function DatePicker() {
+  const [showPicker, setShowPicker] = useState(false);
   const { control, setValue, watch } = useFormContext();
+  const selectedDate = watch('firstMetDate');
+  const [tempDate, setTempDate] = useState<Date | null>(null);
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    return dayjs(dateString).format('YYYY년 M월 D일');
+  const handleDateChange = (event: any, date?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowPicker(false);
+      if (date) {
+        setValue('firstMetDate', dayjs(date).format('YYYY-MM-DD'));
+      }
+    } else {
+      setTempDate(date || null);
+    }
   };
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false);
-    }
-    if (selectedDate) {
-      const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
-      setValue('firstMetDate', formattedDate);
-    }
+  const handlePress = () => {
+    setTempDate(selectedDate ? new Date(selectedDate) : new Date());
+    setShowPicker(true);
   };
 
   const handleConfirm = () => {
-    if (!watch('firstMetDate')) {
-      const today = dayjs().format('YYYY-MM-DD');
-      setValue('firstMetDate', today);
-    }
-    setShowDatePicker(false);
+    const dateToSet = tempDate || new Date();
+    setValue('firstMetDate', dayjs(dateToSet).format('YYYY-MM-DD'));
+    setShowPicker(false);
+  };
+
+  const handleCancel = () => {
+    setTempDate(null);
+    setShowPicker(false);
   };
 
   return (
@@ -104,33 +110,66 @@ function DatePicker() {
         <View>
           <Text className="text-gray-600 font-medium mb-2">
             처음 만난 날
-            <Text className="text-red-500"> *</Text>
+            <Text className="text-red-500">*</Text>
           </Text>
-          <Pressable
-            onPress={() => setShowDatePicker(true)}
-            className="flex-row items-center border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 active:bg-gray-100"
-            style={({ pressed }) => [
-              pressed && { backgroundColor: '#F3F4F6' }
-            ]}
+          <Pressable 
+            className="flex-row items-center border border-gray-200 rounded-xl px-4 py-3 bg-gray-50"
+            onPress={handlePress}
           >
-            <MaterialIcons name="event" size={20} color="#9CA3AF" />
-            <Text className="flex-1 ml-2 text-base text-gray-700">
-              {watch('firstMetDate') 
-                ? formatDate(watch('firstMetDate')) 
-                : '날짜를 선택해주세요'}
+            <MaterialIcons name="calendar-today" size={20} color="#9CA3AF" />
+            <Text className="flex-1 ml-2 text-base">
+              {selectedDate ? dayjs(selectedDate).format('YYYY년 MM월 DD일') : '날짜를 선택하세요'}
             </Text>
-            <MaterialIcons name="arrow-drop-down" size={24} color="#9CA3AF" />
           </Pressable>
 
-          <DatePickerModal
-            visible={showDatePicker}
-            onClose={() => setShowDatePicker(false)}
-            onConfirm={handleConfirm}
-            value={watch('firstMetDate') 
-              ? new Date(watch('firstMetDate')) 
-              : new Date()}
-            onChange={handleDateChange}
-          />
+          {Platform.OS === 'ios' ? (
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={showPicker}
+              onRequestClose={handleCancel}
+            >
+              <Pressable 
+                className="flex-1 justify-end bg-black/30"
+                onPress={handleCancel}
+              >
+                <View className="bg-white rounded-t-2xl">
+                  <View className="flex-row justify-between items-center px-4 py-2 border-b border-gray-200">
+                    <Pressable onPress={handleCancel}>
+                      <Text className="text-gray-500 font-medium">취소</Text>
+                    </Pressable>
+                    <Text className="font-semibold">처음 만난 날</Text>
+                    <Pressable onPress={handleConfirm}>
+                      <Text className="text-pink-500 font-medium">완료</Text>
+                    </Pressable>
+                  </View>
+                  <View className="items-center justify-center py-2">
+                    <DateTimePicker
+                      value={tempDate || new Date()}
+                      mode="date"
+                      display="spinner"
+                      onChange={handleDateChange}
+                      locale="ko"
+                      style={{ width: '100%', height: 200 }}
+                      textColor="#000000"
+                      maximumDate={new Date()}
+                    />
+                  </View>
+                </View>
+              </Pressable>
+            </Modal>
+          ) : (
+            showPicker && (
+              <DateTimePicker
+                value={selectedDate ? new Date(selectedDate) : new Date()}
+                mode="date"
+                display="default"
+                onChange={handleDateChange}
+                locale="ko"
+                maximumDate={new Date()}
+              />
+            )
+          )}
           
           {Boolean(error) && (
             <Text className="text-red-500 text-sm mt-1">{error?.message}</Text>
@@ -140,5 +179,3 @@ function DatePicker() {
     />
   );
 }
-
-export default DatePicker;

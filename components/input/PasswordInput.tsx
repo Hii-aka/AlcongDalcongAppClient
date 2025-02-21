@@ -38,6 +38,7 @@ function PasswordInput({submitBehavior = 'blurAndSubmit'}: PasswordInputProps) {
                 onChangeText={onChange}
                 returnKeyType="next"
                 submitBehavior={submitBehavior}
+                
                 onSubmitEditing={() => setFocus('passwordConfirm')}
                 value={value}
                 error={error?.message}

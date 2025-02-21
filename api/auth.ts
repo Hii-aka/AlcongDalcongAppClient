@@ -6,6 +6,7 @@ type SignUpRequestBody = {
     email: string;
     password: string;
     nickname: string;
+    gender: string;
 };
 
 type LoginRequestBody = {
@@ -13,9 +14,9 @@ type LoginRequestBody = {
     password: string;
 };
 
-const signUp = async ({email, password, nickname}: SignUpRequestBody) => {
+const signUp = async ({email, password, nickname, gender}: SignUpRequestBody) => {
     try {
-        const {data} = await api.post<ApiResponse<string>>('auth/signup', {email, password});
+        const {data} = await api.post<ApiResponse<string>>('auth/signup', {email, password, nickname, gender});
         return data;
     } catch (error) {
         console.error(error);

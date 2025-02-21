@@ -124,6 +124,7 @@ function useAuth() {
         signUpMutation,
         loginMutation,
         logoutMutation,
+        getMeQuery,
     }
 }
 

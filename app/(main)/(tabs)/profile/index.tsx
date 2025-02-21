@@ -1,13 +1,23 @@
-import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
 import useAuth from "../../../../hooks/queries/useAuth";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Profile } from "@/types";
 
 export default function ProfileHome() {
     const router = useRouter();
     const { logoutMutation } = useAuth();
     const insets = useSafeAreaInsets();
+    const { getMeQuery } = useAuth();
+
+    const { data: me } = getMeQuery as { data: Profile };
+
+    if (!me) {
+        router.replace("/");
+    }
+
+    console.log(me);
 
     const handleLogout = () => {
         Alert.alert(
@@ -37,7 +47,11 @@ export default function ProfileHome() {
                     <View className="relative">
                         <View className="w-24 h-24 rounded-full border-4 border-pink-100 shadow-md overflow-hidden">
                             <Image 
-                                source={require('@/assets/images/default-profile.png')}
+                                source={
+                                    me?.profileImage 
+                                        ? { uri: me.profileImage }
+                                        : require('@/assets/images/default-profile.png')
+                                }
                                 className="w-full h-full"
                             />
                         </View>
@@ -48,7 +62,7 @@ export default function ProfileHome() {
                             <Ionicons name="camera" size={20} color="white" />
                         </TouchableOpacity>
                     </View>
-                    <Text className="text-xl font-bold mt-4 text-gray-800">김철수</Text>
+                    <Text className="text-xl font-bold mt-4 text-gray-800">{me.nickname}</Text>
                     <View className="flex-row items-center mt-1">
                         <FontAwesome5 name="heart" size={12} color="#EC4899" />
                         <Text className="text-pink-500 ml-2">연인과 함께한지 365일</Text>
