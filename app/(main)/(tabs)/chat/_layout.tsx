@@ -8,7 +8,12 @@ export default function ChatLayout() {
                 backgroundColor: '#FFFFFF',
             },
         }}>
-            <Stack.Screen name="index" options={{title: '채팅'}}/>
+            <Stack.Screen name="index" 
+                options={{
+                    title: '채팅',
+                    headerShown: false,
+                }}
+            />
         </Stack>
     );
 }

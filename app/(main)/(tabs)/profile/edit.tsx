@@ -16,7 +16,7 @@ type ProfileForm = {
 
 export default function ProfileEdit() {
   const [profileImage, setProfileImage] = useState<string | null>(
-    'https://images.unsplash.com/photo-1600486913747-55e5470d6f40'
+    require('@/assets/images/default-profile.png')
   );
 
   const form = useForm<ProfileForm>({
