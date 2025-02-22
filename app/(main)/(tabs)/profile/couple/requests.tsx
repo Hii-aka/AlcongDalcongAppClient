@@ -10,7 +10,7 @@ import useRespondCoupleRequest from '@/hooks/queries/useRespondCoupleRequest';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SHADOWS } from '@/constants/theme';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-
+import Toast from 'react-native-toast-message';
 export default function CoupleRequestsPage() {
   const { getMeQuery } = useAuth();
   const { data: me } = getMeQuery;
@@ -20,6 +20,10 @@ export default function CoupleRequestsPage() {
   const handleAcceptRequest = async (requestId: string) => {
     try {
       await respondCoupleRequest.mutateAsync({ requestId, accept: true });
+      Toast.show({
+        text1: '커플 신청이 수락되었습니다.',
+      }); 
+      router.replace('/profile');
     } catch (error) {
       console.error('커플 신청 수락 중 오류 발생:', error);
     }
@@ -28,6 +32,10 @@ export default function CoupleRequestsPage() {
   const handleRejectRequest = async (requestId: string) => {
     try {
       await respondCoupleRequest.mutateAsync({ requestId, accept: false });
+      Toast.show({
+        text1: '커플 신청이 거절되었습니다.',
+      });
+      router.replace('/profile');
     } catch (error) {
       console.error('커플 신청 거절 중 오류 발생:', error);
     }

@@ -27,13 +27,6 @@ export default function MainLayout() {
                         gestureEnabled: false,
                     }} 
                 />
-                <Stack.Screen 
-                    name="couple-requests" 
-                    options={{
-                        presentation: 'modal',
-                        animation: 'slide_from_bottom',
-                    }}
-                />
             </Stack>
         </>
     );
