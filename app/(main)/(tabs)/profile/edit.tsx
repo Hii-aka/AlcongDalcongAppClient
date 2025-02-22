@@ -8,20 +8,22 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SHADOWS } from '@/constants/theme';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-
+import useAuth from '@/hooks/queries/useAuth';
 type ProfileForm = {
   nickname: string;
   statusMessage: string;
 };
 
 export default function ProfileEdit() {
+  const { getMeQuery } = useAuth();
+  const { data: me } = getMeQuery;
   const [profileImage, setProfileImage] = useState<string | null>(
-    require('@/assets/images/default-profile.png')
+    me?.profileImage || require('@/assets/images/default-profile.png')
   );
 
   const form = useForm<ProfileForm>({
     defaultValues: {
-      nickname: '김철수',
+      nickname: me?.nickname || '',
       statusMessage: '행복한 하루 보내세요',
     },
   });
@@ -84,7 +86,7 @@ export default function ProfileEdit() {
                 >
                   <View className="bg-white p-1 rounded-full">
                     <Image
-                      source={{ uri: profileImage || undefined }}
+                      source={ require('@/assets/images/default-profile.png') }
                       className="w-32 h-32 rounded-full"
                     />
                   </View>

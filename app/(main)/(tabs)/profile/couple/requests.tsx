@@ -29,6 +29,8 @@ export default function CoupleRequestsPage() {
     }
   };
 
+  console.log('requests', requests);
+
   const handleRejectRequest = async (requestId: string) => {
     try {
       await respondCoupleRequest.mutateAsync({ requestId, accept: false });
