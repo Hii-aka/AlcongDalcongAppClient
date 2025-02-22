@@ -11,8 +11,18 @@ interface Profile {
     deletedAt?: string;
 }
 
+interface User {
+    id: number;
+    email: string;
+    nickname: string;
+}
+
 interface Couple {
     id: number;
+    status: string;
+    firstMetDate: string;
+    sender: User;
+    receiver: User;
     createdAt: string;
     updatedAt: string;
     deletedAt?: string;
