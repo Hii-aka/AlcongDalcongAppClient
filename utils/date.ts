@@ -105,7 +105,7 @@ export const getRelativeTime = (date: Date | string) =>
 
 // 두 날짜 사이의 일수 차이 계산 (현재 날짜 기준)
 export const getDaysDifference = (date: Date | string): number => {
-  return dayjs().diff(dayjs(date), 'day');
+  return dayjs().diff(dayjs(date), 'day') + 1;
 };
 
 // 특정 날짜로부터의 일수 차이 계산
