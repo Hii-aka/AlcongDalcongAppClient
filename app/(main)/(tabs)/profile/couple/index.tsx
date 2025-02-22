@@ -59,7 +59,7 @@ export default function CoupleConnect() {
           </Pressable>
           <Pressable 
             className="flex-1 py-4 items-center"
-            onPress={() => router.navigate("/profile/couple/requests")}
+            onPress={() => router.push("/(main)/(tabs)/profile/couple/requests")}
           >
             <Text className="text-gray-500">받은 신청</Text>
           </Pressable>

@@ -54,22 +54,36 @@ const CoupleChat = () => {
         ];
 
         return (
-            <Animated.View 
-                entering={FadeIn.delay(300)}
-                className="flex-row flex-wrap justify-center gap-2 px-4 py-2"
-            >
-                {suggestions.map((suggestion, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        className="bg-white/90 px-4 py-2 rounded-full border border-pink-100"
-                        style={SHADOWS.small}
-                    >
-                        <Text className="text-pink-500 font-medium">{suggestion}</Text>
-                    </TouchableOpacity>
-                ))}
-            </Animated.View>
+            <View className="py-2">
+                <FlatList
+                    data={suggestions}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    className="px-4"
+                    ItemSeparatorComponent={() => <View className="w-2" />}
+                    renderItem={({item}) => (
+                        <TouchableOpacity
+                            className="bg-white/90 px-4 py-2 rounded-full border border-pink-100"
+                            style={SHADOWS.small}
+                        >
+                            <Text className="text-pink-500 font-medium">{item}</Text>
+                        </TouchableOpacity>
+                    )}
+                    keyExtractor={(item) => item}
+                />
+            </View>
         );
     };
+
+    const ListEmptyComponent = () => (
+        <View className="flex-1 items-center justify-center">
+            <Text className="text-gray-500 text-center">
+                {chatType === 'couple' 
+                    ? '아직 대화가 없습니다. 첫 메시지를 보내보세요!' 
+                    : 'AI에게 데이트 코스를 추천받아보세요!'}
+            </Text>
+        </View>
+    );
 
     return (
         <KeyboardAvoidingView
@@ -162,10 +176,17 @@ const CoupleChat = () => {
                             ref={flatListRef}
                             data={currentMessages}
                             keyExtractor={(item) => item.id.toString()}
-                            className="flex-1 px-4"
+                            className="flex-1"
+                            contentContainerStyle={{
+                                flexGrow: 1,
+                                paddingHorizontal: 16,
+                                paddingVertical: 16,
+                            }}
                             onContentSizeChange={scrollToBottom}
                             onLayout={scrollToBottom}
                             showsVerticalScrollIndicator={false}
+                            ListHeaderComponent={renderQuickReplies}
+                            ListEmptyComponent={ListEmptyComponent}
                             renderItem={({item, index}) => (
                                 <Animated.View 
                                     entering={FadeInDown.delay(index * 100).duration(400)}
@@ -209,11 +230,6 @@ const CoupleChat = () => {
                                     </View>
                                 </Animated.View>
                             )}
-                            contentContainerStyle={{
-                                flexGrow: 1,
-                                paddingVertical: 16,
-                            }}
-                            ListHeaderComponent={chatType === 'ai' ? renderQuickReplies : null}
                         />
 
                         {/* 입력창 */}
