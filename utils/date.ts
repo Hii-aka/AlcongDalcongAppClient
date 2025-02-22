@@ -1,7 +1,8 @@
+import { Anniversary } from '@/types';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import type { Anniversary } from '../app/types/anniversary';
+
 
 dayjs.locale('ko');
 dayjs.extend(relativeTime);

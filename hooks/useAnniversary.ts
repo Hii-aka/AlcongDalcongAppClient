@@ -1,8 +1,6 @@
 import { useMemo, useEffect } from 'react';
-import { calculateDaysTogether, getNextAnniversary } from '@/lib/utils/date';
-import type { Anniversary } from '@/lib/types/anniversary';
 import dayjs from 'dayjs';
-
+import { calculateDaysTogether, getNextAnniversary } from '@/utils/date';
 export function useAnniversary(startDate: Date | string | null) {
   // startDate 유효성 검사
   const validatedStartDate = useMemo(() => {
