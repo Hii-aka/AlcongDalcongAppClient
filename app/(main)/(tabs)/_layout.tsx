@@ -46,10 +46,11 @@ export default function TabLayout() {
                 tabBarLabelStyle: {
                     fontSize: 12,
                     fontWeight: '600',
-                    marginTop: -4,
+                    marginTop: 2,
                 },
                 tabBarIconStyle: {
-                    marginTop: 4,
+                    marginTop: 6,
+                    marginBottom: 4,
                 },
             }}
         >
@@ -64,11 +65,6 @@ export default function TabLayout() {
                                 size={size} 
                                 color={color} 
                             />
-                            {focused && (
-                                <View 
-                                    className="w-1 h-1 rounded-full bg-pink-500 mt-1"
-                                />
-                            )}
                         </View>
                     ),
                 }}
@@ -84,11 +80,6 @@ export default function TabLayout() {
                                 size={size} 
                                 color={color} 
                             />
-                            {focused && (
-                                <View 
-                                    className="w-1 h-1 rounded-full bg-pink-500 mt-1"
-                                />
-                            )}
                         </View>
                     ),
                 }}
@@ -104,11 +95,6 @@ export default function TabLayout() {
                                 size={size} 
                                 color={color} 
                             />
-                            {focused && (
-                                <View 
-                                    className="w-1 h-1 rounded-full bg-pink-500 mt-1"
-                                />
-                            )}
                         </View>
                     ),
                 }}
@@ -124,11 +110,6 @@ export default function TabLayout() {
                                 size={size} 
                                 color={color} 
                             />
-                            {focused && (
-                                <View 
-                                    className="w-1 h-1 rounded-full bg-pink-500 mt-1"
-                                />
-                            )}
                         </View>
                     ),
                 }}
