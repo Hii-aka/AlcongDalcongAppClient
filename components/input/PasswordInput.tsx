@@ -1,53 +1,67 @@
-import React from 'react';
-import { TextInputProps} from 'react-native';
-import InputField from './InputField';
+import React, { useState } from 'react';
+import { View, TextInput, Pressable, Text } from 'react-native';
 import { useFormContext } from 'react-hook-form';
-import { Controller } from 'react-hook-form';
-import { Input } from '../common/Input';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '@/constants/theme';
 
-type PasswordInputProps = {
-    submitBehavior?: TextInputProps['submitBehavior'];
+interface PasswordInputProps {
+  submitBehavior?: 'submit' | 'next';
 }
 
-function PasswordInput({submitBehavior = 'blurAndSubmit'}: PasswordInputProps) {  
-    const {control, setFocus} = useFormContext();       
+export default function PasswordInput({ submitBehavior = 'next' }: PasswordInputProps) {
+  const [isSecure, setIsSecure] = useState(true);
+  const { register, setValue, formState: { errors }, watch } = useFormContext();
+  const value = watch('password');
+
+  React.useEffect(() => {
+    register('password', {
+      required: '비밀번호를 입력해주세요',
+      minLength: {
+        value: 8,
+        message: '비밀번호는 8자 이상이어야 합니다',
+      },
+      pattern: {
+        value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+        message: '영문, 숫자, 특수문자를 포함해야 합니다',
+      }
+    });
+  }, [register]);
+
+  const error = errors.password?.message as string | undefined;
+
   return (
-    <Controller
-        control={control}
-        name="password"
-        rules={{
-            validate: (data: string) => {
-                if (!data) return '비밀번호를 입력해주세요.';
-                // 영문자, 숫자, 특수문자가 각각 최소 1개 이상 포함되어야 함
-                const hasLetter = /[a-zA-Z]/.test(data);
-                const hasNumber = /[0-9]/.test(data);
-                const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(data);
-                
-                if (!hasLetter || !hasNumber || !hasSpecial) {
-                    return '비밀번호는 영문자, 숫자, 특수문자를 모두 포함해야 합니다.';
-                }
-                return true;
-            },
-        }}
-        render={({field: {ref,onChange, value}, fieldState: {error}}) => (
-            <Input
-                label="비밀번호"
-                placeholder="비밀번호를 입력해주세요."
-                icon="lock-closed"
-                inputMode="text"
-                autoCapitalize="none"
-                secureTextEntry
-                onChangeText={onChange}
-                returnKeyType="next"
-                submitBehavior={submitBehavior}
-                onSubmitEditing={() => setFocus('passwordConfirm')}
-                value={value}
-                error={error?.message}
-            />
-        )}
-    />
-  )
+    <View>
+      <View className={`relative rounded-2xl overflow-hidden ${
+        error ? 'bg-red-50' : 'bg-pink-50/30'
+      }`}>
+        <TextInput
+          className={`w-full px-4 py-4 text-base ${
+            error ? 'text-red-900' : 'text-gray-800'
+          }`}
+          placeholder="비밀번호를 입력해주세요"
+          placeholderTextColor={error ? '#EF4444' : '#9CA3AF'}
+          secureTextEntry={isSecure}
+          onChangeText={(text) => setValue('password', text, { shouldValidate: true })}
+          returnKeyType={submitBehavior === 'submit' ? 'done' : 'next'}
+          autoCapitalize="none"
+          value={value}
+        />
+        <Pressable 
+          className="absolute right-3 top-4"
+          onPress={() => setIsSecure(!isSecure)}
+        >
+          <Ionicons
+            name={isSecure ? 'eye-off' : 'eye'}
+            size={20}
+            color={error ? '#EF4444' : COLORS.love}
+          />
+        </Pressable>
+      </View>
+      {error && (
+        <Text className="text-red-500 text-sm mt-2 ml-1">
+          {error}
+        </Text>
+      )}
+    </View>
+  );
 }
-
-
-export default PasswordInput;   

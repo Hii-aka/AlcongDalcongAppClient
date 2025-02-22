@@ -19,7 +19,7 @@ export default function CalendarLayout() {
       <Stack.Screen name="post" 
         options={{
           title: '일정 추가',
-          headerBackButtonDisplayMode: 'minimal',
+          headerShown: false,
         }}
       />
     </Stack>

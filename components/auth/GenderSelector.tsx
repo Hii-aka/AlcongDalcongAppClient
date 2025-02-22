@@ -1,94 +1,60 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
-import { Controller, useFormContext } from 'react-hook-form';
+import { View, Text, Pressable } from 'react-native';
+import { useFormContext } from 'react-hook-form';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '@/constants/theme';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
-type Gender = 'MALE' | 'FEMALE';
+type IconName = 'male' | 'female' | 'heart';
 
-function GenderSelect() {
-  const { control } = useFormContext();
+export default function GenderSelector() {
+  const { register, setValue, watch } = useFormContext();
+  const selectedGender = watch('gender');
 
-  const genderOptions: { value: Gender; label: string; icon: string; subIcon: string }[] = [
-    { 
-      value: 'MALE', 
-      label: '남성', 
-      icon: 'face-man',
-      subIcon: 'mars'  // ♂ 심볼
-    },
-    { 
-      value: 'FEMALE', 
-      label: '여성', 
-      icon: 'face-woman',
-      subIcon: 'venus'  // ♀ 심볼
-    }
-  ];
+  React.useEffect(() => {
+    register('gender', {
+      required: '성별을 선택해주세요',
+    });
+  }, [register]);
+
+  const handleSelect = (gender: string) => {
+    setValue('gender', gender, { shouldValidate: true });
+  };
+
+  const GenderOption = ({ value, label, icon }: { value: string; label: string; icon: IconName }) => (
+    <Pressable
+      onPress={() => handleSelect(value)}
+      className={`flex-1 py-4 px-4 flex-row items-center justify-center space-x-2 ${
+        selectedGender === value ? 'bg-pink-500/10' : 'bg-pink-50/30'
+      }`}
+    >
+      <Ionicons 
+        name={icon} 
+        size={20} 
+        color={selectedGender === value ? COLORS.love : '#9CA3AF'} 
+      />
+      <Text className={`text-base font-medium ${
+        selectedGender === value ? 'text-pink-500' : 'text-gray-600'
+      }`}>
+        {label}
+      </Text>
+      {selectedGender === value && (
+        <Animated.View 
+          entering={FadeIn.duration(200)}
+          className="absolute -top-1 -right-1"
+        >
+          <View className="bg-white rounded-full p-1">
+            <Ionicons name="heart" size={12} color={COLORS.love} />
+          </View>
+        </Animated.View>
+      )}
+    </Pressable>
+  );
 
   return (
-    <Controller
-      control={control}
-      name="gender"
-      rules={{ required: '성별을 선택해주세요 💝' }}
-      render={({ field: { value, onChange }, fieldState: { error } }) => (
-        <View>
-          <Text className="text-gray-600 font-medium mb-3 text-center">
-            당신의 성별을 알려주세요
-            <Text className="text-rose-400"> 💖</Text>
-          </Text>
-          
-          <View className="flex-row space-x-4 px-1">
-            {genderOptions.map((option) => (
-              <Pressable
-                key={option.value}
-                onPress={() => onChange(option.value)}
-                className={`flex-1 items-center justify-center py-5 rounded-3xl border ${
-                  value === option.value
-                    ? 'bg-rose-50 border-rose-300'
-                    : 'bg-gray-50/80 border-gray-200'
-                }`}
-                style={({ pressed }) => [
-                  {
-                    transform: [{ scale: pressed ? 0.97 : 1 }],
-                    shadowColor: value === option.value ? '#FEE2E2' : '#E5E7EB',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 8,
-                    elevation: value === option.value ? 3 : 1,
-                  }
-                ]}
-              >
-                <MaterialCommunityIcons
-                  name={option.icon as any}
-                  size={32}
-                  color={value === option.value ? '#FB7185' : '#9CA3AF'}
-                />
-                <View className="flex-row items-center mt-2">
-                  <Text
-                    className={`font-medium text-base ${
-                      value === option.value ? 'text-rose-500' : 'text-gray-500'
-                    }`}
-                  >
-                    {option.label}
-                  </Text>
-                  <FontAwesome5 
-                    name={option.subIcon}
-                    size={12}
-                    color={value === option.value ? '#FB7185' : '#9CA3AF'}
-                    style={{ marginLeft: 4, marginTop: 2 }}
-                  />
-                </View>
-              </Pressable>
-            ))}
-          </View>
-          
-          {error && (
-            <Text className="text-rose-400 text-sm mt-3 text-center">
-              {error.message}
-            </Text>
-          )}
-        </View>
-      )}
-    />
+    <View className="flex-row rounded-2xl overflow-hidden divide-x divide-pink-100">
+      <GenderOption value="male" label="남성" icon="male" />
+      <GenderOption value="female" label="여성" icon="female" />
+    </View>
   );
 }
-
-export default GenderSelect;

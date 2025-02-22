@@ -7,6 +7,10 @@ import { Profile } from "@/types";
 import useGetCoupleRequestPending from "../../../../hooks/queries/useGetCoupleRequestPending";
 import useGetCoupleRequestAccepted from "../../../../hooks/queries/useGetCoupleRequestAccepted";
 import { getDaysDifference, formatDate } from "@/utils";
+import { LinearGradient } from 'expo-linear-gradient';
+import { COLORS, SHADOWS } from '@/constants/theme';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+
 export default function ProfileHome() {
     const router = useRouter();
     const { logoutMutation } = useAuth();
@@ -17,12 +21,11 @@ export default function ProfileHome() {
 
     if (!me) {
         router.replace("/");
+        return null;
     }
+
     const { data: coupleRequestPending } = useGetCoupleRequestPending();
     const { data: coupleRequestAccepted } = useGetCoupleRequestAccepted();
-    console.log('coupleRequestPending', coupleRequestPending);
-    console.log('coupleRequestAccepted', coupleRequestAccepted);
-
 
     const handleLogout = () => {
         Alert.alert(
@@ -41,119 +44,161 @@ export default function ProfileHome() {
 
     return (
         <ScrollView 
-            className="flex-1 bg-pink-50/30"
+            className="flex-1 bg-white"
             contentContainerStyle={{
                 paddingBottom: insets.bottom + 120
             }}
         >
-            {/* 헤더 섹션 */}
-            <View className="bg-white pb-6 shadow-sm">
-                <View className="items-center pt-12 pb-6">
-                    <View className="relative">
-                        <View className="w-24 h-24 rounded-full border-4 border-pink-100 shadow-md overflow-hidden">
-                            <Image 
-                                source={
-                                    me?.profileImage 
-                                        ? { uri: me.profileImage }
-                                        : require('@/assets/images/default-profile.png')
-                                }
-                                className="w-full h-full"
-                            />
-                        </View>
-                        <TouchableOpacity 
-                            className="absolute bottom-0 right-0 bg-pink-500 p-2 rounded-full shadow-md"
-                            onPress={() => router.push("/profile/edit")}
+            <LinearGradient
+                colors={[COLORS.backgroundAlt, COLORS.background] as readonly [string, string]}
+                className="flex-1"
+            >
+                {/* 헤더 섹션 */}
+                <View className="pb-6">
+                    <LinearGradient
+                        colors={[COLORS.love, COLORS.primary] as readonly [string, string]}
+                        className="pt-12 pb-8 px-6 rounded-b-[40px]"
+                        style={SHADOWS.medium}
+                    >
+                        <Animated.View 
+                            entering={FadeInDown.duration(600)}
+                            className="items-center"
                         >
-                            <Ionicons name="camera" size={20} color="white" />
-                        </TouchableOpacity>
-                    </View>
-                    <Text className="text-xl font-bold mt-4 text-gray-800">{me.nickname}</Text>
-                    <View className="flex-row items-center mt-1">
-                        <FontAwesome5 name="heart" size={12} color="#EC4899" />
-                        <Text className="text-pink-500 ml-2">{coupleRequestAccepted ? `연인과 함께한지 ${getDaysDifference(coupleRequestAccepted.firstMetDate)}일` : '연인을 등록해주세요.'}</Text>
+                            <View className="relative">
+                                <View className="w-28 h-28 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
+                                    <Image 
+                                        source={
+                                            me?.profileImage 
+                                                ? { uri: me.profileImage }
+                                                : require('@/assets/images/default-profile.png')
+                                        }
+                                        className="w-full h-full"
+                                    />
+                                </View>
+                                <TouchableOpacity 
+                                    className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-lg"
+                                    style={SHADOWS.small}
+                                    onPress={() => router.push("/profile/edit")}
+                                >
+                                    <Ionicons name="camera" size={20} color={COLORS.love} />
+                                </TouchableOpacity>
+                            </View>
+                            <Text className="text-2xl font-bold mt-4 text-white">{me.nickname}</Text>
+                            <View className="flex-row items-center mt-2 bg-white/20 px-4 py-2 rounded-full">
+                                <FontAwesome5 name="heart" size={12} color="white" />
+                                <Text className="text-white ml-2 font-medium">
+                                    {coupleRequestAccepted 
+                                        ? `연인과 함께한지 ${getDaysDifference(coupleRequestAccepted.firstMetDate)}일` 
+                                        : '연인을 등록해주세요.'}
+                                </Text>
+                            </View>
+                        </Animated.View>
+                    </LinearGradient>
+
+                    {/* 정보 섹션 */}
+                    <View className="px-6 -mt-6">
+                        {/* 커플 정보 카드 */}
+                        <Animated.View entering={FadeInDown.delay(200).duration(600)}>
+                            <InfoSection 
+                                title="우리의 기록" 
+                                icon="heart"
+                                iconColor={COLORS.love}
+                                items={[
+                                    { 
+                                        label: "처음 만난 날", 
+                                        value: coupleRequestAccepted?.firstMetDate ? formatDate(coupleRequestAccepted.firstMetDate) : '처음 만난 날을 등록해주세요.', 
+                                        icon: "calendar-alt" 
+                                    },
+                                    { label: "함께한 일기", value: "123개", icon: "book" },
+                                    { label: "공유한 사진", value: "486장", icon: "images" },
+                                ]}
+                            />
+                        </Animated.View>
+
+                        {/* 기본 정보 카드 */}
+                        <Animated.View entering={FadeInDown.delay(400).duration(600)} className="mt-6">
+                            <InfoSection 
+                                title="내 정보" 
+                                icon="user"
+                                iconColor={COLORS.love}
+                                items={[
+                                    { label: "이메일", value: me.email, icon: "envelope" },
+                                    { label: "연인 코드", value: "LOVE123", icon: "key" },
+                                ]}
+                            />
+                        </Animated.View>
+
+                        {/* 설정 버튼들 */}
+                        <Animated.View 
+                            entering={FadeInDown.delay(600).duration(600)}
+                            className="space-y-3 mt-6"
+                        >
+                            <ActionButton 
+                                label="프로필 수정"
+                                icon="edit"
+                                onPress={() => router.push("/profile/edit")}
+                            />
+                            <ActionButton 
+                                label="알림 설정"
+                                icon="bell"
+                                onPress={() => router.push("/profile/notifications")}
+                                variant="secondary"
+                            />
+                            <ActionButton 
+                                label="커플 연결 관리"
+                                icon="heart"
+                                onPress={() => router.push("/profile/couple")}
+                                variant="secondary"
+                            />
+                        </Animated.View>
+
+                        {/* 구분선 */}
+                        <View className="h-[1px] bg-pink-100 my-6" />
+
+                        {/* 로그아웃 버튼 */}
+                        <Animated.View entering={FadeInDown.delay(800).duration(600)}>
+                            <ActionButton 
+                                label="로그아웃"
+                                icon="sign-out-alt"
+                                onPress={handleLogout}
+                                variant="danger"
+                            />
+                        </Animated.View>
                     </View>
                 </View>
-            </View>
-
-            {/* 정보 섹션 */}
-            <View className="px-4 py-6 space-y-6">
-                {/* 커플 정보 카드 */}
-                <InfoSection 
-                    title="우리의 기록" 
-                    icon="heart"
-                    iconColor="#EC4899"
-                    items={[
-                        { label: "처음 만난 날", value: coupleRequestAccepted?.firstMetDate ? formatDate(coupleRequestAccepted.firstMetDate) : '처음 만난 날을 등록해주세요.', icon: "calendar-alt" },
-                        { label: "함께한 일기", value: "123개", icon: "book" },
-                        { label: "공유한 사진", value: "486장", icon: "images" },
-                    ]}
-                />
-
-                {/* 기본 정보 카드 */}
-                <InfoSection 
-                    title="내 정보" 
-                    icon="user"
-                    iconColor="#EC4899"
-                    items={[
-                        { label: "이메일", value: me.email, icon: "envelope" },
-                        { label: "연인 코드", value: "LOVE123", icon: "key" },
-                    ]}
-                />
-
-                {/* 설정 버튼들 */}
-                <View className="space-y-3">
-                    <ActionButton 
-                        label="프로필 수정"
-                        icon="edit"
-                        onPress={() => router.push("/profile/edit")}
-                    />
-                    <ActionButton 
-                        label="알림 설정"
-                        icon="bell"
-                        onPress={() => router.push("/profile/notifications")}
-                        variant="secondary"
-                    />
-                    <ActionButton 
-                        label="커플 연결 관리"
-                        icon="heart"
-                        onPress={() => router.push("/profile/couple")}
-                        variant="secondary"
-                    />
-                </View>
-
-                {/* 구분선 */}
-                <View className="h-[1px] bg-pink-100 my-4" />
-
-                {/* 로그아웃 버튼 */}
-                <ActionButton 
-                    label="로그아웃"
-                    icon="sign-out-alt"
-                    onPress={handleLogout}
-                    variant="danger"
-                />
-            </View>
+            </LinearGradient>
         </ScrollView>
     );
 }
 
-function InfoSection({ title, icon, iconColor = "#EC4899", items }: { 
+function InfoSection({ title, icon, iconColor = COLORS.love, items }: { 
     title: string; 
     icon: string;
     iconColor?: string;
     items: Array<{ label: string; value: string; icon: string; }> 
 }) {
     return (
-        <View className="bg-white rounded-2xl shadow-sm overflow-hidden border border-pink-100">
-            <View className="flex-row items-center p-4 border-b border-pink-50">
-                <FontAwesome5 name={icon} size={16} color={iconColor} />
-                <Text className="text-gray-800 font-semibold ml-2">{title}</Text>
-            </View>
-            <View className="p-4 space-y-4">
+        <View 
+            className="bg-white rounded-3xl overflow-hidden border border-pink-100"
+            style={SHADOWS.small}
+        >
+            <LinearGradient
+                colors={[COLORS.backgroundAlt, COLORS.background] as readonly [string, string]}
+                className="px-6 py-4 border-b border-pink-50"
+            >
+                <View className="flex-row items-center">
+                    <FontAwesome5 name={icon} size={16} color={iconColor} />
+                    <Text className="text-gray-800 font-bold text-lg ml-2">{title}</Text>
+                </View>
+            </LinearGradient>
+            <View className="p-6 space-y-4">
                 {items.map((item, index) => (
                     <View key={index} className="flex-row items-center">
-                        <FontAwesome5 name={item.icon} size={14} color="#EC4899" />
-                        <Text className="text-gray-600 ml-3 flex-1">{item.label}</Text>
-                        <Text className="text-gray-800 font-medium">{item.value}</Text>
+                        <View className="w-8 h-8 rounded-full bg-pink-50 items-center justify-center">
+                            <FontAwesome5 name={item.icon} size={14} color={COLORS.love} />
+                        </View>
+                        <Text className="text-gray-600 ml-3 flex-1 text-base">{item.label}</Text>
+                        <Text className="text-gray-800 font-semibold text-base">{item.value}</Text>
                     </View>
                 ))}
             </View>
@@ -176,21 +221,24 @@ function ActionButton({
         switch (variant) {
             case 'primary':
                 return {
-                    button: "bg-pink-500",
+                    container: "bg-white",
+                    gradient: [COLORS.love, COLORS.primary] as readonly [string, string],
                     text: "text-white",
                     icon: "white"
                 };
             case 'secondary':
                 return {
-                    button: "bg-pink-50",
-                    text: "text-pink-600",
-                    icon: "#EC4899"
+                    container: "bg-white",
+                    gradient: [COLORS.backgroundAlt, COLORS.background] as readonly [string, string],
+                    text: "text-gray-800",
+                    icon: COLORS.love
                 };
             case 'danger':
                 return {
-                    button: "bg-white border border-red-400",
+                    container: "bg-white",
+                    gradient: ['#FEE2E2', '#FEF2F2'] as readonly [string, string],
                     text: "text-red-500",
-                    icon: "#F87171"
+                    icon: "#EF4444"
                 };
         }
     };
@@ -199,11 +247,19 @@ function ActionButton({
     
     return (
         <TouchableOpacity 
-            className={`w-full py-4 rounded-xl flex-row items-center justify-center space-x-2 ${styles.button}`}
+            className="overflow-hidden rounded-2xl"
+            style={SHADOWS.small}
             onPress={onPress}
         >
-            <FontAwesome5 name={icon} size={16} color={styles.icon} />
-            <Text className={`font-semibold ${styles.text}`}>{label}</Text>
+            <LinearGradient
+                colors={styles.gradient}
+                className="py-4 px-6"
+            >
+                <View className="flex-row items-center justify-center space-x-2">
+                    <FontAwesome5 name={icon} size={16} color={styles.icon} />
+                    <Text className={`font-bold text-base ${styles.text}`}>{label}</Text>
+                </View>
+            </LinearGradient>
         </TouchableOpacity>
     );
 }

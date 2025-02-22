@@ -1,50 +1,54 @@
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
-import InputField from './InputField';
+import { View, TextInput, Text } from 'react-native';
 import { useFormContext } from 'react-hook-form';
-import { Controller } from 'react-hook-form';
+import { COLORS } from '@/constants/theme';
 
-function NicknameInput() {
-    const {control, setFocus} = useFormContext();   
+export default function NicknameInput() {
+  const { register, setValue, formState: { errors }, watch } = useFormContext();
+  const value = watch('nickname');
+
+  React.useEffect(() => {
+    register('nickname', {
+      required: '닉네임을 입력해주세요',
+      minLength: {
+        value: 2,
+        message: '닉네임은 2자 이상이어야 합니다',
+      },
+      maxLength: {
+        value: 10,
+        message: '닉네임은 10자 이하여야 합니다',
+      },
+      pattern: {
+        value: /^[가-힣a-zA-Z][가-힣a-zA-Z0-9]*$/,
+        message: '닉네임은 한글/영문으로 시작하고 숫자를 포함할 수 있습니다',
+      }
+    });
+  }, [register]);
+
+  const error = errors.nickname?.message as string | undefined;
+
   return (
-    <Controller
-        control={control}
-        name="nickname"
-        rules={{
-            required: '닉네임을 입력해주세요.',
-            minLength: {
-                value: 2,
-                message: '닉네임은 2자 이상이어야 합니다.',
-            },
-            maxLength: {
-                value: 10,
-                message: '닉네임은 10자 이하여야 합니다.',
-            },
-            validate: (value: string) => {
-                // 한글, 영문자, 숫자만 허용하고 첫 글자는 숫자가 아니어야 함
-                if (!/^[a-zA-Z가-힣][a-zA-Z0-9가-힣]*$/.test(value)) {
-                    return '닉네임은 한글, 영문자, 숫자만 사용 가능하며, 첫 글자는 숫자가 될 수 없습니다.';
-                }
-                return true;
-            }
-        }}
-        render={({field: {ref, onChange, value}, fieldState: {error}}) => (
-            <InputField
-                ref={ref}
-                label="닉네임"
-                placeholder="닉네임을 입력해주세요."
-                inputMode="text"
-                onChangeText={onChange}
-                returnKeyType="next"
-                submitBehavior="submit"
-                onSubmitEditing={() => setFocus('password')}
-                value={value}
-                error={error?.message}
-            />
-        )}
-    />
-  )
-}
-
-
-export default NicknameInput;   
+    <View>
+      <View className={`relative rounded-2xl overflow-hidden ${
+        error ? 'bg-red-50' : 'bg-pink-50/30'
+      }`}>
+        <TextInput
+          className={`w-full px-4 py-4 text-base ${
+            error ? 'text-red-900' : 'text-gray-800'
+          }`}
+          placeholder="닉네임을 입력해주세요"
+          placeholderTextColor={error ? '#EF4444' : '#9CA3AF'}
+          onChangeText={(text) => setValue('nickname', text, { shouldValidate: true })}
+          returnKeyType="next"
+          maxLength={10}
+          value={value}
+        />
+      </View>
+      {error && (
+        <Text className="text-red-500 text-sm mt-2 ml-1">
+          {error}
+        </Text>
+      )}
+    </View>
+  );
+}   

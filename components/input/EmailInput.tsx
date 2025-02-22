@@ -1,40 +1,47 @@
 import React from 'react';
+import { View, TextInput, Text } from 'react-native';
 import { useFormContext } from 'react-hook-form';
-import { Controller } from 'react-hook-form';
-import regax from '@/constants/regax';
-import { Input } from '../common/Input';
-function EmailInput() {
-    const {control, setFocus} = useFormContext();   
+import { COLORS } from '@/constants/theme';
+
+export default function EmailInput() {
+  const { register, setValue, formState: { errors }, watch } = useFormContext();
+  const value = watch('email');
+
+  React.useEffect(() => {
+    register('email', {
+      required: '이메일을 입력해주세요',
+      pattern: {
+        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+        message: '올바른 이메일 주소를 입력해주세요',
+      },
+    });
+  }, [register]);
+
+  const error = errors.email?.message as string | undefined;
+
   return (
-    <Controller
-        control={control}
-        name="email"
-        rules={{
-            required: '이메일을 입력해주세요.',
-            pattern: {
-                value: regax.EMAIL,
-                message: '이메일 형식이 올바르지 않습니다.',
-            },
-        }}
-        render={({field: {onChange, value}, fieldState: {error}}) => (
-            <Input
-                autoFocus
-                label="이메일"
-                placeholder="이메일을 입력해주세요."
-                icon="mail"
-                keyboardType="email-address"
-                onChangeText={onChange}
-                returnKeyType="next"
-                submitBehavior="submit"
-                autoCapitalize="none"
-                onSubmitEditing={() => setFocus('password')}
-                value={value}
-                error={error?.message}
-            />
-        )}
-    />
-  )
+    <View>
+      <View className={`relative rounded-2xl overflow-hidden ${
+        error ? 'bg-red-50' : 'bg-pink-50/30'
+      }`}>
+        <TextInput
+          className={`w-full px-4 py-4 text-base ${
+            error ? 'text-red-900' : 'text-gray-800'
+          }`}
+          placeholder="이메일을 입력해주세요"
+          placeholderTextColor={error ? '#EF4444' : '#9CA3AF'}
+          onChangeText={(text) => setValue('email', text, { shouldValidate: true })}
+          returnKeyType="next"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={value}
+        />
+      </View>
+      {error && (
+        <Text className="text-red-500 text-sm mt-2 ml-1">
+          {error}
+        </Text>
+      )}
+    </View>
+  );
 }
-
-
-export default EmailInput;

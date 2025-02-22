@@ -9,6 +9,7 @@ import YearSelector from './YearSelector';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SHADOWS } from '@/constants/theme';
 import { router } from 'expo-router';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 interface CalendarProps<T> {
     monthYear: MonthYear;
@@ -65,13 +66,21 @@ function Calendar<T>({
         return (
             <View className="flex-1 bg-white">
                 <LinearGradient
-                    colors={[COLORS.backgroundAlt, COLORS.background]}
+                    colors={[COLORS.backgroundAlt, COLORS.background] as readonly [string, string]}
                     className="flex-1 pt-4 px-6"
                 >
-                    <View className="flex-1 items-center justify-center">
+                    <Animated.View 
+                        entering={FadeInDown.duration(600)}
+                        className="flex-1 items-center justify-center"
+                    >
                         <View className="bg-white rounded-3xl p-8 shadow-sm border border-pink-100 items-center w-full">
-                            <Ionicons name="heart-outline" size={64} color={COLORS.love} />
-                            <Text className="text-xl font-bold text-gray-800 mt-4 text-center">
+                            <LinearGradient
+                                colors={[COLORS.love, COLORS.primary] as readonly [string, string]}
+                                className="w-20 h-20 rounded-full items-center justify-center mb-4"
+                            >
+                                <Ionicons name="heart" size={40} color="white" />
+                            </LinearGradient>
+                            <Text className="text-xl font-bold text-gray-800 text-center">
                                 아직 연인과 연결되지 않았어요
                             </Text>
                             <Text className="text-base text-gray-600 mt-2 text-center">
@@ -79,16 +88,21 @@ function Calendar<T>({
                                 기록하고 공유해보세요
                             </Text>
                             <Pressable
-                                className="mt-6 bg-white rounded-full py-3 px-6 border border-pink-100"
+                                className="mt-6 overflow-hidden rounded-full"
                                 style={SHADOWS.small}
-                                onPress={() => router.push('/connect')}
+                                onPress={() => router.push('connect' as any)}
                             >
-                                <Text className="text-base font-semibold text-pink-500">
-                                    연인 연결하기
-                                </Text>
+                                <LinearGradient
+                                    colors={[COLORS.love, COLORS.primary] as readonly [string, string]}
+                                    className="py-3 px-6"
+                                >
+                                    <Text className="text-base font-bold text-white">
+                                        연인 연결하기
+                                    </Text>
+                                </LinearGradient>
                             </Pressable>
                         </View>
-                    </View>
+                    </Animated.View>
                 </LinearGradient>
             </View>
         );
@@ -97,46 +111,71 @@ function Calendar<T>({
     return (
         <View className="flex-1 bg-white">
             <LinearGradient
-                colors={[COLORS.backgroundAlt, COLORS.background]}
+                colors={[COLORS.backgroundAlt, COLORS.background] as readonly [string, string]}
                 className="pt-4"
             >
                 <View className="px-6 pb-4">
                     {/* 커플 정보 섹션 */}
-                    <View className="bg-white rounded-3xl p-4 mb-6 shadow-sm border border-pink-100">
-                        <View className="flex-row items-center justify-between mb-4">
-                            <View className="flex-row items-center">
-                                <Image
-                                    source={{ uri: 'https://picsum.photos/100' }}
-                                    className="w-12 h-12 rounded-full border-2 border-pink-200"
-                                />
-                                <View className="mx-2">
-                                    <Ionicons name="heart" size={24} color={COLORS.love} />
+                    <Animated.View 
+                        entering={FadeInDown.duration(600)}
+                        className="bg-white rounded-3xl overflow-hidden shadow-sm border border-pink-100 mb-6"
+                    >
+                        <LinearGradient
+                            colors={[COLORS.love, COLORS.primary] as readonly [string, string]}
+                            className="px-4 py-2"
+                        >
+                            <Text className="text-white font-medium text-center">
+                                우리의 캘린더
+                            </Text>
+                        </LinearGradient>
+                        <View className="p-4">
+                            <View className="flex-row items-center justify-between">
+                                <View className="flex-row items-center">
+                                    <View className="relative">
+                                        <Image
+                                            source={{ uri: 'https://picsum.photos/100' }}
+                                            className="w-14 h-14 rounded-full border-2 border-white"
+                                            style={SHADOWS.small}
+                                        />
+                                        <View className="absolute -right-1 -bottom-1 bg-white rounded-full p-1">
+                                            <Ionicons name="heart" size={14} color={COLORS.love} />
+                                        </View>
+                                    </View>
+                                    <View className="mx-2">
+                                        <Ionicons name="heart" size={24} color={COLORS.love} />
+                                    </View>
+                                    <View className="relative">
+                                        <Image
+                                            source={{ uri: 'https://picsum.photos/101' }}
+                                            className="w-14 h-14 rounded-full border-2 border-white"
+                                            style={SHADOWS.small}
+                                        />
+                                        <View className="absolute -right-1 -bottom-1 bg-white rounded-full p-1">
+                                            <Ionicons name="heart" size={14} color={COLORS.love} />
+                                        </View>
+                                    </View>
                                 </View>
-                                <Image
-                                    source={{ uri: 'https://picsum.photos/101' }}
-                                    className="w-12 h-12 rounded-full border-2 border-pink-200"
-                                />
-                            </View>
-                            <View className="items-end">
-                                <Text className="text-base font-medium text-gray-600">
-                                    함께한 지
-                                </Text>
-                                <Text className="text-2xl font-bold text-pink-500">
-                                    {daysCount}일
-                                </Text>
+                                <View className="items-end">
+                                    <Text className="text-base font-medium text-gray-600">
+                                        함께한 지
+                                    </Text>
+                                    <Text className="text-2xl font-bold text-pink-500">
+                                        {daysCount}일
+                                    </Text>
+                                </View>
                             </View>
                         </View>
-                    </View>
+                    </Animated.View>
 
                     {/* 달력 헤더 */}
-                    <View className="flex-row justify-between items-center mb-6">
+                    <Animated.View 
+                        entering={FadeInDown.delay(200).duration(600)}
+                        className="flex-row justify-between items-center mb-6"
+                    >
                         <Pressable 
-                            className="w-12 h-12 items-center justify-center rounded-full active:bg-pink-50"
+                            className="w-12 h-12 items-center justify-center rounded-full bg-white"
                             onPress={() => onChangeMonth(-1)}
-                            style={({ pressed }) => [
-                                pressed && { backgroundColor: COLORS.backgroundAlt },
-                                SHADOWS.small
-                            ]}
+                            style={SHADOWS.small}
                         >
                             <Ionicons name="chevron-back" size={24} color={COLORS.love} />   
                         </Pressable>
@@ -150,25 +189,25 @@ function Calendar<T>({
                             <Text className="text-xl font-bold text-gray-800 ml-2">
                                 {year}년 {month}월
                             </Text>
-                            <View className="absolute -right-1 -top-1">
-                                <Ionicons name="heart" size={16} color={COLORS.love} />
+                            <View className="absolute -right-1 -top-1 bg-white rounded-full p-1">
+                                <Ionicons name="heart" size={14} color={COLORS.love} />
                             </View>
                         </Pressable>
 
                         <Pressable 
-                            className="w-12 h-12 items-center justify-center rounded-full active:bg-pink-50"
+                            className="w-12 h-12 items-center justify-center rounded-full bg-white"
                             onPress={() => onChangeMonth(1)}
-                            style={({ pressed }) => [
-                                pressed && { backgroundColor: COLORS.backgroundAlt },
-                                SHADOWS.small
-                            ]}
+                            style={SHADOWS.small}
                         >
                             <Ionicons name="chevron-forward" size={24} color={COLORS.love} />
                         </Pressable>
-                    </View>
+                    </Animated.View>
 
                     {/* 달력 본체 */}
-                    <View className="bg-white rounded-3xl p-4 shadow-sm border border-pink-100">
+                    <Animated.View 
+                        entering={FadeInDown.delay(400).duration(600)}
+                        className="bg-white rounded-3xl p-4 shadow-sm border border-pink-100"
+                    >
                         <DayOfWeeks />
                         <View>
                             {weeks.map((week, weekIndex) => (
@@ -187,10 +226,13 @@ function Calendar<T>({
                                 </View>
                             ))}
                         </View>
-                    </View>
+                    </Animated.View>
 
-                    {/* 오늘로 이동 버튼 */}
-                    <View className="flex-row justify-center mt-6 space-x-4">
+                    {/* 하단 버튼 */}
+                    <Animated.View 
+                        entering={FadeInDown.delay(600).duration(600)}
+                        className="flex-row justify-center mt-6 space-x-4"
+                    >
                         <Pressable
                             className="flex-row items-center justify-center py-3 px-6 
                                 rounded-full bg-white"
@@ -198,26 +240,30 @@ function Calendar<T>({
                             onPress={moveToToday}
                         >
                             <Ionicons name="today" size={20} color={COLORS.love} />
-                            <Text className="text-base font-semibold text-gray-800 ml-2">
+                            <Text className="text-base font-bold text-gray-800 ml-2">
                                 오늘로 이동
                             </Text>
-                            <View className="absolute -right-1 -top-1">
-                                <Ionicons name="heart" size={16} color={COLORS.love} />
+                            <View className="absolute -right-1 -top-1 bg-white rounded-full p-1">
+                                <Ionicons name="heart" size={14} color={COLORS.love} />
                             </View>
                         </Pressable>
 
                         <Pressable
-                            className="flex-row items-center justify-center py-3 px-6 
-                                rounded-full bg-pink-500"
+                            className="overflow-hidden rounded-full"
                             style={SHADOWS.small}
-                            onPress={() => router.push('/calendar/post')}
+                            onPress={() => router.push('/calendar/post' as any)}
                         >
-                            <Ionicons name="add" size={20} color="white" />
-                            <Text className="text-base font-semibold text-white ml-2">
-                                새로운 데이트
-                            </Text>
+                            <LinearGradient
+                                colors={[COLORS.love, COLORS.primary] as readonly [string, string]}
+                                className="flex-row items-center justify-center py-3 px-6"
+                            >
+                                <Ionicons name="add" size={20} color="white" />
+                                <Text className="text-base font-bold text-white ml-2">
+                                    새로운 데이트
+                                </Text>
+                            </LinearGradient>
                         </Pressable>
-                    </View>
+                    </Animated.View>
                 </View>
             </LinearGradient>
 

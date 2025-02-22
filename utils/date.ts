@@ -150,7 +150,7 @@ export function getNextAnniversary(startDate: Date | string | null): { daysUntil
     return { daysUntil: 0, nextAnniversary: null };
   }
   
-  try {
+  try { 
     const start = dayjs(startDate).startOf('day');
     if (!start.isValid()) {
       console.error('Invalid start date:', startDate);
