@@ -13,11 +13,7 @@ export default function CalendarLayout() {
       <Stack.Screen name="index"
         options={{
           title: '캘린더',
-          headerRight: () => (
-            <Pressable onPress={() => router.push('/calendar/post')}>
-              <Ionicons name="add" size={24} color="black" />
-            </Pressable>
-          ),
+          headerShown: false,
         }}
       />
       <Stack.Screen name="post" 

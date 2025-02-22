@@ -34,6 +34,18 @@
         }
       ],
       "expo-router"
+    ],
+    "experiments": {
+      "tsconfigPaths": true,
+      "typedRoutes": true
+    },
+    "excludeExpoRouterFiles": [
+      "**/lib/**/*",
+      "**/types/**/*",
+      "**/utils/**/*",
+      "**/hooks/**/*",
+      "**/constants/**/*",
+      "**/api/**/*"
     ]
   }
 }

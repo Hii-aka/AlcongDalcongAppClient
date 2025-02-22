@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import type { Anniversary } from '../app/types/anniversary';
+import type { Anniversary } from '../types/anniversary';
 
 dayjs.locale('ko');
 dayjs.extend(relativeTime);
@@ -27,7 +27,7 @@ export function getDateDetails(date: Date | string): DateDetails {
   const d = dayjs(date);
   return {
     year: d.year(),
-    month: d.month() + 1, // dayjs는 0-based month를 사용하므로 1을 더함
+    month: d.month() + 1,
     day: d.date()
   };
 }
@@ -203,5 +203,4 @@ export function getNextAnniversary(startDate: Date | string | null): { daysUntil
     console.error('getNextAnniversary error:', error);
     return { daysUntil: 0, nextAnniversary: null };
   }
-}
-
+} 

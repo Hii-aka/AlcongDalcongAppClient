@@ -15,17 +15,14 @@ export default function DiaryLayout() {
       <Stack.Screen name="index" 
         options={{
           title: '일기',
-          headerRight: () => (
-            <Pressable onPress={() => router.push('/diary/post')}>
-              <Ionicons name="add" size={24} color="black" />
-            </Pressable>
-          ),
+          headerShown: false,
         }}
       />
       <Stack.Screen name="post" 
         options={{
           title: '일기 작성',
           headerBackButtonDisplayMode: 'minimal',
+          headerShown: false,
         }}
       />
     </Stack>
