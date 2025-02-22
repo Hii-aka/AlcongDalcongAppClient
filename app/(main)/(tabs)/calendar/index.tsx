@@ -5,7 +5,8 @@ import { getMonthYearDetails, getNewMonthYear } from "@/utils/date";
 import ScheduledDate from "@/components/date/ScheduledDate";
 import { COLORS } from "@/constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
-
+import useGetCoupleRequestAccepted from "@/hooks/queries/useGetCoupleRequestAccepted";
+import { getDaysDifference } from "@/utils/date";
 interface Schedule {
   id: number;
   title: string;
@@ -42,10 +43,11 @@ export default function CalendarHome() {
     const currentMonthYear = getMonthYearDetails(new Date());
     const [monthYear, setMonthYear] = useState(currentMonthYear);
     const [selectedDate, setSelectedDate] = useState(0);
+    const { data: coupleRequestAccepted } = useGetCoupleRequestAccepted();
 
     // TODO: 실제 연인 연결 상태를 가져오는 로직으로 대체
-    const [isConnected, setIsConnected] = useState(false);
-    const [daysCount, setDaysCount] = useState(100);
+    const [isConnected, setIsConnected] = useState(coupleRequestAccepted ? true : false);
+    const [daysCount, setDaysCount] = useState(coupleRequestAccepted ? getDaysDifference(coupleRequestAccepted.firstMetDate) : 0);
 
     const handlePressDate = (date: number) => {
         setSelectedDate(date);
