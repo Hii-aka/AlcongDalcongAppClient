@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.locale('ko');
+dayjs.extend(relativeTime);
 
 // 기본 포맷팅 함수들
 export const formatDate = (date: Date | string) => dayjs(date).format('YYYY년 MM월 DD일');
@@ -97,4 +99,15 @@ export const getDaysInMonth = (date: Date | string) =>
   dayjs(date).daysInMonth();
 
 export const getRelativeTime = (date: Date | string) => 
-  dayjs(date).fromNow();  
+  dayjs(date).fromNow();
+
+// 두 날짜 사이의 일수 차이 계산 (현재 날짜 기준)
+export const getDaysDifference = (date: Date | string): number => {
+  return dayjs().diff(dayjs(date), 'day');
+};
+
+// 특정 날짜로부터의 일수 차이 계산
+export const getDaysBetween = (startDate: Date | string, endDate: Date | string): number => {
+  return dayjs(endDate).diff(dayjs(startDate), 'day');
+};
+

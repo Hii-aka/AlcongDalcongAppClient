@@ -4,7 +4,9 @@ import { useRouter } from "expo-router";
 import useAuth from "../../../../hooks/queries/useAuth";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Profile } from "@/types";
-
+import useGetCoupleRequestPending from "../../../../hooks/queries/useGetCoupleRequestPending";
+import useGetCoupleRequestAccepted from "../../../../hooks/queries/useGetCoupleRequestAccepted";
+import { getDaysDifference, formatDate } from "@/utils";
 export default function ProfileHome() {
     const router = useRouter();
     const { logoutMutation } = useAuth();
@@ -16,8 +18,11 @@ export default function ProfileHome() {
     if (!me) {
         router.replace("/");
     }
+    const { data: coupleRequestPending } = useGetCoupleRequestPending();
+    const { data: coupleRequestAccepted } = useGetCoupleRequestAccepted();
+    console.log('coupleRequestPending', coupleRequestPending);
+    console.log('coupleRequestAccepted', coupleRequestAccepted);
 
-    console.log(me);
 
     const handleLogout = () => {
         Alert.alert(
@@ -65,7 +70,7 @@ export default function ProfileHome() {
                     <Text className="text-xl font-bold mt-4 text-gray-800">{me.nickname}</Text>
                     <View className="flex-row items-center mt-1">
                         <FontAwesome5 name="heart" size={12} color="#EC4899" />
-                        <Text className="text-pink-500 ml-2">연인과 함께한지 365일</Text>
+                        <Text className="text-pink-500 ml-2">{coupleRequestAccepted ? `연인과 함께한지 ${getDaysDifference(coupleRequestAccepted.firstMetDate)}일` : '연인을 등록해주세요.'}</Text>
                     </View>
                 </View>
             </View>
@@ -78,7 +83,7 @@ export default function ProfileHome() {
                     icon="heart"
                     iconColor="#EC4899"
                     items={[
-                        { label: "처음 만난 날", value: "2023.01.01", icon: "calendar-alt" },
+                        { label: "처음 만난 날", value: coupleRequestAccepted?.firstMetDate ? formatDate(coupleRequestAccepted.firstMetDate) : '처음 만난 날을 등록해주세요.', icon: "calendar-alt" },
                         { label: "함께한 일기", value: "123개", icon: "book" },
                         { label: "공유한 사진", value: "486장", icon: "images" },
                     ]}
@@ -90,7 +95,7 @@ export default function ProfileHome() {
                     icon="user"
                     iconColor="#EC4899"
                     items={[
-                        { label: "이메일", value: "user@example.com", icon: "envelope" },
+                        { label: "이메일", value: me.email, icon: "envelope" },
                         { label: "연인 코드", value: "LOVE123", icon: "key" },
                     ]}
                 />

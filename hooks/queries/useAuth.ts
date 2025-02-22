@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { signUp, login, getAccessToken, logout, getMe } from "../../api/auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { secureStorage } from "../../utils/expo.securestore";
 import queryClient from "../../api/queryClient";
 import { queryKeys, numbers } from "../../constants";
@@ -87,24 +87,34 @@ function useGetMe(queryOptions?: UseQueryCustomOptions) {
 }
 
 function useGetRefreshToken(queryOptions?: UseQueryCustomOptions) {
+    const [isEnabled, setIsEnabled] = useState(false);
+
+    useEffect(() => {
+        async function checkRefreshToken() {
+            const token = await secureStorage.getItem('refreshToken');
+            setIsEnabled(!!token);
+        }
+        checkRefreshToken();
+    }, []);
+
     return useQuery({
-        queryFn: async () => {
-            try {
-                const refreshToken = await secureStorage.getItem('refreshToken');
-                if (!refreshToken) {
-                    throw new Error('No refresh token');
-                }
-                return getAccessToken();
-            } catch (error) {
-                await secureStorage.removeItem('accessToken');
-                await secureStorage.removeItem('refreshToken');
-                throw error;
-            }
-        },
+        queryFn: getAccessToken,
         queryKey: [queryKeys.AUTH, queryKeys.GET_ACCESS_TOKEN],
         staleTime: numbers.ACCESS_TOKEN_REFRESH_TIME,
         refetchInterval: numbers.ACCESS_TOKEN_REFRESH_TIME,
         retry: false,
+        enabled: isEnabled,
+        onError: (error: any) => {
+            console.log('error', error);
+            if (error.response.status === 401) {
+                secureStorage.removeItem('accessToken');
+                secureStorage.removeItem('refreshToken');
+                queryClient.resetQueries({
+                    queryKey: [queryKeys.AUTH,queryKeys.GET_ME],
+                });
+                router.push('/auth');
+            }
+        },
         ...queryOptions,
     });
 }

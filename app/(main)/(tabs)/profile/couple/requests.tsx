@@ -1,35 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Link, router } from 'expo-router';
-
-interface CoupleRequest {
-  id: string;
-  senderName: string;
-  senderImage: string;
-  requestDate: string;
-}
-
-// 임시 데이터
-const dummyRequests: CoupleRequest[] = [
-  {
-    id: '1',
-    senderName: '김철수',
-    senderImage: 'https://via.placeholder.com/100',
-    requestDate: '2024-03-20',
-  },
-  {
-    id: '2',
-    senderName: '이영희',
-    senderImage: 'https://via.placeholder.com/100',
-    requestDate: '2024-03-19',
-  },
-];
+import useGetCoupleRequestPending from '@/hooks/queries/useGetCoupleRequestPending';
+import { Couple } from '@/types';
+import useAuth from '@/hooks/queries/useAuth';
 
 export default function CoupleRequestsPage() {
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [requests, setRequests] = React.useState<CoupleRequest[]>(dummyRequests);
+  const [isLoading, setIsLoading] = useState(false);
+  const { getMeQuery } = useAuth();
+  const { data: me } = getMeQuery;
+  const { data: coupleRequestPending } = useGetCoupleRequestPending();
+
+  const [requests, setRequests] = useState<Couple[]>(coupleRequestPending ?? []);
 
   const handleAcceptRequest = async (requestId: string) => {
     setIsLoading(true);
@@ -95,21 +79,22 @@ export default function CoupleRequestsPage() {
         ) : (
           <View className="p-4 space-y-4">
             {requests.map((request) => (
+              request.receiver.id === me?.id && (
               <View 
                 key={request.id} 
                 className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100"
               >
                 <View className="flex-row items-center">
                   <Image 
-                    source={{ uri: request.senderImage }} 
+                    source={require('@/assets/images/default-profile.png')} 
                     className="w-12 h-12 rounded-full"
                   />
                   <View className="ml-3 flex-1">
                     <Text className="font-semibold text-gray-900">
-                      {request.senderName}
+                      {request.sender.nickname}
                     </Text>
                     <Text className="text-gray-500 text-sm">
-                      {request.requestDate}
+                      {request.firstMetDate}
                     </Text>
                   </View>
                 </View>
@@ -117,21 +102,23 @@ export default function CoupleRequestsPage() {
                 <View className="flex-row justify-end mt-4 space-x-3">
                   <TouchableOpacity
                     className="px-4 py-2 rounded-xl bg-gray-100"
-                    onPress={() => handleRejectRequest(request.id)}
+                    onPress={() => handleRejectRequest(request.id.toString())}
                     disabled={isLoading}
                   >
                     <Text className="text-gray-700 font-medium">거절</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     className="px-4 py-2 rounded-xl bg-pink-500"
-                    onPress={() => handleAcceptRequest(request.id)}
+                    onPress={() => handleAcceptRequest(request.id.toString())}
                     disabled={isLoading}
                   >
                     <Text className="text-white font-medium">수락</Text>
                   </TouchableOpacity>
                 </View>
               </View>
-            ))}
+            )
+            ))
+          }
           </View>
         )}
       </ScrollView>

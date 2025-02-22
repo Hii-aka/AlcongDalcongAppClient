@@ -15,44 +15,25 @@ type LoginRequestBody = {
 };
 
 const signUp = async ({email, password, nickname, gender}: SignUpRequestBody) => {
-    try {
-        const {data} = await api.post<ApiResponse<string>>('auth/signup', {email, password, nickname, gender});
-        return data;
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
+    const {data} = await api.post<ApiResponse<string>>('auth/signup', {email, password, nickname, gender});
+    return data;
 };
 
 const login = async ({email, password}: LoginRequestBody) => {
-    try {
-        const {data} = await api.post<ApiResponse<string>>('auth/login', {email, password});
-        return data;
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-};
+    const {data} = await api.post<ApiResponse<string>>('auth/login', {email, password});
+    return data;
+};  
 
 const logout = async () => {
-    try {
-        const {data} = await api.delete<ApiResponse<string>>('auth/logout');
-        return data;
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
+    const {data} = await api.delete<ApiResponse<string>>('auth/logout');
+    return data;
 };
 
 const getMe = async () => {
-    try {
-        const {data} = await api.get<ApiResponse<Profile>>('auth/me');
-        return data;
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
+    const {data} = await api.get<ApiResponse<Profile>>('auth/me');
+    return data;
 };
+
 type RefreshTokenResponse = {
     accessToken: string;
     refreshToken: string;
@@ -60,17 +41,15 @@ type RefreshTokenResponse = {
 
 const getAccessToken = async () => {
     const refreshToken = await secureStorage.getItem('refreshToken');
-    try {
-        const {data} = await api.get<ApiResponse<RefreshTokenResponse>>('auth/refresh', {
-            headers: {
-                Authorization: `Bearer ${refreshToken}`
-            }
-        });
-        return data;
-    } catch (error) {   
-        console.error(error);
-        throw error;
+    if (!refreshToken) {
+        throw new Error('No refresh token');
     }
+    const {data} = await api.get<ApiResponse<RefreshTokenResponse>>('auth/refresh', {
+        headers: {
+            Authorization: `Bearer ${refreshToken}`
+        }
+    });
+        return data;
 };
 
 export {signUp, login, getAccessToken, logout, getMe};
