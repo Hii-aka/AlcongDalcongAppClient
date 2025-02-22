@@ -6,46 +6,31 @@ import { Link, router } from 'expo-router';
 import useGetCoupleRequestPending from '@/hooks/queries/useGetCoupleRequestPending';
 import { Couple } from '@/types';
 import useAuth from '@/hooks/queries/useAuth';
+import useRespondCoupleRequest from '@/hooks/queries/useRespondCoupleRequest';
 
 export default function CoupleRequestsPage() {
-  const [isLoading, setIsLoading] = useState(false);
   const { getMeQuery } = useAuth();
   const { data: me } = getMeQuery;
-  const { data: coupleRequestPending } = useGetCoupleRequestPending();
-
-  const [requests, setRequests] = useState<Couple[]>(coupleRequestPending ?? []);
+  const { data: requests, isLoading: isLoadingRequests } = useGetCoupleRequestPending();
+  const respondCoupleRequest = useRespondCoupleRequest();
 
   const handleAcceptRequest = async (requestId: string) => {
-    setIsLoading(true);
     try {
-      // TODO: API 호출로 커플 신청 수락 처리
-      // await acceptCoupleRequest(requestId);
-      
-      // 임시로 목록에서 제거
-      setRequests(prev => prev.filter(req => req.id !== requestId));
+      await respondCoupleRequest.mutateAsync({ requestId, accept: true });
     } catch (error) {
       console.error('커플 신청 수락 중 오류 발생:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleRejectRequest = async (requestId: string) => {
-    setIsLoading(true);
     try {
-      // TODO: API 호출로 커플 신청 거절 처리
-      // await rejectCoupleRequest(requestId);
-      
-      // 임시로 목록에서 제거
-      setRequests(prev => prev.filter(req => req.id !== requestId));
+      await respondCoupleRequest.mutateAsync({ requestId, accept: false });
     } catch (error) {
       console.error('커플 신청 거절 중 오류 발생:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  if (isLoading) {
+  if (isLoadingRequests || respondCoupleRequest.isPending) {
     return (
       <View className="flex-1 justify-center items-center bg-gray-50">
         <ActivityIndicator size="large" color="#EC4899" />
@@ -67,7 +52,7 @@ export default function CoupleRequestsPage() {
         </Pressable>
       </View>
       <ScrollView className="flex-1">
-        {requests.length === 0 ? (
+        {!requests || requests.length === 0 ? (
           <View className="flex-1 justify-center items-center py-20">
             <View className="w-20 h-20 bg-pink-100 rounded-full items-center justify-center mb-4">
               <FontAwesome5 name="heart" size={32} color="#EC4899" />
@@ -103,14 +88,14 @@ export default function CoupleRequestsPage() {
                   <TouchableOpacity
                     className="px-4 py-2 rounded-xl bg-gray-100"
                     onPress={() => handleRejectRequest(request.id.toString())}
-                    disabled={isLoading}
+                    disabled={isLoadingRequests || respondCoupleRequest.isPending}
                   >
                     <Text className="text-gray-700 font-medium">거절</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     className="px-4 py-2 rounded-xl bg-pink-500"
                     onPress={() => handleAcceptRequest(request.id.toString())}
-                    disabled={isLoading}
+                    disabled={isLoadingRequests || respondCoupleRequest.isPending}
                   >
                     <Text className="text-white font-medium">수락</Text>
                   </TouchableOpacity>
