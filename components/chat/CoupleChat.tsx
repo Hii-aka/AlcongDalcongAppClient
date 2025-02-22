@@ -1,54 +1,233 @@
-import {FlatList, Text, View} from "react-native";
-import {useRef, useState} from "react";
-import {Ionicons} from "@expo/vector-icons";
+import { FlatList, Text, View, Pressable, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
+import { useRef, useState, useCallback } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from 'expo-linear-gradient';
+import { COLORS, SHADOWS } from '@/constants/theme';
 import InputWindow from "@/components/chat/InputWindow";
-import {Message} from "@/app/(main)/(tabs)/chat";
+import { Message } from "@/app/(main)/(tabs)/chat";
+import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faRobot } from '@fortawesome/free-solid-svg-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import dayjs from 'dayjs';
+
+type ChatType = 'couple' | 'ai';
 
 const CoupleChat = () => {
+    const insets = useSafeAreaInsets();
+    const [chatType, setChatType] = useState<ChatType>('couple');
     const [messagesWithPartner, setMessagesWithPartner] = useState<Message[]>([
-        {id: 1, sender: "partner", text: "오늘 저녁에 뭐 먹을까?"},
-        {id: 2, sender: "me", text: "파스타 어때?"}
+        {id: 1, sender: "partner", text: "오늘 저녁에 뭐 먹을까?", timestamp: new Date().toISOString()},
+        {id: 2, sender: "me", text: "파스타 어때?", timestamp: new Date().toISOString()}
+    ]);
+    const [messagesWithAi, setMessagesWithAi] = useState<Message[]>([
+        {
+            id: 1, 
+            sender: "AI", 
+            text: "안녕하세요! 데이트 코스를 추천해 드릴까요? 원하시는 분위기나 선호하는 활동이 있다면 말씀해 주세요.", 
+            timestamp: new Date().toISOString()
+        }
     ]);
 
     const flatListRef = useRef<FlatList>(null);
+    const currentMessages = chatType === 'couple' ? messagesWithPartner : messagesWithAi;
+    const setCurrentMessages = chatType === 'couple' ? setMessagesWithPartner : setMessagesWithAi;
+
+    const scrollToBottom = useCallback(() => {
+        if (flatListRef.current) {
+            flatListRef.current.scrollToEnd({ animated: true });
+        }
+    }, []);
+
+    const renderMessageTime = (timestamp: string) => {
+        return dayjs(timestamp).format('HH:mm');
+    };
+
+    const renderQuickReplies = () => {
+        if (chatType !== 'ai') return null;
+
+        const suggestions = [
+            "로맨틱한 디너 코스",
+            "야외 데이트 추천",
+            "실내 데이트 코스",
+            "특별한 기념일"
+        ];
+
+        return (
+            <Animated.View 
+                entering={FadeIn.delay(300)}
+                className="flex-row flex-wrap justify-center gap-2 px-4 py-2"
+            >
+                {suggestions.map((suggestion, index) => (
+                    <TouchableOpacity
+                        key={index}
+                        className="bg-white/90 px-4 py-2 rounded-full border border-pink-100"
+                        style={SHADOWS.small}
+                    >
+                        <Text className="text-pink-500 font-medium">{suggestion}</Text>
+                    </TouchableOpacity>
+                ))}
+            </Animated.View>
+        );
+    };
 
     return (
-        <View className="flex-1 bg-gray-100 px-4">
-            <View className="bg-white rounded-lg p-4 shadow-md flex-1">
-                <View className="flex flex-row items-start mb-2">
-                    <View className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
-                        <Ionicons name="heart" size={18} color="#020202"/>
-                    </View>
-                    <View className="ml-2">
-                        <Text className="text-lg font-bold">연인과의 대화</Text>
-                        <Text className="text-sm text-gray-500">실시간 채팅</Text>
-                    </View>
-                </View>
-
-                <FlatList
-                    ref={flatListRef}
-                    data={messagesWithPartner}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({item}) => (
-                        <View className={item.sender === 'me' ? "" : "flex flex-row gap-2 items-start"}>
-                            {item.sender !== 'me' && (
-                                <View className="w-8 h-8 rounded-full bg-pink-200 flex items-center justify-center">
-                                    <Ionicons name="heart" size={12} color="#FFFFFF"/>
-                                </View>
-                            )}
-                            <View
-                                className={`p-2 rounded-lg mb-2 ${item.sender === 'me' ? 'bg-black self-end' : 'bg-gray-300 self-start'}`}>
-                                <Text className={item.sender === 'me' ? "text-white" : "text-black"}>{item.text}</Text>
-                            </View>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            className="flex-1"
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        >
+            <View className="flex-1">
+                <LinearGradient
+                    colors={[COLORS.backgroundAlt, COLORS.background]}
+                    className="flex-1 px-4 pt-4"
+                    style={{ paddingBottom: insets.bottom + 90 }}
+                >
+                    <Animated.View 
+                        entering={FadeInDown.duration(600)}
+                        className="flex-1 bg-white/80 rounded-3xl shadow-sm border border-pink-100 overflow-hidden"
+                    >
+                        {/* 채팅 타입 선택 */}
+                        <View className="flex-row border-b border-pink-100">
+                            <Pressable 
+                                className={`flex-1 py-4 px-6 flex-row items-center justify-center ${
+                                    chatType === 'couple' ? 'border-b-2 border-pink-500' : ''
+                                }`}
+                                onPress={() => setChatType('couple')}
+                            >
+                                <Ionicons 
+                                    name="heart" 
+                                    size={18} 
+                                    color={chatType === 'couple' ? COLORS.love : COLORS.textLight}
+                                />
+                                <Text className={`ml-2 font-semibold ${
+                                    chatType === 'couple' ? 'text-pink-500' : 'text-gray-500'
+                                }`}>
+                                    연인과 대화
+                                </Text>
+                            </Pressable>
+                            <Pressable 
+                                className={`flex-1 py-4 px-6 flex-row items-center justify-center ${
+                                    chatType === 'ai' ? 'border-b-2 border-pink-500' : ''
+                                }`}
+                                onPress={() => setChatType('ai')}
+                            >
+                                <FontAwesomeIcon 
+                                    icon={faRobot} 
+                                    size={18} 
+                                    color={chatType === 'ai' ? COLORS.love : COLORS.textLight}
+                                />
+                                <Text className={`ml-2 font-semibold ${
+                                    chatType === 'ai' ? 'text-pink-500' : 'text-gray-500'
+                                }`}>
+                                    AI 어시스턴트
+                                </Text>
+                            </Pressable>
                         </View>
-                    )}
-                    style={{flex: 1}}
-                    contentContainerStyle={{flexGrow: 1, justifyContent: 'flex-start', paddingBottom: 60}}
-                />
 
-                <InputWindow setMessages={setMessagesWithPartner} flatListRef={flatListRef} placeholder="메시지를 입력하세요"/>
+                        {/* 헤더 */}
+                        <LinearGradient
+                            colors={[COLORS.love, COLORS.primary]}
+                            className="px-4 py-3 flex-row items-center"
+                        >
+                            <View className="w-10 h-10 rounded-full bg-white/20 items-center justify-center">
+                                {chatType === 'couple' ? (
+                                    <Ionicons name="heart" size={20} color="#FFFFFF"/>
+                                ) : (
+                                    <FontAwesomeIcon icon={faRobot} size={20} color="#FFFFFF"/>
+                                )}
+                            </View>
+                            <View className="ml-3 flex-1">
+                                <Text className="text-lg font-bold text-white">
+                                    {chatType === 'couple' ? '연인과의 대화' : 'AI 어시스턴트'}
+                                </Text>
+                                <Text className="text-sm text-white/80">
+                                    {chatType === 'couple' ? '실시간 채팅' : '데이트 코스 추천받기'}
+                                </Text>
+                            </View>
+                            <TouchableOpacity 
+                                className="w-10 h-10 rounded-full bg-white/20 items-center justify-center active:opacity-70"
+                                style={SHADOWS.small}
+                            >
+                                <Ionicons 
+                                    name={chatType === 'couple' ? "images" : "bulb"} 
+                                    size={20} 
+                                    color="#FFFFFF"
+                                />
+                            </TouchableOpacity>
+                        </LinearGradient>
+
+                        {/* 메시지 목록 */}
+                        <FlatList
+                            ref={flatListRef}
+                            data={currentMessages}
+                            keyExtractor={(item) => item.id.toString()}
+                            className="flex-1 px-4"
+                            onContentSizeChange={scrollToBottom}
+                            onLayout={scrollToBottom}
+                            showsVerticalScrollIndicator={false}
+                            renderItem={({item, index}) => (
+                                <Animated.View 
+                                    entering={FadeInDown.delay(index * 100).duration(400)}
+                                    className={item.sender === 'me' ? "items-end" : "items-start"}
+                                >
+                                    <View className="flex-row items-end mb-4 max-w-[80%]">
+                                        {item.sender !== 'me' && (
+                                            <View className="mr-2">
+                                                <View className={`w-8 h-8 rounded-full items-center justify-center ${
+                                                    chatType === 'couple' ? 'bg-pink-100' : 'bg-blue-100'
+                                                }`}>
+                                                    {chatType === 'couple' ? (
+                                                        <Ionicons name="heart" size={16} color={COLORS.love}/>
+                                                    ) : (
+                                                        <FontAwesomeIcon icon={faRobot} size={16} color={COLORS.secondary}/>
+                                                    )}
+                                                </View>
+                                            </View>
+                                        )}
+                                        <View>
+                                            <View
+                                                className={`p-3 rounded-2xl ${
+                                                    item.sender === 'me' 
+                                                        ? 'bg-pink-500' 
+                                                        : `bg-white border ${chatType === 'couple' ? 'border-pink-100' : 'border-blue-100'}`
+                                                }`}
+                                                style={SHADOWS.small}
+                                            >
+                                                <Text 
+                                                    className={`${item.sender === 'me' ? "text-white" : "text-gray-800"} text-[15px]`}
+                                                >
+                                                    {item.text}
+                                                </Text>
+                                            </View>
+                                            <Text className={`text-xs text-gray-500 mt-1 ${
+                                                item.sender === 'me' ? 'text-right' : 'text-left'
+                                            }`}>
+                                                {renderMessageTime(item.timestamp)}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                </Animated.View>
+                            )}
+                            contentContainerStyle={{
+                                flexGrow: 1,
+                                paddingVertical: 16,
+                            }}
+                            ListHeaderComponent={chatType === 'ai' ? renderQuickReplies : null}
+                        />
+
+                        {/* 입력창 */}
+                        <View className="px-4 py-3 border-t border-pink-100 bg-white">
+                            <InputWindow 
+                                setMessages={setCurrentMessages}
+                                flatListRef={flatListRef} 
+                                placeholder={chatType === 'couple' ? "메시지를 입력하세요" : "AI에게 질문하기"}
+                            />
+                        </View>
+                    </Animated.View>
+                </LinearGradient>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

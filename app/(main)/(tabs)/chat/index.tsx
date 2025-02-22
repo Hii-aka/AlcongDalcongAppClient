@@ -14,9 +14,7 @@ export default function ChatHome() {
             <View className="flex-1">
                 <CoupleChat/>
             </View>
-            <View className="flex-1 border-t border-gray-300">
-                <AiChat/>
-            </View>
+            
         </SafeAreaView>
     );
 }
