@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, Image, Pressable, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, Image, Pressable, ScrollView, SafeAreaView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DiaryList from '@/components/diary/DiaryList';
 import { ProfileCard } from '@/components/diary/ProfileCard';
@@ -43,7 +43,7 @@ export default function DiaryHome() {
         <Pressable 
           className="flex-row items-center py-2 px-4 rounded-full bg-white"
           style={SHADOWS.small}
-          onPress={() => router.push('/diary/all')}
+          onPress={() => router.push('diary/all' as any)}
         >
           <Text className="text-base font-medium text-gray-600 mr-1">
             전체보기
@@ -75,7 +75,7 @@ export default function DiaryHome() {
               <Pressable
                 className="mt-6 bg-white rounded-full py-3 px-6 border border-pink-100"
                 style={SHADOWS.small}
-                onPress={() => router.push('/connect')}
+                onPress={() => router.push('connect' as any)}
               >
                 <Text className="text-base font-semibold text-pink-500">
                   연인 연결하기
@@ -91,21 +91,35 @@ export default function DiaryHome() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <LinearGradient
-        colors={[COLORS.backgroundAlt, COLORS.background]}
+        colors={[COLORS.backgroundAlt, COLORS.background] as readonly [string, string]}
         className="flex-1"
       >
         <DiaryList 
           ListHeaderComponent={HeaderComponent}
-          contentContainerStyle={{ paddingBottom: 24 }}
+          contentContainerStyle={{ 
+            paddingBottom: Platform.OS === 'ios' ? 120 : 100 
+          }}
         />
         <Pressable
-          className="absolute right-6 bottom-6 w-14 h-14 rounded-full bg-pink-500 items-center justify-center"
-          style={SHADOWS.medium}
+          className={`absolute right-6 items-center justify-center ${Platform.OS === 'ios' ? 'bottom-24' : 'bottom-20'}`}
+          style={[
+            SHADOWS.medium,
+            {
+              width: 56,
+              height: 56,
+              borderRadius: 28,
+              backgroundColor: COLORS.love,
+            }
+          ]}
           onPress={() => router.push('/diary/post')}
         >
+          <LinearGradient
+            colors={[COLORS.love, COLORS.primary] as readonly [string, string]}
+            className="absolute w-full h-full rounded-full"
+          />
           <Ionicons name="add" size={32} color="white" />
-          <View className="absolute -right-1 -top-1">
-            <Ionicons name="heart" size={16} color={COLORS.love} />
+          <View className="absolute -right-1 -top-1 bg-white rounded-full p-1">
+            <Ionicons name="heart" size={14} color={COLORS.love} />
           </View>
         </Pressable>
       </LinearGradient>

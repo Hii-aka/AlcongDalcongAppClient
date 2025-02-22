@@ -1,41 +1,43 @@
-import React from 'react';
-import { TextInputProps} from 'react-native';
-import InputField from './InputField';
+import React, { useState } from 'react';
+import { View, TextInput, Pressable } from 'react-native';
 import { useFormContext } from 'react-hook-form';
-import { Controller } from 'react-hook-form';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '@/constants/theme';
 
+export default function PasswordConfirmInput() {
+  const [isSecure, setIsSecure] = useState(true);
+  const { register, setValue, watch } = useFormContext();
+  const password = watch('password');
 
-function PasswordConfirmInput() {  
-    const {control} = useFormContext();       
-    const {watch} = useFormContext();
-    const password = watch('password');
+  React.useEffect(() => {
+    register('passwordConfirm', {
+      required: '비밀번호를 한번 더 입력해주세요',
+      validate: (value: string) =>
+        value === password || '비밀번호가 일치하지 않습니다',
+    });
+  }, [register, password]);
+
   return (
-    <Controller
-        control={control}
-        name="passwordConfirm"
-        rules={{
-            validate: (data: string) => {
-                if (!data) return '비밀번호를 입력해주세요.';
-                if (data !== password) return '비밀번호가 일치하지 않습니다.';
-                return true;
-            },
-        }}
-        render={({field: {ref,onChange, value}, fieldState: {error}}) => (
-            <InputField
-                ref={ref}   
-                label="비밀번호 확인"
-                placeholder="비밀번호를 입력해주세요."
-                inputMode="text"
-                secureTextEntry
-                onChangeText={onChange}
-                textContentType="oneTimeCode"
-                value={value}
-                error={error?.message}
-            />
-        )}
-    />
-  )
-}
-
-
-export default PasswordConfirmInput;   
+    <View className="relative">
+      <TextInput
+        className="w-full px-4 py-3 text-base text-gray-800"
+        placeholder="비밀번호를 한번 더 입력해주세요"
+        placeholderTextColor="#9CA3AF"
+        secureTextEntry={isSecure}
+        onChangeText={(text) => setValue('passwordConfirm', text, { shouldValidate: true })}
+        returnKeyType="done"
+        autoCapitalize="none"
+      />
+      <Pressable 
+        className="absolute right-3 top-3"
+        onPress={() => setIsSecure(!isSecure)}
+      >
+        <Ionicons
+          name={isSecure ? 'eye-off' : 'eye'}
+          size={24}
+          color={COLORS.love}
+        />
+      </Pressable>
+    </View>
+  );
+}   
