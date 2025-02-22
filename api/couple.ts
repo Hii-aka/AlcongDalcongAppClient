@@ -15,4 +15,14 @@ const getCoupleAccepted = async () => {
     return data;
 };
 
-export {createCouple, getCouplePending, getCoupleAccepted};
+type RespondCoupleRequest = {
+    requestId: string;
+    accept: boolean;
+};
+
+const respondCoupleRequest = async ({requestId, accept}: RespondCoupleRequest) => {
+    const {data} = await api.post<ApiResponse<string>>(`couples/request/${requestId}/respond`, {accept});
+    return data;
+};
+
+export {createCouple, getCouplePending, getCoupleAccepted, respondCoupleRequest};
