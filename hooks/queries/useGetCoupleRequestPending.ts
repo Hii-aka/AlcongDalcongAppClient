@@ -9,7 +9,7 @@ function useGetCoupleRequestPending() {
     return useQuery({
         queryKey: [queryKeys.COUPLE_REQUEST_PENDING],
         queryFn: getCouplePending,
-        enabled: me.coupleStatus === 'not_coupled',
+        enabled: me?.coupleStatus === 'not_coupled',
     });
 }
 

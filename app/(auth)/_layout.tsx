@@ -7,12 +7,14 @@ export default function AuthLayout() {
         name="index"
         options={{
           title: '로그인',
+          headerShown: false,
         }}
       />
       <Stack.Screen
         name="signup"
         options={{
           title: '회원가입',
+          headerShown: false,
         }}
       />
     </Stack>

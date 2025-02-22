@@ -1,6 +1,3 @@
-export * from './domain';
-export * from './common';
-
 // Anniversary related types
 export interface Anniversary {
   days: number;
@@ -13,4 +10,4 @@ export interface AnniversaryCalculatorProps {
   onSelectDate?: (date: Anniversary) => void;
 }
 
-// Add other types here...
+// Add other types here... 
