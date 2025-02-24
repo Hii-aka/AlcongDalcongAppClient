@@ -4,15 +4,15 @@
 알콩달콩은 연인들을 위한 스마트한 다이어리 앱입니다. 소중한 추억을 기록하고, 데이트 일정을 관리하며, AI 기반의 데이트 장소 추천 기능을 제공합니다.
 
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-    <img src="https://github.com/user-attachments/assets/cf82ef27-fae4-4429-8871-95d835050e1d" width="250" />
-    <img src="https://github.com/user-attachments/assets/8a9a1164-8e82-4b28-a16f-78774c1d8a5f" width="250" />
-    <img src="https://github.com/user-attachments/assets/80870d16-4eed-4270-98f6-3ed8e8789632" width="250" />
-    <img src="https://github.com/user-attachments/assets/17bee6f0-4fa2-442f-be2b-ade8d1aab4d4" width="250" />
-    <img src="https://github.com/user-attachments/assets/7eee2724-26e4-46a8-8728-87c6e62d4fc0" width="250" />
-    <img src="https://github.com/user-attachments/assets/6ee2f0cf-9170-43e2-97d1-505274eb1070" width="250" />
-    <img src="https://github.com/user-attachments/assets/723400be-b6eb-4a50-9cb4-e6b9211f2855" width="250" />
-    <img src="https://github.com/user-attachments/assets/0e278b54-2adc-4ffd-883d-04389c2136be" width="250" />
-    <img src="https://github.com/user-attachments/assets/ca5a2ca8-a8da-4462-afc0-df8d60add4db" width="250" />
+    <img src="https://github.com/user-attachments/assets/aa122848-2a36-4ce8-b63f-9f42fa3fdd0d" width="250" /> 
+    <img src="https://github.com/user-attachments/assets/1aa26c1b-eb8a-4e30-bad0-1d653ea9addf" width="250" />
+    <img src="https://github.com/user-attachments/assets/b69a9c33-bf30-4577-8af6-8c2193d5df3a" width="250" />
+    <img src="https://github.com/user-attachments/assets/53c63a98-20f3-421a-b94a-0ca3ef0c78eb" width="250" />
+    <img src="https://github.com/user-attachments/assets/aa23c305-5f58-4bbe-b19d-63bfeb93b19d" width="250" />
+    <img src="https://github.com/user-attachments/assets/e8c62ef9-606d-43ec-b8d5-31a7e0fde1f2" width="250" />
+    <img src="https://github.com/user-attachments/assets/b74f6dc8-18d8-4313-a1b3-36374d1be7d1" width="250" />
+    <img src="https://github.com/user-attachments/assets/7cd1e560-5cee-4575-9869-93ad79c68f9f" width="250" />
+    <img src="https://github.com/user-attachments/assets/37c0fa71-b504-401e-aed5-78e0ca94c187" width="250" />
 </div>
 
 ## 주요 기능 ✨
