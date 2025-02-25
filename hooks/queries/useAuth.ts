@@ -56,7 +56,10 @@ function useLogin(mutationOptions?: UseMutationCustomOptions) {
                 await secureStorage.setItem('refreshToken', data.tokens.refreshToken);
         },
         onSettled: () => {
-            queryClient.fetchQuery({
+            queryClient.refetchQueries({
+                queryKey: [queryKeys.AUTH, queryKeys.GET_ACCESS_TOKEN],
+            });
+            queryClient.invalidateQueries({
                 queryKey: [queryKeys.AUTH, queryKeys.GET_ME],
             });
         },
@@ -93,7 +96,8 @@ function useGetRefreshToken() {
         queryKey: [queryKeys.AUTH, queryKeys.GET_ACCESS_TOKEN],
         staleTime: numbers.ACCESS_TOKEN_REFRESH_TIME,
         refetchInterval: numbers.ACCESS_TOKEN_REFRESH_TIME,
-        retry: false,
+        refetchOnReconnect: true,
+        refetchIntervalInBackground: true,
     });
 
     useEffect(() => {
@@ -131,6 +135,7 @@ function useAuth() {
         loginMutation,
         logoutMutation,
         getMeQuery,
+        refreshTokenQuery,
     }
 }
 

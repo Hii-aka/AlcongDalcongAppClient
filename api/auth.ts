@@ -49,7 +49,7 @@ const getAccessToken = async () => {
             Authorization: `Bearer ${refreshToken}`,
         }
     });
-        return data;
+    return data;
 };
 
 export {signUp, login, getAccessToken, logout, getMe};

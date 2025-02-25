@@ -1,8 +1,8 @@
 import ky from 'ky';
 import { Platform } from 'react-native';
 import { secureStorage } from '../utils/expo.securestore';
-import useAuth from '@/hooks/queries/useAuth';
-const BASE_URL = Platform.OS === 'android' 
+import { getAccessToken } from './auth';
+  const BASE_URL = Platform.OS === 'android' 
   ? 'http://10.0.2.2:3000' 
   : 'http://localhost:3000';
 
@@ -26,8 +26,35 @@ export const client = ky.create({
         // 응답 처리
         if (!response.ok) {
           // 에러 처리
-          console.log('error', response.status);
-          
+        }
+        if (response.status === 401) {
+          // useAuth 훅 대신 직접 refresh 토큰 로직을 구현
+          try {
+            const refreshToken = await secureStorage.getItem('refreshToken');
+            if (refreshToken) {
+              const response = await fetch(`${BASE_URL}/auth/refresh`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${refreshToken}`,
+                },
+              });
+              
+              if (response.ok) {
+                const { data } = await response.json();
+                if (data.accessToken) {
+                  await secureStorage.setItem('accessToken', data.accessToken);
+                }
+                if (data.refreshToken) {
+                  await secureStorage.setItem('refreshToken', data.refreshToken);
+                }
+                request.headers.set('Authorization', `Bearer ${data.accessToken}`);
+                return client(request);
+              }
+            }
+          } catch (error) {
+            console.error('Token refresh failed:', error);
+          }
         }
         return response;
       }

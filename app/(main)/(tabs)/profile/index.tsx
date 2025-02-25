@@ -10,7 +10,7 @@ import { getDaysDifference, formatDate } from "@/utils";
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SHADOWS } from '@/constants/theme';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-
+import AuthRoute from "@/components/common/AuthRoute";
 export default function ProfileHome() {
     const router = useRouter();
     const { logoutMutation } = useAuth();
@@ -18,11 +18,6 @@ export default function ProfileHome() {
     const { getMeQuery } = useAuth();
 
     const { data: me } = getMeQuery as { data: Profile };
-
-    if (!me) {
-        router.replace("/");
-        return null;
-    }
 
     const { data: coupleRequestPending } = useGetCoupleRequestPending();
     const { data: coupleRequestAccepted } = useGetCoupleRequestAccepted();
@@ -43,9 +38,10 @@ export default function ProfileHome() {
     };
 
     return (
-        <ScrollView 
-            className="flex-1 bg-white"
-            contentContainerStyle={{
+        <AuthRoute>
+            <ScrollView 
+                className="flex-1 bg-white"
+                contentContainerStyle={{
                 paddingBottom: insets.bottom + 120
             }}
         >
@@ -168,6 +164,7 @@ export default function ProfileHome() {
                 </View>
             </LinearGradient>
         </ScrollView>
+        </AuthRoute>
     );
 }
 
