@@ -36,7 +36,7 @@ export default function ProfileHome() {
                 { 
                     text: "로그아웃", 
                     style: "destructive",
-                    onPress: () => logoutMutation.mutate({}) 
+                    onPress: () => logoutMutation.mutate(null) 
                 }
             ]
         );

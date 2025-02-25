@@ -56,8 +56,8 @@ function useLogin(mutationOptions?: UseMutationCustomOptions) {
                 await secureStorage.setItem('refreshToken', data.tokens.refreshToken);
         },
         onSettled: () => {
-            queryClient.refetchQueries({
-                queryKey: [queryKeys.AUTH],
+            queryClient.fetchQuery({
+                queryKey: [queryKeys.AUTH, queryKeys.GET_ME],
             });
         },
         ...mutationOptions,
@@ -73,6 +73,7 @@ function useLogout(mutationOptions?: UseMutationCustomOptions) {
             queryClient.resetQueries({
                 queryKey: [queryKeys.AUTH],
             });
+            router.replace('/');
         },
         ...mutationOptions,
     });
@@ -86,37 +87,32 @@ function useGetMe(queryOptions?: UseQueryCustomOptions) {
     });
 }
 
-function useGetRefreshToken(queryOptions?: UseQueryCustomOptions) {
-    const [isEnabled, setIsEnabled] = useState(false);
-
-    useEffect(() => {
-        async function checkRefreshToken() {
-            const token = await secureStorage.getItem('refreshToken');
-            setIsEnabled(!!token);
-        }
-        checkRefreshToken();
-    }, []);
-
-    return useQuery({
+function useGetRefreshToken() {
+    const {data, isSuccess, isError, isPending} = useQuery({
         queryFn: getAccessToken,
         queryKey: [queryKeys.AUTH, queryKeys.GET_ACCESS_TOKEN],
         staleTime: numbers.ACCESS_TOKEN_REFRESH_TIME,
         refetchInterval: numbers.ACCESS_TOKEN_REFRESH_TIME,
         retry: false,
-        enabled: isEnabled,
-        onError: (error: any) => {
-            console.log('error', error);
-            if (error.response.status === 401) {
-                secureStorage.removeItem('accessToken');
-                secureStorage.removeItem('refreshToken');
-                queryClient.resetQueries({
-                    queryKey: [queryKeys.AUTH,queryKeys.GET_ME],
-                });
-                router.push('/auth');
-            }
-        },
-        ...queryOptions,
     });
+
+    useEffect(() => {
+        if (isSuccess) {
+            secureStorage.setItem('accessToken', data.accessToken);
+            if (data.refreshToken) {
+                secureStorage.setItem('refreshToken', data.refreshToken);
+            }
+        }
+    }, [isSuccess]);
+
+    useEffect(() => {
+        if (isError) {
+            secureStorage.removeItem('accessToken');
+            secureStorage.removeItem('refreshToken');
+        }
+    }, [isError]);
+
+    return {isSuccess, isError, isPending};
 }
 
 function useAuth() {

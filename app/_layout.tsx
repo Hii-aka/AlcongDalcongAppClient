@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { COLORS } from '@/constants/theme';
 import queryClient from '@/api/queryClient';
-
+import Toast from 'react-native-toast-message';
 export default function RootLayout() {
     return (
         <QueryClientProvider client={queryClient}>
@@ -27,6 +27,7 @@ export default function RootLayout() {
                             }}
                         />
                     </Stack>
+                    <Toast />
                 </SafeAreaProvider>
             </GestureHandlerRootView>
         </QueryClientProvider>
