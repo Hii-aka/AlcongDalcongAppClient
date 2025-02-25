@@ -44,7 +44,6 @@ export default function Signup() {
   const {signUpMutation} = useAuth();
 
   const onSubmit = async (data: SignupForm) => {
-    console.log(data);
     const {email, password, nickname, gender} = data;
     signUpMutation.mutate({email, password, nickname, gender});
   };

@@ -1,6 +1,5 @@
 import { createCouple } from "@/api/couple";
 import { useMutation } from "@tanstack/react-query";
-import { ApiResponse } from "@/types";
 import Toast from "react-native-toast-message";
 interface CreateCoupleVariables {
   receiverEmail: string;
@@ -8,7 +7,7 @@ interface CreateCoupleVariables {
 }
 
 function useCreateCouple() {
-    return useMutation<ApiResponse<string>, Error, CreateCoupleVariables>({
+    return useMutation({
         mutationFn: createCouple,
         onSuccess: (data) => {
             console.log(data);

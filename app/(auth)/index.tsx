@@ -17,13 +17,7 @@ type LoginForm = {
 };
 
 export default function AuthHome() {
-  const {loginMutation, isAuthenticated} = useAuth();
-  
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/(main)/(tabs)/diary');
-    }
-  }, [isAuthenticated]);
+  const {loginMutation} = useAuth();
 
   const loginForm = useForm<LoginForm>({
     defaultValues: {

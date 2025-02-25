@@ -46,10 +46,10 @@ const getAccessToken = async () => {
     }
     const {data} = await api.get<ApiResponse<RefreshTokenResponse>>('auth/refresh', {
         headers: {
-            Authorization: `Bearer ${refreshToken}`
+            Authorization: `Bearer ${refreshToken}`,
         }
     });
-        return data;
+    return data;
 };
 
 export {signUp, login, getAccessToken, logout, getMe};
