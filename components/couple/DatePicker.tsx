@@ -4,17 +4,20 @@ import { Controller, useFormContext } from "react-hook-form";
 import { MaterialIcons } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import DateTimePicker from '@react-native-community/datetimepicker';
-
+import { Profile } from '@/types';
+import useGetCoupleRequestAccepted from '@/hooks/queries/useGetCoupleRequestAccepted';
 // DatePickerModal 컴포넌트를 별도로 분리
 interface DatePickerModalProps {
   visible: boolean;
+  value: Date;
+  isConnected?: boolean;
+  partner?: Profile | null;
   onClose: () => void;
   onConfirm: () => void;
-  value: Date;
   onChange: (event: any, date?: Date) => void;
 }
 
-function DatePickerModal({ visible, onClose, onConfirm, value, onChange }: DatePickerModalProps) {
+function DatePickerModal({ visible, onClose, onConfirm, value, onChange, isConnected = false, partner = null }: DatePickerModalProps) {
   if (Platform.OS === 'android') {
     return visible ? (
       <DateTimePicker
@@ -66,12 +69,13 @@ function DatePickerModal({ visible, onClose, onConfirm, value, onChange }: DateP
 }
 
 // 메인 DatePicker 컴포넌트
-export default function DatePicker() {
+export default function DatePicker({isConnected = false, partner = null}: {isConnected?: boolean, partner?: Profile | null}) {
   const [showPicker, setShowPicker] = useState(false);
   const { control, setValue, watch } = useFormContext();
   const selectedDate = watch('firstMetDate');
   const [tempDate, setTempDate] = useState<Date | null>(null);
 
+  const { data: coupleRequestAccepted } = useGetCoupleRequestAccepted();
   const handleDateChange = (event: any, date?: Date) => {
     if (Platform.OS === 'android') {
       setShowPicker(false);
@@ -114,11 +118,11 @@ export default function DatePicker() {
           </Text>
           <Pressable 
             className="flex-row items-center border border-gray-200 rounded-xl px-4 py-3 bg-gray-50"
-            onPress={handlePress}
+            onPress={isConnected ? undefined : handlePress}
           >
             <MaterialIcons name="calendar-today" size={20} color="#9CA3AF" />
             <Text className="flex-1 ml-2 text-base">
-              {selectedDate ? dayjs(selectedDate).format('YYYY년 MM월 DD일') : '날짜를 선택하세요'}
+              {isConnected ? coupleRequestAccepted?.firstMetDate ? dayjs(coupleRequestAccepted.firstMetDate).format('YYYY년 MM월 DD일') : '날짜를 선택하세요' : selectedDate ? dayjs(selectedDate).format('YYYY년 MM월 DD일') : '날짜를 선택하세요'}
             </Text>
           </Pressable>
 
@@ -145,10 +149,11 @@ export default function DatePicker() {
                   </View>
                   <View className="items-center justify-center py-2">
                     <DateTimePicker
-                      value={tempDate || new Date()}
+                      disabled={isConnected}
+                      value={isConnected ? coupleRequestAccepted?.firstMetDate ? new Date(coupleRequestAccepted.firstMetDate) : new Date() : tempDate || new Date()}
                       mode="date"
                       display="spinner"
-                      onChange={handleDateChange}
+                      onChange={isConnected ? undefined : handleDateChange}
                       locale="ko"
                       style={{ width: '100%', height: 200 }}
                       textColor="#000000"
@@ -161,10 +166,11 @@ export default function DatePicker() {
           ) : (
             showPicker && (
               <DateTimePicker
-                value={selectedDate ? new Date(selectedDate) : new Date()}
+                disabled={isConnected}
+                value={isConnected ? coupleRequestAccepted?.firstMetDate ? new Date(coupleRequestAccepted.firstMetDate) : new Date() : selectedDate ? new Date(selectedDate) : new Date()}
                 mode="date"
                 display="default"
-                onChange={handleDateChange}
+                onChange={isConnected ? undefined : handleDateChange}
                 locale="ko"
                 maximumDate={new Date()}
               />
