@@ -4,16 +4,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Link, router } from 'expo-router';
 import useGetCoupleRequestPending from '@/hooks/queries/useGetCoupleRequestPending';
-import { Couple } from '@/types';
+import { Couple, ProfileWithCouple } from '@/types';
 import useAuth from '@/hooks/queries/useAuth';
 import useRespondCoupleRequest from '@/hooks/queries/useRespondCoupleRequest';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SHADOWS } from '@/constants/theme';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import Toast from 'react-native-toast-message';
+import CoupleTab from '@/components/couple/CoupleTab';
+
 export default function CoupleRequestsPage() {
   const { getMeQuery } = useAuth();
-  const { data: me } = getMeQuery;
+  const { data: {user, partner} } = getMeQuery as {data: ProfileWithCouple};
   const { data: requests, isLoading: isLoadingRequests } = useGetCoupleRequestPending();
   const respondCoupleRequest = useRespondCoupleRequest();
 
@@ -28,8 +30,6 @@ export default function CoupleRequestsPage() {
       console.error('커플 신청 수락 중 오류 발생:', error);
     }
   };
-
-  console.log('requests', requests);
 
   const handleRejectRequest = async (requestId: string) => {
     try {
@@ -58,15 +58,15 @@ export default function CoupleRequestsPage() {
         className="flex-1"
       >
         <View className="flex-row border-b border-pink-100 bg-white/80 mt-2">
-          <Pressable 
-            className="flex-1 py-4 items-center"
-            onPress={() => router.navigate("/profile/couple")}
-          >
-            <Text className="text-gray-500">커플 연결하기</Text>
-          </Pressable>
-          <Pressable className="flex-1 py-4 items-center border-b-2 border-pink-500">
-            <Text className="text-pink-500 font-semibold">받은 신청</Text>
-          </Pressable>
+          <CoupleTab 
+            isActive={false} 
+            label={partner ? "커플 정보" : "커플 연결하기"} 
+            onPress={() => router.push("/(main)/(tabs)/profile/couple")}
+          />
+          <CoupleTab 
+            isActive
+            label="받은 신청" 
+            />
         </View>
 
         <ScrollView className="flex-1">
@@ -89,7 +89,7 @@ export default function CoupleRequestsPage() {
           ) : (
             <View className="p-6 space-y-4">
               {requests.map((request) => (
-                request.receiver.id === me?.id && (
+                request.receiver.id === user.id && (
                   <Animated.View 
                     key={request.id}
                     entering={FadeInDown.duration(600)}

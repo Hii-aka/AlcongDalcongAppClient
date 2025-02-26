@@ -9,6 +9,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SHADOWS } from '@/constants/theme';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import useAuth from '@/hooks/queries/useAuth';
+import { ProfileWithCouple } from '@/types';
+
 type ProfileForm = {
   nickname: string;
   statusMessage: string;
@@ -16,14 +18,14 @@ type ProfileForm = {
 
 export default function ProfileEdit() {
   const { getMeQuery } = useAuth();
-  const { data: me } = getMeQuery;
+  const { data: {user, partner} } = getMeQuery as { data: ProfileWithCouple};
   const [profileImage, setProfileImage] = useState<string | null>(
-    me?.profileImage || require('@/assets/images/default-profile.png')
+    user.profileImage || require('@/assets/images/default-profile.png')
   );
 
   const form = useForm<ProfileForm>({
     defaultValues: {
-      nickname: me?.nickname || '',
+      nickname: user.nickname || '',
       statusMessage: '행복한 하루 보내세요',
     },
   });

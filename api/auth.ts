@@ -1,6 +1,6 @@
 import { api } from "./ky";
 import { secureStorage } from "../utils/expo.securestore";
-import { Profile, ApiResponse } from "@/types";
+import { Profile, ApiResponse, ProfileWithCouple } from "@/types";
 
 type SignUpRequestBody = {
     email: string;
@@ -30,7 +30,7 @@ const logout = async () => {
 };
 
 const getMe = async () => {
-    const {data} = await api.get<ApiResponse<Profile>>('auth/me');
+    const {data} = await api.get<ApiResponse<ProfileWithCouple>>('auth/me');
     return data;
 };
 

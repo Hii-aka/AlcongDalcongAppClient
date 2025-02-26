@@ -3,7 +3,7 @@ import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
 import useAuth from "../../../../hooks/queries/useAuth";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Profile } from "@/types";
+import { ProfileWithCouple, ApiResponse } from "@/types";
 import useGetCoupleRequestPending from "../../../../hooks/queries/useGetCoupleRequestPending";
 import useGetCoupleRequestAccepted from "../../../../hooks/queries/useGetCoupleRequestAccepted";
 import { getDaysDifference, formatDate } from "@/utils";
@@ -17,8 +17,7 @@ export default function ProfileHome() {
     const insets = useSafeAreaInsets();
     const { getMeQuery } = useAuth();
 
-    const { data: me } = getMeQuery as { data: Profile };
-
+    const { data: {user, partner} } = getMeQuery as { data: ProfileWithCouple};
     const { data: coupleRequestPending } = useGetCoupleRequestPending();
     const { data: coupleRequestAccepted } = useGetCoupleRequestAccepted();
 
@@ -64,8 +63,8 @@ export default function ProfileHome() {
                                 <View className="w-28 h-28 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
                                     <Image 
                                         source={
-                                            me?.profileImage 
-                                                ? { uri: me.profileImage }
+                                            user?.profileImage 
+                                                ? { uri: user.profileImage }
                                                 : require('@/assets/images/default-profile.png')
                                         }
                                         className="w-full h-full"
@@ -79,7 +78,7 @@ export default function ProfileHome() {
                                     <Ionicons name="camera" size={20} color={COLORS.love} />
                                 </TouchableOpacity>
                             </View>
-                            <Text className="text-2xl font-bold mt-4 text-white">{me.nickname}</Text>
+                            <Text className="text-2xl font-bold mt-4 text-white">{user?.nickname}</Text>
                             <View className="flex-row items-center mt-2 bg-white/20 px-4 py-2 rounded-full">
                                 <FontAwesome5 name="heart" size={12} color="white" />
                                 <Text className="text-white ml-2 font-medium">
@@ -118,7 +117,7 @@ export default function ProfileHome() {
                                 icon="user"
                                 iconColor={COLORS.love}
                                 items={[
-                                    { label: "이메일", value: me.email, icon: "envelope" },
+                                    { label: "이메일", value: user?.email || '', icon: "envelope" },
                                     { label: "연인 코드", value: "LOVE123", icon: "key" },
                                 ]}
                             />

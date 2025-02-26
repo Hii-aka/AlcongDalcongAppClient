@@ -3,8 +3,14 @@ import { View, Text, TextInput, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Controller, useFormContext } from 'react-hook-form';
 import regax from '@/constants/regax';
+import { Profile } from '@/types';
 
-export default function EmailInput() {
+interface EmailInputProps {
+  isConnected?: boolean;
+  partner?: Profile | null;
+}
+
+export default function EmailInput({isConnected = false, partner = null}: EmailInputProps) {
   const { control } = useFormContext();
 
   return (
@@ -29,7 +35,8 @@ export default function EmailInput() {
       >
         <MaterialIcons name="email" size={20} color="#9CA3AF" />
         <TextInput
-          placeholder="상대방의 이메일을 입력하세요"
+          editable={!isConnected}
+          placeholder={isConnected ? partner?.email : "상대방의 이메일을 입력하세요"}
           className="flex-1 ml-2 text-base"
           onChangeText={onChange}
           value={value}
