@@ -19,6 +19,8 @@ export default function CoupleRequestsPage() {
   const { data: requests, isLoading: isLoadingRequests } = useGetCoupleRequestPending();
   const respondCoupleRequest = useRespondCoupleRequest();
 
+  console.log('[CoupleRequestsPage] requests', requests);
+
   const handleAcceptRequest = async (requestId: string) => {
     try {
       await respondCoupleRequest.mutateAsync({ requestId, accept: true });

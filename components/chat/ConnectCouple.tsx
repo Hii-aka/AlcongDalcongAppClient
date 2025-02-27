@@ -13,6 +13,8 @@ import { TextInput } from 'react-native';
 import dayjs from 'dayjs';
 import useCreateCouple from '@/hooks/queries/useCreateCouple';
 import { Profile } from '@/types';
+import ConnectButton from '@/components/couple/ConnectButton';
+import useDisconnectCouple from '@/hooks/queries/useDisconnectCouple';
 dayjs.locale('ko');
 
 interface CoupleForm {
@@ -29,6 +31,7 @@ interface ConnectCoupleProps {
 function ConnectCouple({isConnected = false, partner = null}: ConnectCoupleProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const createCoupleMutation = useCreateCouple();
+    const disconnectCoupleMutation = useDisconnectCouple();
     const coupleForm = useForm<CoupleForm>({
         defaultValues: {
           receiverEmail: '',
@@ -39,6 +42,7 @@ function ConnectCouple({isConnected = false, partner = null}: ConnectCoupleProps
     
       const onSubmit = async (data: CoupleForm) => {
         const {receiverEmail, firstMetDate} = data;
+
         try {
           setIsSubmitting(true);
           createCoupleMutation.mutate({
@@ -49,6 +53,14 @@ function ConnectCouple({isConnected = false, partner = null}: ConnectCoupleProps
           setIsSubmitting(false);
         }
       };
+
+      const handleDisconnect = () => {
+        if (partner?.coupleId) {
+          disconnectCoupleMutation.mutate({
+            coupleId: partner.coupleId,
+          });
+        }
+      }
 
   return (
     <KeyboardAvoidingView 
@@ -115,24 +127,12 @@ function ConnectCouple({isConnected = false, partner = null}: ConnectCoupleProps
                     </View>
 
                     {/* 제출 버튼 */}
-                    <Pressable
-                      onPress={coupleForm.handleSubmit(onSubmit)}
-                      disabled={isSubmitting || !coupleForm.watch('receiverEmail') || !coupleForm.watch('firstMetDate')}
-                      className="mt-6 overflow-hidden rounded-2xl"
-                      style={SHADOWS.medium}
-                    >
-                      <LinearGradient
-                        colors={[COLORS.love, COLORS.primary]}
-                        className="py-4 px-6"
-                      >
-                        <Text className="text-white text-center font-bold text-lg">
-                          {isSubmitting ? "신청 중..." : isConnected ? "커플 정보 수정하기" : "커플 신청하기"}
-                        </Text>
-                        {isSubmitting && (
-                          <ActivityIndicator size="small" color="white" style={{ marginLeft: 8 }} />
-                        )}
-                      </LinearGradient>
-                    </Pressable>
+                   <ConnectButton
+                    onPress={isConnected ? handleDisconnect : coupleForm.handleSubmit(onSubmit)}
+                    disabled={isSubmitting}
+                    isSubmitting={isSubmitting}
+                    isConnected={isConnected}
+                   />
                   </View>
                 </FormProvider>
               </View>

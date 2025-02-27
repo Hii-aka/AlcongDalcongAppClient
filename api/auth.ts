@@ -52,4 +52,13 @@ const getAccessToken = async () => {
     return data;
 };
 
-export {signUp, login, getAccessToken, logout, getMe};
+type DisconnectCouple = {
+    coupleId: number;
+};
+
+const disconnectCouple = async ({coupleId}: DisconnectCouple) => {
+    const {data} = await api.delete<ApiResponse<number>>(`auth/disconnect/${coupleId}`);
+    return data;
+};
+
+export {signUp, login, getAccessToken, logout, getMe, disconnectCouple};
