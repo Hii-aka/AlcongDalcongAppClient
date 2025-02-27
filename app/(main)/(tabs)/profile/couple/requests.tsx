@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -15,11 +15,18 @@ import CoupleTab from '@/components/couple/CoupleTab';
 
 export default function CoupleRequestsPage() {
   const { getMeQuery } = useAuth();
-  const { data: {user, partner} } = getMeQuery as {data: ProfileWithCouple};
-  const { data: requests, isLoading: isLoadingRequests } = useGetCoupleRequestPending();
+  const userData = getMeQuery.data as ProfileWithCouple | undefined;
+  const user = userData?.user;
+  const partner = userData?.partner;
+  const { data: requests, isLoading: isLoadingRequests, isError ,error} = useGetCoupleRequestPending();
   const respondCoupleRequest = useRespondCoupleRequest();
+  const [receivedRequests, setReceivedRequests] = useState<Couple[]>([]);
 
-  console.log('[CoupleRequestsPage] requests', requests);
+  useEffect(() => {
+    if (requests) {
+      setReceivedRequests(requests.filter(request => request.receiver.id === user?.id));
+    }
+  }, [requests]);
 
   const handleAcceptRequest = async (requestId: string) => {
     try {
@@ -62,7 +69,7 @@ export default function CoupleRequestsPage() {
         <View className="flex-row border-b border-pink-100 bg-white/80 mt-2">
           <CoupleTab 
             isActive={false} 
-            label={partner ? "커플 정보" : "커플 연결하기"} 
+            label={partner && partner.coupleId ? "커플 정보" : "커플 연결하기"} 
             onPress={() => router.push("/(main)/(tabs)/profile/couple")}
           />
           <CoupleTab 
@@ -72,7 +79,9 @@ export default function CoupleRequestsPage() {
         </View>
 
         <ScrollView className="flex-1">
-          {!requests || requests.length === 0 ? (
+          {!receivedRequests || 
+          receivedRequests.length === 0 || 
+          receivedRequests.every(request => request.status !== 'pending') ? (
             <Animated.View 
               entering={FadeInDown.duration(600)}
               className="flex-1 justify-center items-center py-20"
@@ -90,8 +99,8 @@ export default function CoupleRequestsPage() {
             </Animated.View>
           ) : (
             <View className="p-6 space-y-4">
-              {requests.map((request) => (
-                request.receiver.id === user.id && (
+              {receivedRequests.map((request) => (
+                request.status === 'pending' && (
                   <Animated.View 
                     key={request.id}
                     entering={FadeInDown.duration(600)}

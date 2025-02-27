@@ -86,6 +86,11 @@ function useGetMe(queryOptions?: UseQueryCustomOptions) {
     return useQuery({
         queryFn: getMe,
         queryKey: [queryKeys.AUTH, queryKeys.GET_ME],
+        staleTime: 2 * 60 * 1000,
+        gcTime: 5 * 60 * 1000,
+        refetchOnMount: true,
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
         ...queryOptions,
     });
 }
