@@ -9,6 +9,7 @@ interface Profile {
     createdAt: string;
     updatedAt: string;
     deletedAt?: string;
+    coupleId?: number;
 }
 
 interface ProfileWithCouple  {

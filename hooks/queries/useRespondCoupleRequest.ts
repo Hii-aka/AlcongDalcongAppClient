@@ -7,10 +7,9 @@ function useRespondCoupleRequest() {
     return useMutation({
         mutationFn: respondCoupleRequest,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [queryKeys.COUPLE_REQUEST_PENDING] });
-            queryClient.invalidateQueries({ queryKey: [queryKeys.COUPLE_REQUEST_ACCEPTED] });
-            queryClient.invalidateQueries({ queryKey: [queryKeys.GET_ME] });
-            queryClient.invalidateQueries({ queryKey: [queryKeys.AUTH] });
+            queryClient.invalidateQueries({ queryKey: [queryKeys.COUPLE, queryKeys.COUPLE_REQUEST_PENDING] });
+            queryClient.invalidateQueries({ queryKey: [queryKeys.COUPLE,queryKeys.COUPLE_REQUEST_ACCEPTED] });
+            queryClient.invalidateQueries({ queryKey: [queryKeys.AUTH,queryKeys.GET_ME] });
         },
     });
 }

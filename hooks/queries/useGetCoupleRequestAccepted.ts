@@ -9,7 +9,7 @@ function useGetCoupleRequestAccepted() {
     const { data: {user, partner}, isLoading: isMeLoading } = getMeQuery as { data: ProfileWithCouple; isLoading: boolean };
 
     const coupleQuery = useQuery({
-        queryKey: [queryKeys.COUPLE_REQUEST_ACCEPTED],
+        queryKey: [queryKeys.COUPLE, queryKeys.COUPLE_REQUEST_ACCEPTED, user.coupleId, partner.coupleId],
         queryFn: async () => {
             const response = await getCoupleAccepted();
             console.log('[useGetCoupleRequestAccepted] API Response:', {
@@ -28,16 +28,16 @@ function useGetCoupleRequestAccepted() {
     });
 
     // 디버깅을 위한 로그
-    console.log('[useGetCoupleRequestAccepted] Hook state:', {
-        user,
-        coupleStatus: user?.coupleStatus,
-        isLoading: coupleQuery.isLoading,
-        isFetching: coupleQuery.isFetching,
-        isError: coupleQuery.isError,
-        error: coupleQuery.error,
-        data: coupleQuery.data,
-        firstMetDate: coupleQuery.data?.firstMetDate
-    });
+    // console.log('[useGetCoupleRequestAccepted] Hook state:', {
+    //     user,
+    //     coupleStatus: user?.coupleStatus,
+    //     isLoading: coupleQuery.isLoading,
+    //     isFetching: coupleQuery.isFetching,
+    //     isError: coupleQuery.isError,
+    //     error: coupleQuery.error,
+    //     data: coupleQuery.data,
+    //     firstMetDate: coupleQuery.data?.firstMetDate
+    // });
 
     return coupleQuery;
 }
