@@ -8,10 +8,11 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import SearchLocationScreen from '@/components/date/SearchLocationScreen';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { formatDate, formatTime, formatDateTime } from '@/utils';
+import { formatDate, formatTime, formatDateTime, formatDateWithSeparator } from '@/utils';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-
+import useCreateDateCalendar from '@/hooks/queries/useCreateDateCalendar';
+import useSearchLocationStore from '@/store/useSearchLocationStore';
 dayjs.locale('ko');
 
 export default function CalendarPost() {
@@ -23,30 +24,27 @@ export default function CalendarPost() {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
   const [tempTime, setTempTime] = useState(new Date());
-
+  const createDateCalendar = useCreateDateCalendar();
+  const {location} = useSearchLocationStore();
   const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     if (Platform.OS === 'android') {
       setShowDatePicker(false);
-    }
-    if (selectedDate) {
-      if (Platform.OS === 'ios') {
-        setTempDate(selectedDate);
-      } else {
+      if (event.type === 'set' && selectedDate) {
         setDate(selectedDate);
       }
+    } else if (selectedDate) {
+      setTempDate(selectedDate);
     }
   };
 
   const handleTimeChange = (event: DateTimePickerEvent, selectedTime?: Date) => {
     if (Platform.OS === 'android') {
       setShowTimePicker(false);
-    }
-    if (selectedTime) {
-      if (Platform.OS === 'ios') {
-        setTempTime(selectedTime);
-      } else {
+      if (event.type === 'set' && selectedTime) {
         setTime(selectedTime);
       }
+    } else if (selectedTime) {
+      setTempTime(selectedTime);
     }
   };
 
@@ -72,7 +70,16 @@ export default function CalendarPost() {
 
   const handleSave = () => {
     // TODO: 일정 저장 로직 구현
-    router.back();
+    console.log('일정 저장');
+    console.log(title, formatDateWithSeparator(tempDate), formatTime(tempTime), memo);
+    createDateCalendar.mutate({
+      title,
+      date: formatDateWithSeparator(tempDate),
+      time: formatTime(tempTime),
+      location: location?.place_name || '',
+      description: memo,
+    });
+    // router.back();
   };
 
   const renderPicker = (type: 'date' | 'time') => {
@@ -80,6 +87,17 @@ export default function CalendarPost() {
     const visible = isDate ? showDatePicker : showTimePicker;
     const value = isDate ? (Platform.OS === 'ios' ? tempDate : date) : (Platform.OS === 'ios' ? tempTime : time);
     const onChange = isDate ? handleDateChange : handleTimeChange;
+
+    if (Platform.OS === 'android') {
+      return visible ? (
+        <DateTimePicker
+          value={value}
+          mode={type}
+          onChange={onChange}
+          locale="ko-KR"
+        />
+      ) : null;
+    }
 
     if (!visible) return null;
 

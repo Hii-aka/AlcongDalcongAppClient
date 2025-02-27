@@ -34,9 +34,23 @@ interface Couple {
     deletedAt?: string;
 }
 
+type DateCalendarRequest = {
+    title: string;
+    date: string;
+    time: string;
+    location: string;
+    description: string;
+};
+
+type DateCalendarResponse = {
+    id: number;
+};
+
 export type {
     Profile,
     Couple,
     ProfileWithCouple,
-    User
+    User,
+    DateCalendarRequest,
+    DateCalendarResponse
 };

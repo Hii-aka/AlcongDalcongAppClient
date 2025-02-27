@@ -5,7 +5,7 @@ import { debounce } from 'lodash';
 import SearchRegionResult from './SearchRegionResult';
 import { RegionInfo } from '@/hooks/useSearchLocation';
 import { MaterialIcons } from '@expo/vector-icons';
-
+import useSearchLocationStore from '@/store/useSearchLocationStore';
 interface SearchLocationScreenProps {
     onLocationSelect?: (location: RegionInfo) => void;
 }
@@ -14,6 +14,7 @@ function SearchLocationScreen({ onLocationSelect }: SearchLocationScreenProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
     const [selectedLocation, setSelectedLocation] = useState<RegionInfo | null>(null);
+    const {setLocation} = useSearchLocationStore();
     
     // 디바운스된 검색 쿼리를 위한 상태
     const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -39,6 +40,7 @@ function SearchLocationScreen({ onLocationSelect }: SearchLocationScreenProps) {
     const handleSelectPlace = (place: RegionInfo) => {
         setSearchQuery(place.place_name);
         setSelectedLocation(place);
+        setLocation(place);
         setIsSearching(false);
         onLocationSelect?.(place);
         Keyboard.dismiss();

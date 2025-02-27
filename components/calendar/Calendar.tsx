@@ -10,7 +10,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SHADOWS } from '@/constants/theme';
 import { router } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-
 interface CalendarProps<T> {
     monthYear: MonthYear;
     selectedDate: number;
@@ -18,7 +17,6 @@ interface CalendarProps<T> {
     onPressDate: (date: number) => void;
     onChangeMonth: (increment: number) => void;
     moveToToday: () => void;
-    isConnected?: boolean; // 연인 연결 상태
     partnerName?: string; // 연인 이름
     daysCount?: number; // 사귄 일수
 }
@@ -30,7 +28,6 @@ function Calendar<T>({
     onPressDate,
     onChangeMonth,
     moveToToday,
-    isConnected = false,
     partnerName = '',
     daysCount = 0,
 }: CalendarProps<T>) {     
@@ -61,52 +58,6 @@ function Calendar<T>({
     const weeks = Array.from({ length: 6 }, (_, weekIndex) => 
         calendarDays.slice(weekIndex * 7, (weekIndex + 1) * 7)
     );
-
-    if (!isConnected) {
-        return (
-            <View className="flex-1 bg-white">
-                <LinearGradient
-                    colors={[COLORS.backgroundAlt, COLORS.background] as readonly [string, string]}
-                    className="flex-1 pt-4 px-6"
-                >
-                    <Animated.View 
-                        entering={FadeInDown.duration(600)}
-                        className="flex-1 items-center justify-center"
-                    >
-                        <View className="bg-white rounded-3xl p-8 shadow-sm border border-pink-100 items-center w-full">
-                            <LinearGradient
-                                colors={[COLORS.love, COLORS.primary] as readonly [string, string]}
-                                className="w-20 h-20 rounded-full items-center justify-center mb-4"
-                            >
-                                <Ionicons name="heart" size={40} color="white" />
-                            </LinearGradient>
-                            <Text className="text-xl font-bold text-gray-800 text-center">
-                                아직 연인과 연결되지 않았어요
-                            </Text>
-                            <Text className="text-base text-gray-600 mt-2 text-center">
-                                연인과 함께 특별한 날들을{'\n'}
-                                기록하고 공유해보세요
-                            </Text>
-                            <Pressable
-                                className="mt-6 overflow-hidden rounded-full"
-                                style={SHADOWS.small}
-                                onPress={() => router.push('connect' as any)}
-                            >
-                                <LinearGradient
-                                    colors={[COLORS.love, COLORS.primary] as readonly [string, string]}
-                                    className="py-3 px-6"
-                                >
-                                    <Text className="text-base font-bold text-white">
-                                        연인 연결하기
-                                    </Text>
-                                </LinearGradient>
-                            </Pressable>
-                        </View>
-                    </Animated.View>
-                </LinearGradient>
-            </View>
-        );
-    }
 
     return (
         <View className="flex-1 bg-white">
