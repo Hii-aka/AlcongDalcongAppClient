@@ -5,11 +5,16 @@ import useAuth from "./useAuth";
 import { ProfileWithCouple } from "@/types";
 function useGetCoupleRequestPending() {
     const { getMeQuery } = useAuth();
-    const { data: {user} } = getMeQuery as { data: ProfileWithCouple };
+    const userData = getMeQuery.data as ProfileWithCouple | undefined;
+    const user = userData?.user;
     return useQuery({
-        queryKey: [queryKeys.COUPLE, queryKeys.COUPLE_REQUEST_PENDING, user.coupleId],
+        queryKey: [queryKeys.COUPLE, queryKeys.COUPLE_REQUEST_PENDING, user?.coupleId],
         queryFn: getCouplePending,
         enabled: user?.coupleStatus === 'not_coupled',
+        staleTime: 0, // 0초
+        gcTime: 0, // 0초
+        refetchOnMount: true,
+        refetchOnWindowFocus: true,     
     });
 }
 

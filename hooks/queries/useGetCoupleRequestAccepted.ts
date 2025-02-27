@@ -6,10 +6,13 @@ import { useQuery } from "@tanstack/react-query";
 
 function useGetCoupleRequestAccepted() {
     const { getMeQuery } = useAuth();
-    const { data: {user, partner}, isLoading: isMeLoading } = getMeQuery as { data: ProfileWithCouple; isLoading: boolean };
+    const userData = getMeQuery.data as ProfileWithCouple | undefined;
+    
+    const user = userData?.user;
+    const partner = userData?.partner;
 
     const coupleQuery = useQuery({
-        queryKey: [queryKeys.COUPLE, queryKeys.COUPLE_REQUEST_ACCEPTED, user.coupleId, partner.coupleId],
+        queryKey: [queryKeys.COUPLE, queryKeys.COUPLE_REQUEST_ACCEPTED, user?.coupleId, partner?.coupleId],
         queryFn: async () => {
             const response = await getCoupleAccepted();
             console.log('[useGetCoupleRequestAccepted] API Response:', {
@@ -20,9 +23,9 @@ function useGetCoupleRequestAccepted() {
             });
             return response;
         },
-        enabled: !isMeLoading && (user?.coupleStatus === 'coupled'),
-        staleTime: 0, // 항상 최신 데이터 사용
-        gcTime: 5 * 60 * 1000, // 5분
+        enabled: !!user && !!partner && user?.coupleStatus === 'coupled',
+        staleTime: 0, // 0초
+        gcTime: 0, // 0초
         refetchOnMount: true,
         refetchOnWindowFocus: true,
     });
