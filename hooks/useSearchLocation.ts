@@ -1,7 +1,6 @@
 import ky from "ky";
 import { getEnvVar } from "@/utils/env";
 import { useEffect, useState } from "react";
-
 type Meta = {
     total_count: number;
     pageable_count: number;
@@ -90,7 +89,7 @@ function useSearchLocation(keyword: string) {
                     }
                     return [...prev, ...response.documents];
                 });
-                
+            
                 setHasMore(!response.meta.is_end && response.documents.length > 0);
             } catch (error: any) {
                 console.error('Location search error:', error);

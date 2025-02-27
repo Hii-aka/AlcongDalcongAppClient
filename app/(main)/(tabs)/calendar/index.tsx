@@ -7,6 +7,7 @@ import { COLORS } from "@/constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
 import useGetCoupleRequestAccepted from "@/hooks/queries/useGetCoupleRequestAccepted";
 import { getDaysDifference } from "@/utils/date";
+import NotYetConnect from "@/components/couple/NotYetConnect";
 interface Schedule {
   id: number;
   title: string;
@@ -43,11 +44,10 @@ export default function CalendarHome() {
     const currentMonthYear = getMonthYearDetails(new Date());
     const [monthYear, setMonthYear] = useState(currentMonthYear);
     const [selectedDate, setSelectedDate] = useState(0);
-    const { data: coupleRequestAccepted } = useGetCoupleRequestAccepted();
+    const { data: couple, isLoading: isCoupleLoading } = useGetCoupleRequestAccepted();
 
     // TODO: 실제 연인 연결 상태를 가져오는 로직으로 대체
-    const [isConnected, setIsConnected] = useState(coupleRequestAccepted ? true : false);
-    const [daysCount, setDaysCount] = useState(coupleRequestAccepted ? getDaysDifference(coupleRequestAccepted.firstMetDate) : 0);
+    const [daysCount, setDaysCount] = useState(couple ? getDaysDifference(couple.firstMetDate) : 0);
 
     const handlePressDate = (date: number) => {
         setSelectedDate(date);
@@ -63,13 +63,14 @@ export default function CalendarHome() {
       setMonthYear(getMonthYearDetails(new Date()));
     };
 
-    useEffect(() => { 
-      moveToToday();
-      // TODO: 연인 연결 상태 확인 로직
-      setTimeout(() => {
-        setIsConnected(true);
-      }, 1000);
-    }, []);
+    if (isCoupleLoading || !couple) {
+      return <NotYetConnect 
+        isCoupleLoading={isCoupleLoading} 
+        icon="calendar" 
+        title="아직 연인과 연결되지 않았어요" 
+        description={"연인과 함께 소중한 추억을\n기록하고 공유해보세요"}
+      />;
+    }
 
     return (
         <SafeAreaView className="flex-1">
@@ -89,11 +90,10 @@ export default function CalendarHome() {
                         moveToToday={moveToToday}
                         onPressDate={handlePressDate}
                         onChangeMonth={handleChangeMonth}
-                        isConnected={isConnected}
                         daysCount={daysCount}
                     />
                     
-                    {isConnected && selectedDate > 0 && (
+                    {couple && selectedDate > 0 && (
                         <View className="px-6">
                             <ScheduledDate 
                                 selectedDate={selectedDate} 

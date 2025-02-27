@@ -9,6 +9,7 @@ dayjs.extend(relativeTime);
 
 // 기본 포맷팅 함수들
 export const formatDate = (date: Date | string) => dayjs(date).format('YYYY년 MM월 DD일');
+export const formatDateWithSeparator = (date: Date | string, separator: string = '-') => dayjs(date).format(`YYYY${separator}MM${separator}DD`);
 export const formatDateTime = (date: Date | string) => dayjs(date).format('YYYY년 MM월 DD일 A h:mm');
 export const formatTime = (date: Date | string) => dayjs(date).format('HH:mm');
 
@@ -43,7 +44,7 @@ export function getDateLocaleFormat(date: Date | string): string {
   return dayjs(date).format('YYYY년 MM월 DD일');
 }
 
-interface MonthYear {
+export interface MonthYear {
   month: number;
   year: number;
   startDate: Date;
