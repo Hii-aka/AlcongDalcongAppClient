@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SHADOWS } from '@/constants/theme';
-
+import { getTimeString } from '@/utils/date';
 interface Schedule {
   id: number;
   title: string;
@@ -43,7 +43,7 @@ export default function ScheduledDate({ selectedDate, schedules }: ScheduledDate
                 <View className="flex-row items-center">
                   <Ionicons name="time" size={16} color={COLORS.love} />
                   <Text className="text-gray-600 ml-2">
-                    {schedule.time}
+                    {getTimeString(schedule.time)}
                   </Text>
                 </View>
                 

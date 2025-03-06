@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { View, Text, Pressable, Dimensions, Image } from 'react-native';
-import { isSameAsCurrentDate, MonthYear } from '@/utils/date';
+import { isSameAsCurrentDate, MonthYear, getDateNumber } from '@/utils/date';
 import DayOfWeeks from './DayOfWeeks';
 import { Ionicons } from '@expo/vector-icons';
 import DateBox from './DateBox';
@@ -13,7 +13,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 interface CalendarProps<T> {
     monthYear: MonthYear;
     selectedDate: number;
-    schedules: Record<number, T[]>;
+    schedules: T[];
     onPressDate: (date: number) => void;
     onChangeMonth: (increment: number) => void;
     moveToToday: () => void;
@@ -168,8 +168,8 @@ function Calendar<T>({
                                             key={day.id}
                                             date={day.date}
                                             isToday={isSameAsCurrentDate(year, month, day.date)}
-                                            hasSchedule={schedules[day.date]?.length > 0}
-                                            selectedDate={selectedDate}
+                                            hasSchedule={schedules.some(schedule => day.date === getDateNumber(schedule.date))}
+                                            selectedDate={selectedDate} 
                                             onPressDate={onPressDate}
                                             width={dateBoxWidth}
                                         />

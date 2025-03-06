@@ -44,6 +44,15 @@ type DateCalendarRequest = {
 
 type DateCalendarResponse = {
     id: number;
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+    location: string;
+    coupleId: number;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
 };
 
 export type {

@@ -44,6 +44,14 @@ export function getDateLocaleFormat(date: Date | string): string {
   return dayjs(date).format('YYYY년 MM월 DD일');
 }
 
+// 시간 문자열 반환
+export function getTimeString(time: string): string {
+  const [hours, minutes] = time.split(':').map(Number);
+  const amPm = hours >= 12 ? '오후' : '오전';
+  const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+  return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${amPm}`;
+}
+
 export interface MonthYear {
   month: number;
   year: number;
@@ -78,6 +86,10 @@ export function isSameAsCurrentDate(year: number, month: number, date: number): 
 }
 
 // 추가 유용한 함수들
+export const getDateNumber = (dateString: string): number => {
+  return dayjs(dateString).date();
+};
+
 export const addDays = (date: Date | string, days: number) => 
   dayjs(date).add(days, 'day').toDate();
 

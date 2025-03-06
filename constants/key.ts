@@ -7,6 +7,8 @@ const queryKeys = {
     COUPLE_REQUEST_PENDING: 'coupleRequestPending',
     COUPLE_REQUEST_ACCEPTED: 'coupleRequestAccepted',
     COUPLE_DISCONNECT: 'coupleDisconnect',
+
+    ALL_DATE_CALENDARS: 'allDateCalendars',
 };
 
 export {queryKeys};
