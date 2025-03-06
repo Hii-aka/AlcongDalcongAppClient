@@ -3,6 +3,8 @@ import { View, Text, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SHADOWS } from '@/constants/theme';
 import { getTimeString } from '@/utils/date';
+import { router } from 'expo-router';
+
 interface Schedule {
   id: number;
   title: string;
@@ -32,6 +34,9 @@ export default function ScheduledDate({ selectedDate, schedules }: ScheduledDate
           schedules.map((schedule) => (
             <Pressable
               key={schedule.id}
+              onPress={() => {
+                router.push(`/calendar/${schedule.id}`);
+              }}
               className="bg-white rounded-2xl p-4 mb-3 border border-pink-100"
               style={SHADOWS.small}
             >

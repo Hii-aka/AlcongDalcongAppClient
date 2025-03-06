@@ -22,6 +22,12 @@ export default function CalendarLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen name="[id]"
+        options={{
+          title: '일정 상세',
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

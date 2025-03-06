@@ -10,37 +10,6 @@ import { getDaysDifference } from "@/utils/date";
 import NotYetConnect from "@/components/couple/NotYetConnect";
 import { useGetAllDateCalendars } from "@/hooks/queries/useGetAllDateCalendars";
 import { useGetDateCalendar } from "@/hooks/queries/useGetDateCalendar";
-interface Schedule {
-  id: number;
-  title: string;
-  time: string;
-  location: string;
-}
-
-type ScheduleMap = {
-  [key: number]: Schedule[];
-};
-
-const SAMPLE_SCHEDULES: ScheduleMap = {
-  14: [{ 
-    id: 1,
-    title: '롯데월드 데이트',
-    time: '14:00',
-    location: '잠실역 2번 출구',
-  }],
-  20: [{ 
-    id: 2,
-    title: '한강 피크닉',
-    time: '12:00',
-    location: '여의도 한강공원',
-  }],
-  25: [{ 
-    id: 3,
-    title: '영화 데이트',
-    time: '19:00',
-    location: 'CGV 홍대입구',
-  }],
-};
 
 export default function CalendarHome() {
     const currentMonthYear = getMonthYearDetails(new Date());
