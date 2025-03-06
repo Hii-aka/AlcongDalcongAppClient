@@ -1,7 +1,7 @@
 import { View, SafeAreaView, ScrollView } from "react-native";
 import Calendar from "@/components/calendar/Calendar";
 import { useEffect, useState } from "react";
-import { getMonthYearDetails, getNewMonthYear } from "@/utils/date";
+import { getDateWithSeparator, getMonthYearDetails, getNewMonthYear } from "@/utils/date";
 import ScheduledDate from "@/components/date/ScheduledDate";
 import { COLORS } from "@/constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
@@ -9,6 +9,7 @@ import useGetCoupleRequestAccepted from "@/hooks/queries/useGetCoupleRequestAcce
 import { getDaysDifference } from "@/utils/date";
 import NotYetConnect from "@/components/couple/NotYetConnect";
 import { useGetAllDateCalendars } from "@/hooks/queries/useGetAllDateCalendars";
+import { useGetDateCalendar } from "@/hooks/queries/useGetDateCalendar";
 interface Schedule {
   id: number;
   title: string;
@@ -47,6 +48,7 @@ export default function CalendarHome() {
     const [selectedDate, setSelectedDate] = useState(0);
     const { data: couple, isLoading: isCoupleLoading } = useGetCoupleRequestAccepted();
     const { data: dateCalendars, isLoading: isDateCalendarsLoading } = useGetAllDateCalendars(monthYear.year, monthYear.month);
+    const { data: selectedDateCalendars, isLoading: isSelectedDateCalendarsLoading } = useGetDateCalendar(getDateWithSeparator(new Date(monthYear.year, monthYear.month -1, selectedDate),'.'));
 
     // TODO: 실제 연인 연결 상태를 가져오는 로직으로 대체
     const [daysCount, setDaysCount] = useState(couple ? getDaysDifference(couple.firstMetDate) : 0);
@@ -99,7 +101,7 @@ export default function CalendarHome() {
                         <View className="px-6">
                             <ScheduledDate 
                                 selectedDate={selectedDate} 
-                                schedules={dateCalendars || []}
+                                schedules={selectedDateCalendars || []}
                             />
                         </View>
                     )}

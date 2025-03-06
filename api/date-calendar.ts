@@ -13,8 +13,8 @@ const getAllDateCalendars = async (year: number, month: number) => {
     return data;
 };
 
-const getDateCalendar = async (id: string) => { 
-    const {data} = await api.get<ApiResponse<DateCalendarResponse>>(`date-calendars/${id}`);
+const getDateCalendar = async (date: string) => { 
+    const {data} = await api.get<ApiResponse<DateCalendarResponse[]>>(`date-calendars/${date}`);
     return data;
 };
 

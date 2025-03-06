@@ -9,6 +9,7 @@ const queryKeys = {
     COUPLE_DISCONNECT: 'coupleDisconnect',
 
     ALL_DATE_CALENDARS: 'allDateCalendars',
+    DATE_CALENDAR: 'dateCalendar',
 };
 
 export {queryKeys};
