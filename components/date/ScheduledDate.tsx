@@ -20,6 +20,10 @@ interface ScheduledDateProps {
 export default function ScheduledDate({ selectedDate, schedules }: ScheduledDateProps) {
   if (!selectedDate) return null;
 
+  const handlePressDate = (id: number) => {
+    router.push(`/calendar/${id}`);
+  };
+
   return (
     <View className="mt-4">
       <View className="flex-row items-center mb-4">
@@ -34,9 +38,7 @@ export default function ScheduledDate({ selectedDate, schedules }: ScheduledDate
           schedules.map((schedule) => (
             <Pressable
               key={schedule.id}
-              onPress={() => {
-                router.push(`/calendar/${schedule.id}`);
-              }}
+              onPress={() => handlePressDate(schedule.id)}
               className="bg-white rounded-2xl p-4 mb-3 border border-pink-100"
               style={SHADOWS.small}
             >

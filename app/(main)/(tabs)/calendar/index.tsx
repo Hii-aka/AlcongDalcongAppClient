@@ -3,7 +3,7 @@ import Calendar from "@/components/calendar/Calendar";
 import { useEffect, useState } from "react";
 import { getDateWithSeparator, getMonthYearDetails, getNewMonthYear } from "@/utils/date";
 import ScheduledDate from "@/components/date/ScheduledDate";
-import { COLORS } from "@/constants/theme";
+import { COLORS, TAB_BAR } from "@/constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
 import useGetCoupleRequestAccepted from "@/hooks/queries/useGetCoupleRequestAccepted";
 import { getDaysDifference } from "@/utils/date";
@@ -53,7 +53,6 @@ export default function CalendarHome() {
             >
                 <ScrollView 
                     className="flex-1"
-                    contentContainerStyle={{ paddingBottom: 24 }}
                     showsVerticalScrollIndicator={false}
                 >
                     <Calendar
@@ -67,7 +66,12 @@ export default function CalendarHome() {
                     />
                     
                     {couple && selectedDate > 0 && (
-                        <View className="px-6">
+                        <View 
+                            className="px-6"
+                            style={{ 
+                                marginBottom: TAB_BAR.TOTAL_HEIGHT + 20 // 탭바 높이 + 여유 공간
+                            }}
+                        >
                             <ScheduledDate 
                                 selectedDate={selectedDate} 
                                 schedules={selectedDateCalendars || []}

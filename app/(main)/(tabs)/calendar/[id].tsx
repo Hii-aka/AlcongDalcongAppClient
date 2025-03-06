@@ -2,15 +2,16 @@ import { View, Text, ScrollView, Pressable, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SHADOWS } from '@/constants/theme';
+import { COLORS, SHADOWS, TAB_BAR } from '@/constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { formatDate, formatTime } from '@/utils';
+import { formatDate, getTimeString } from '@/utils';
 import { Alert } from 'react-native';
+import { useGetDateCalendarById } from '@/hooks/queries/useGetDateCalendarById';
 
 export default function DateDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  // const { data: dateCalendar, isLoading } = useGetDateCalendarById(Number(id));
+  const { data: dateCalendar, isLoading } = useGetDateCalendarById(id);
   // const deleteDateCalendar = useDeleteDateCalendar();
 
   const handleDelete = () => {
@@ -33,15 +34,15 @@ export default function DateDetail() {
     );
   };
 
-  // if (isLoading || !dateCalendar) {
-  //   return (
-  //     <SafeAreaView className="flex-1 bg-white">
-  //       <View className="flex-1 items-center justify-center">
-  //         <Text className="text-gray-500">로딩중...</Text>
-  //       </View>
-  //     </SafeAreaView>
-  //   );
-  // }
+  if (isLoading || !dateCalendar) {
+    return (
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-gray-500">로딩중...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -51,7 +52,10 @@ export default function DateDetail() {
       >
         <ScrollView 
           className="flex-1" 
-          contentContainerStyle={{ padding: 16 }}
+          contentContainerStyle={{ 
+            padding: 16,
+            paddingBottom: TAB_BAR.TOTAL_HEIGHT // 탭바 높이 + 여유 공간 더 증가
+          }}
           showsVerticalScrollIndicator={false}
         >
           {/* 헤더 */}
@@ -67,7 +71,7 @@ export default function DateDetail() {
               <Ionicons name="chevron-back" size={24} color={COLORS.love} />
             </Pressable>
             <Text className="text-xl font-bold text-gray-800">
-              데이트 상세
+              {dateCalendar.title}
             </Text>
             <Pressable 
               className="w-10 h-10 items-center justify-center rounded-full bg-white"
@@ -107,7 +111,7 @@ export default function DateDetail() {
                   style={SHADOWS.small}
                 >
                   <Text className="text-base text-gray-800">
-                    롯데월드 데이트
+                    {dateCalendar.title}
                   </Text>
                 </View>
               </View>
@@ -123,7 +127,7 @@ export default function DateDetail() {
                   style={SHADOWS.small}
                 >
                   <Text className="text-base text-gray-800">
-                    {formatDate(new Date('2025-03-06'))}
+                    {formatDate((dateCalendar.date))}
                   </Text>
                 </View>
               </View>
@@ -138,7 +142,7 @@ export default function DateDetail() {
                   style={SHADOWS.small}
                 >
                   <Text className="text-base text-gray-800">
-                    {formatTime(new Date(`2000-01-01T12:00:00`))}
+                    {getTimeString(dateCalendar.time)}
                   </Text>
                 </View>
               </View>
@@ -154,7 +158,7 @@ export default function DateDetail() {
                   style={SHADOWS.small}
                 >
                   <Text className="text-base text-gray-800">
-                    롯데월드
+                    {dateCalendar.location}
                   </Text>
                 </View>
               </View>
@@ -170,7 +174,7 @@ export default function DateDetail() {
                   style={SHADOWS.small}
                 >
                   <Text className="text-base text-gray-800">
-                    데이트 일정 메모
+                    {dateCalendar.description}
                   </Text>
                 </View>
               </View>
@@ -180,7 +184,7 @@ export default function DateDetail() {
           {/* 수정 버튼 */}
           <Animated.View 
             entering={FadeInDown.delay(300).duration(300)}
-            className="mt-6"
+            className="mt-6 mb-4" // 하단 여백 추가
           >
             <Pressable 
               className="overflow-hidden rounded-2xl"
