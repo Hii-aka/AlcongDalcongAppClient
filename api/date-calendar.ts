@@ -1,10 +1,10 @@
 import { api } from "./ky";
-import { ApiResponse, DateCalendarRequest, DateCalendarResponse } from "@/types";
+import { ApiResponse, DateCalendarRequest, DateCalendarResponse, createDateCalendarResponse } from "@/types";
 
 
 
 const createDateCalendar = async (body: DateCalendarRequest) => {
-    const {data} = await api.post<ApiResponse<DateCalendarResponse>>('date-calendars', body);
+    const {data} = await api.post<ApiResponse<createDateCalendarResponse>>('date-calendars', body);
     return data;
 };
 

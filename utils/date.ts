@@ -90,6 +90,14 @@ export const getDateNumber = (dateString: string): number => {
   return dayjs(dateString).date();
 };
 
+export const getMonth = (date: Date | string): number => {
+  return dayjs(date).month() + 1;
+};
+
+export const getYear = (date: Date | string): number => {
+  return dayjs(date).year();
+};
+
 export const addDays = (date: Date | string, days: number) => 
   dayjs(date).add(days, 'day').toDate();
 

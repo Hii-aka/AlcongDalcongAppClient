@@ -79,7 +79,7 @@ export default function CalendarPost() {
       location: location?.place_name || '',
       description: memo,
     });
-    // router.back();
+    router.back();
   };
 
   const renderPicker = (type: 'date' | 'time') => {
