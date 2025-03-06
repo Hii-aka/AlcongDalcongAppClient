@@ -70,8 +70,6 @@ export default function CalendarPost() {
 
   const handleSave = () => {
     // TODO: 일정 저장 로직 구현
-    console.log('일정 저장');
-    console.log(title, formatDateWithSeparator(tempDate), formatTime(tempTime), memo);
     createDateCalendar.mutate({
       title,
       date: formatDateWithSeparator(tempDate),

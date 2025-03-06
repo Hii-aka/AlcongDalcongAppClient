@@ -1,16 +1,20 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createDateCalendar } from "@/api/date-calendar";
 import { queryKeys } from "@/constants/key";
+import { createDateCalendarResponse, UseMutationCustomOptions } from "@/types";
 import { getMonth, getYear } from "@/utils/date";
-function useCreateDateCalendar() {
-    const queryClient = useQueryClient();
+import queryClient from "@/api/queryClient";
+
+function useCreateDateCalendar(mutationOptions?: UseMutationCustomOptions) {
     return useMutation({
         mutationFn: createDateCalendar,
-        onSuccess: ({id, date}) => {
+        onSuccess: (response) => {
+            if (!response) return;
             queryClient.invalidateQueries({ queryKey: [
-                queryKeys.ALL_DATE_CALENDARS, getYear(date), getMonth(date)
+                queryKeys.ALL_DATE_CALENDARS, getYear(response.date), getMonth(response.date)
             ]});
         },
+        ...mutationOptions,
     });
 }   
 
