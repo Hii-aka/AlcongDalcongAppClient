@@ -10,7 +10,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SHADOWS } from '@/constants/theme';
 import { router } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-interface CalendarProps<T> {
+
+interface CalendarProps<T extends { date: string }> {
     monthYear: MonthYear;
     selectedDate: number;
     schedules: T[];
@@ -21,7 +22,7 @@ interface CalendarProps<T> {
     daysCount?: number; // 사귄 일수
 }
 
-function Calendar<T>({
+function Calendar<T extends { date: string }>({
     monthYear,
     selectedDate,
     schedules,

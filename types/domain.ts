@@ -42,6 +42,11 @@ type DateCalendarRequest = {
     description: string;
 };
 
+type createDateCalendarResponse = {
+    id: number;
+    date: Date;
+};
+
 type DateCalendarResponse = {
     id: number;
     title: string;
@@ -61,5 +66,6 @@ export type {
     ProfileWithCouple,
     User,
     DateCalendarRequest,
-    DateCalendarResponse
+    DateCalendarResponse,
+    createDateCalendarResponse,
 };
