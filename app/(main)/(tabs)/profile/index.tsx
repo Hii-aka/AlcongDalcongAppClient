@@ -8,7 +8,7 @@ import useGetCoupleRequestPending from "../../../../hooks/queries/useGetCoupleRe
 import useGetCoupleRequestAccepted from "../../../../hooks/queries/useGetCoupleRequestAccepted";
 import { getDaysDifference, formatDate } from "@/utils";
 import { LinearGradient } from 'expo-linear-gradient';
-import { COLORS, SHADOWS } from '@/constants/theme';
+import { COLORS, SHADOWS, TAB_BAR } from '@/constants/theme';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import AuthRoute from "@/components/common/AuthRoute";
 export default function ProfileHome() {
@@ -41,9 +41,9 @@ export default function ProfileHome() {
             <ScrollView 
                 className="flex-1 bg-white"
                 contentContainerStyle={{
-                paddingBottom: insets.bottom + 120
-            }}
-        >
+                    paddingBottom: insets.bottom + TAB_BAR.TOTAL_HEIGHT + 20
+                }}
+            >
             <LinearGradient
                 colors={[COLORS.backgroundAlt, COLORS.background] as readonly [string, string]}
                 className="flex-1"

@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 // 기본 간격 시스템
 export const SPACING = {
@@ -193,4 +193,10 @@ export const theme = {
   },
 } as const;
 
-export type Theme = typeof theme; 
+export type Theme = typeof theme;
+
+export const TAB_BAR = {
+    HEIGHT: Platform.OS === 'ios' ? 65 : 60,
+    BOTTOM_MARGIN: Platform.OS === 'ios' ? 20 : 16,
+    TOTAL_HEIGHT: Platform.OS === 'ios' ? 85 : 76, // HEIGHT + BOTTOM_MARGIN
+} as const; 

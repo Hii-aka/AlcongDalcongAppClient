@@ -18,6 +18,11 @@ const getDateCalendar = async (date: string) => {
     return data;
 };
 
+const getDateCalendarById = async (id: string) => {
+    const {data} = await api.get<ApiResponse<DateCalendarResponse>>(`date-calendars/detail/${id}`);
+    return data;
+};
+
 const updateDateCalendar = async (id: string, body: DateCalendarRequest) => {
     const {data} = await api.put<ApiResponse<DateCalendarResponse>>(`date-calendars/${id}`, body);
     return data;
@@ -27,4 +32,11 @@ const deleteDateCalendar = async (id: string) => {
     const {data} = await api.delete<ApiResponse<DateCalendarResponse>>(`date-calendars/${id}`);
     return data;
 };
-export {createDateCalendar, getAllDateCalendars, getDateCalendar, updateDateCalendar, deleteDateCalendar};
+export {
+    createDateCalendar, 
+    getAllDateCalendars, 
+    getDateCalendar, 
+    getDateCalendarById, 
+    updateDateCalendar, 
+    deleteDateCalendar
+};

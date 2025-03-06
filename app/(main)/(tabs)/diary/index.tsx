@@ -5,7 +5,7 @@ import DiaryList from '@/components/diary/DiaryList';
 import { ProfileCard } from '@/components/diary/ProfileCard';
 import MoodSelector from '@/components/diary/MoodSelector';
 import { MoodType } from '@/constants/moods';
-import { COLORS, SHADOWS } from '@/constants/theme';
+import { COLORS, SHADOWS, TAB_BAR } from '@/constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import useGetCoupleRequestAccepted from '@/hooks/queries/useGetCoupleRequestAccepted';
@@ -80,11 +80,11 @@ export default function DiaryHome() {
         <DiaryList 
           ListHeaderComponent={HeaderComponent}
           contentContainerStyle={{ 
-            paddingBottom: Platform.OS === 'ios' ? 120 : 100 
+            paddingBottom: TAB_BAR.TOTAL_HEIGHT + 20 // 탭바 높이 + 여유 공간
           }}
         />
         <Pressable
-          className={`absolute right-6 items-center justify-center ${Platform.OS === 'ios' ? 'bottom-24' : 'bottom-20'}`}
+          className="absolute right-6 items-center justify-center"
           style={[
             SHADOWS.medium,
             {
@@ -92,6 +92,7 @@ export default function DiaryHome() {
               height: 56,
               borderRadius: 28,
               backgroundColor: COLORS.love,
+              bottom: TAB_BAR.TOTAL_HEIGHT + 16, // 탭바 위에 16px 여백
             }
           ]}
           onPress={() => router.push('/diary/post')}

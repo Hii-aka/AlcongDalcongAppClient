@@ -2,7 +2,7 @@ import { FlatList, Text, View, Pressable, KeyboardAvoidingView, Platform, Toucha
 import { useRef, useState, useCallback } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
-import { COLORS, SHADOWS } from '@/constants/theme';
+import { COLORS, SHADOWS, TAB_BAR } from '@/constants/theme';
 import InputWindow from "@/components/chat/InputWindow";
 import { Message } from "@/app/(main)/(tabs)/chat";
 import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
@@ -95,7 +95,7 @@ const CoupleChat = () => {
                 <LinearGradient
                     colors={[COLORS.backgroundAlt, COLORS.background]}
                     className="flex-1 px-4 pt-4"
-                    style={{ paddingBottom: insets.bottom + 90 }}
+                    style={{ paddingBottom: insets.bottom + TAB_BAR.TOTAL_HEIGHT + 20 }}
                 >
                     <Animated.View 
                         entering={FadeInDown.duration(600)}

@@ -10,6 +10,7 @@ const queryKeys = {
 
     ALL_DATE_CALENDARS: 'allDateCalendars',
     DATE_CALENDAR: 'dateCalendar',
+    DATE_CALENDAR_BY_ID: 'dateCalendarById',
 };
 
 export {queryKeys};
