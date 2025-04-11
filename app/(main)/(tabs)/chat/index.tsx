@@ -1,6 +1,5 @@
-import {SafeAreaView, View} from 'react-native';
-import CoupleChat from "@/components/chat/CoupleChat";
-import AiChat from "@/components/chat/AiChat";
+import { SafeAreaView, View } from 'react-native';
+import Chat from "@/components/chat/Chat";
 
 export type Message = {
     id: number;
@@ -12,9 +11,9 @@ export default function ChatHome() {
     return (
         <SafeAreaView className="flex-1 bg-gray-100">
             <View className="flex-1">
-                <CoupleChat/>
+                <Chat />
             </View>
-            
+
         </SafeAreaView>
     );
 }
