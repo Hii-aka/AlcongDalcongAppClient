@@ -2,7 +2,7 @@ import ky from 'ky';
 import { Platform } from 'react-native';
 import { secureStorage } from '../utils/expo.securestore';
 import { getAccessToken } from './auth';
-  const BASE_URL = Platform.OS === 'android' 
+  export const BASE_URL = Platform.OS === 'android'
   ? 'http://10.0.2.2:3000' 
   : 'http://localhost:3000';
 

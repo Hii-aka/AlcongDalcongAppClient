@@ -1,29 +1,63 @@
-import {FlatList, Pressable, TextInput, View} from "react-native";
-import {Ionicons} from "@expo/vector-icons";
-import {Dispatch, RefObject, SetStateAction, useState} from "react";
-import {Message} from "@/app/(main)/(tabs)/chat";
+import { FlatList, Pressable, TextInput, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Dispatch, RefObject, SetStateAction, useState } from "react";
+import { Message } from "@/app/(main)/(tabs)/chat";
+import { requestAiChat } from "@/api/ai";
 
-interface InputWindowProps<Message> {
+interface InputWindowProps {
     setMessages: Dispatch<SetStateAction<Message[]>>;
     flatListRef: RefObject<FlatList<Message>>;
-    placeholder: string;
+    chatType: string;
 }
 
-const InputWindow = ({setMessages, flatListRef, placeholder}: InputWindowProps<Message>) => {
+const InputWindow = ({ setMessages, flatListRef, chatType }: InputWindowProps) => {
     const [partnerInput, setPartnerInput] = useState<string>("");
-    const handleSendMessage = () => {
-        if (!partnerInput.trim()) {
+    const [isLoading, setIsLoading] = useState(false);
+    const placeholder = chatType === 'couple' ? "메시지를 입력하세요" : "AI에게 질문하기";
+
+    const handleSendMessage = async () => {
+        if (!partnerInput.trim() || isLoading) {
             return;
         }
 
-        setMessages((prev) => [
-            ...prev,
-            {id: Date.now(), sender: "me", text: partnerInput}
-        ]);
-        setPartnerInput("");
+        const userMessage: Message = { id: Date.now(), sender: "me", text: partnerInput };
+        setMessages((prev) => [...prev, userMessage]);
 
-        setTimeout(() => flatListRef.current?.scrollToEnd({animated: true}), 100);
+        if (chatType === "ai") {
+            await fetchAiRequest();
+            return;
+        }
+
+        setPartnerInput("");
+        setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
     };
+
+    const fetchAiRequest = async () => {
+        setIsLoading(true);
+        let aiResponse = "";
+        const aiMessageId = Date.now() + 1;
+
+        setMessages(prev => [...prev, { id: aiMessageId, sender: "AI", text: "" }]);
+
+        try {
+            await requestAiChat(partnerInput, (chunk) => {
+                aiResponse += chunk;
+                setMessages(prev => prev.map(msg =>
+                    msg.id === aiMessageId ? { ...msg, text: aiResponse } : msg
+                ));
+
+                flatListRef.current?.scrollToEnd({ animated: true });
+            });
+        } catch (error) {
+            console.error('Error in AI chat:', error);
+            setMessages(prev => prev.map(msg =>
+                msg.id === aiMessageId ? { ...msg, text: "오류가 발생했습니다. 다시 입력해 주세요." } : msg
+            ));
+        } finally {
+            setIsLoading(false);
+            setPartnerInput("");
+        }
+    }
 
     return (
         <View className="flex flex-row items-center border-t pt-2 border-gray-300">
@@ -32,9 +66,14 @@ const InputWindow = ({setMessages, flatListRef, placeholder}: InputWindowProps<M
                 placeholder={placeholder}
                 value={partnerInput}
                 onChangeText={setPartnerInput}
+                editable={!isLoading}
             />
-            <Pressable onPress={handleSendMessage} className="ml-2 bg-blue-500 p-2 rounded-md">
-                <Ionicons name="send" size={20} color="white"/>
+            <Pressable
+                onPress={handleSendMessage}
+                className={`ml-2 p-2 rounded-md ${isLoading ? 'bg-gray-400' : 'bg-blue-500'}`}
+                disabled={isLoading}
+            >
+                <Ionicons name="send" size={20} color="white" />
             </Pressable>
         </View>
     );

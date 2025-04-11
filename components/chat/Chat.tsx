@@ -1,11 +1,11 @@
-import { FlatList, Text, View, Pressable, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
-import { useRef, useState, useCallback } from "react";
+import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SHADOWS, TAB_BAR } from '@/constants/theme';
 import InputWindow from "@/components/chat/InputWindow";
 import { Message } from "@/app/(main)/(tabs)/chat";
-import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faRobot } from '@fortawesome/free-solid-svg-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,18 +13,18 @@ import dayjs from 'dayjs';
 
 type ChatType = 'couple' | 'ai';
 
-const CoupleChat = () => {
+const Chat = () => {
     const insets = useSafeAreaInsets();
     const [chatType, setChatType] = useState<ChatType>('couple');
     const [messagesWithPartner, setMessagesWithPartner] = useState<Message[]>([
-        {id: 1, sender: "partner", text: "오늘 저녁에 뭐 먹을까?", timestamp: new Date().toISOString()},
-        {id: 2, sender: "me", text: "파스타 어때?", timestamp: new Date().toISOString()}
+        { id: 1, sender: "partner", text: "오늘 저녁에 뭐 먹을까?", timestamp: new Date().toISOString() },
+        { id: 2, sender: "me", text: "파스타 어때?", timestamp: new Date().toISOString() }
     ]);
     const [messagesWithAi, setMessagesWithAi] = useState<Message[]>([
         {
-            id: 1, 
-            sender: "AI", 
-            text: "안녕하세요! 데이트 코스를 추천해 드릴까요? 원하시는 분위기나 선호하는 활동이 있다면 말씀해 주세요.", 
+            id: 1,
+            sender: "AI",
+            text: "안녕하세요! 데이트 코스를 추천해 드릴까요? 원하시는 분위기나 선호하는 활동이 있다면 말씀해 주세요.",
             timestamp: new Date().toISOString()
         }
     ]);
@@ -61,7 +61,7 @@ const CoupleChat = () => {
                     showsHorizontalScrollIndicator={false}
                     className="px-4"
                     ItemSeparatorComponent={() => <View className="w-2" />}
-                    renderItem={({item}) => (
+                    renderItem={({ item }) => (
                         <TouchableOpacity
                             className="bg-white/90 px-4 py-2 rounded-full border border-pink-100"
                             style={SHADOWS.small}
@@ -78,8 +78,8 @@ const CoupleChat = () => {
     const ListEmptyComponent = () => (
         <View className="flex-1 items-center justify-center">
             <Text className="text-gray-500 text-center">
-                {chatType === 'couple' 
-                    ? '아직 대화가 없습니다. 첫 메시지를 보내보세요!' 
+                {chatType === 'couple'
+                    ? '아직 대화가 없습니다. 첫 메시지를 보내보세요!'
                     : 'AI에게 데이트 코스를 추천받아보세요!'}
             </Text>
         </View>
@@ -97,43 +97,39 @@ const CoupleChat = () => {
                     className="flex-1 px-4 pt-4"
                     style={{ paddingBottom: insets.bottom + TAB_BAR.TOTAL_HEIGHT + 20 }}
                 >
-                    <Animated.View 
+                    <Animated.View
                         entering={FadeInDown.duration(600)}
                         className="flex-1 bg-white/80 rounded-3xl shadow-sm border border-pink-100 overflow-hidden"
                     >
                         {/* 채팅 타입 선택 */}
                         <View className="flex-row border-b border-pink-100">
-                            <Pressable 
-                                className={`flex-1 py-4 px-6 flex-row items-center justify-center ${
-                                    chatType === 'couple' ? 'border-b-2 border-pink-500' : ''
-                                }`}
+                            <Pressable
+                                className={`flex-1 py-4 px-6 flex-row items-center justify-center ${chatType === 'couple' ? 'border-b-2 border-pink-500' : ''
+                                    }`}
                                 onPress={() => setChatType('couple')}
                             >
-                                <Ionicons 
-                                    name="heart" 
-                                    size={18} 
+                                <Ionicons
+                                    name="heart"
+                                    size={18}
                                     color={chatType === 'couple' ? COLORS.love : COLORS.textLight}
                                 />
-                                <Text className={`ml-2 font-semibold ${
-                                    chatType === 'couple' ? 'text-pink-500' : 'text-gray-500'
-                                }`}>
+                                <Text className={`ml-2 font-semibold ${chatType === 'couple' ? 'text-pink-500' : 'text-gray-500'
+                                    }`}>
                                     연인과 대화
                                 </Text>
                             </Pressable>
-                            <Pressable 
-                                className={`flex-1 py-4 px-6 flex-row items-center justify-center ${
-                                    chatType === 'ai' ? 'border-b-2 border-pink-500' : ''
-                                }`}
+                            <Pressable
+                                className={`flex-1 py-4 px-6 flex-row items-center justify-center ${chatType === 'ai' ? 'border-b-2 border-pink-500' : ''
+                                    }`}
                                 onPress={() => setChatType('ai')}
                             >
-                                <FontAwesomeIcon 
-                                    icon={faRobot} 
-                                    size={18} 
+                                <FontAwesomeIcon
+                                    icon={faRobot}
+                                    size={18}
                                     color={chatType === 'ai' ? COLORS.love : COLORS.textLight}
                                 />
-                                <Text className={`ml-2 font-semibold ${
-                                    chatType === 'ai' ? 'text-pink-500' : 'text-gray-500'
-                                }`}>
+                                <Text className={`ml-2 font-semibold ${chatType === 'ai' ? 'text-pink-500' : 'text-gray-500'
+                                    }`}>
                                     AI 어시스턴트
                                 </Text>
                             </Pressable>
@@ -146,9 +142,9 @@ const CoupleChat = () => {
                         >
                             <View className="w-10 h-10 rounded-full bg-white/20 items-center justify-center">
                                 {chatType === 'couple' ? (
-                                    <Ionicons name="heart" size={20} color="#FFFFFF"/>
+                                    <Ionicons name="heart" size={20} color="#FFFFFF" />
                                 ) : (
-                                    <FontAwesomeIcon icon={faRobot} size={20} color="#FFFFFF"/>
+                                    <FontAwesomeIcon icon={faRobot} size={20} color="#FFFFFF" />
                                 )}
                             </View>
                             <View className="ml-3 flex-1">
@@ -159,13 +155,13 @@ const CoupleChat = () => {
                                     {chatType === 'couple' ? '실시간 채팅' : '데이트 코스 추천받기'}
                                 </Text>
                             </View>
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 className="w-10 h-10 rounded-full bg-white/20 items-center justify-center active:opacity-70"
                                 style={SHADOWS.small}
                             >
-                                <Ionicons 
-                                    name={chatType === 'couple' ? "images" : "bulb"} 
-                                    size={20} 
+                                <Ionicons
+                                    name={chatType === 'couple' ? "images" : "bulb"}
+                                    size={20}
                                     color="#FFFFFF"
                                 />
                             </TouchableOpacity>
@@ -187,43 +183,41 @@ const CoupleChat = () => {
                             showsVerticalScrollIndicator={false}
                             ListHeaderComponent={renderQuickReplies}
                             ListEmptyComponent={ListEmptyComponent}
-                            renderItem={({item, index}) => (
-                                <Animated.View 
+                            renderItem={({ item, index }) => (
+                                <Animated.View
                                     entering={FadeInDown.delay(index * 100).duration(400)}
                                     className={item.sender === 'me' ? "items-end" : "items-start"}
                                 >
                                     <View className="flex-row items-end mb-4 max-w-[80%]">
                                         {item.sender !== 'me' && (
                                             <View className="mr-2">
-                                                <View className={`w-8 h-8 rounded-full items-center justify-center ${
-                                                    chatType === 'couple' ? 'bg-pink-100' : 'bg-blue-100'
-                                                }`}>
+                                                <View className={`w-8 h-8 rounded-full items-center justify-center ${chatType === 'couple' ? 'bg-pink-100' : 'bg-blue-100'
+                                                    }`}>
                                                     {chatType === 'couple' ? (
-                                                        <Ionicons name="heart" size={16} color={COLORS.love}/>
+                                                        <Ionicons name="heart" size={16} color={COLORS.love} />
                                                     ) : (
-                                                        <FontAwesomeIcon icon={faRobot} size={16} color={COLORS.secondary}/>
+                                                        <FontAwesomeIcon icon={faRobot} size={16}
+                                                            color={COLORS.secondary} />
                                                     )}
                                                 </View>
                                             </View>
                                         )}
                                         <View>
                                             <View
-                                                className={`p-3 rounded-2xl ${
-                                                    item.sender === 'me' 
-                                                        ? 'bg-pink-500' 
+                                                className={`p-3 rounded-2xl ${item.sender === 'me'
+                                                        ? 'bg-pink-500'
                                                         : `bg-white border ${chatType === 'couple' ? 'border-pink-100' : 'border-blue-100'}`
-                                                }`}
+                                                    }`}
                                                 style={SHADOWS.small}
                                             >
-                                                <Text 
+                                                <Text
                                                     className={`${item.sender === 'me' ? "text-white" : "text-gray-800"} text-[15px]`}
                                                 >
                                                     {item.text}
                                                 </Text>
                                             </View>
-                                            <Text className={`text-xs text-gray-500 mt-1 ${
-                                                item.sender === 'me' ? 'text-right' : 'text-left'
-                                            }`}>
+                                            <Text className={`text-xs text-gray-500 mt-1 ${item.sender === 'me' ? 'text-right' : 'text-left'
+                                                }`}>
                                                 {renderMessageTime(item.timestamp)}
                                             </Text>
                                         </View>
@@ -234,10 +228,10 @@ const CoupleChat = () => {
 
                         {/* 입력창 */}
                         <View className="px-4 py-3 border-t border-pink-100 bg-white">
-                            <InputWindow 
+                            <InputWindow
                                 setMessages={setCurrentMessages}
-                                flatListRef={flatListRef} 
-                                placeholder={chatType === 'couple' ? "메시지를 입력하세요" : "AI에게 질문하기"}
+                                flatListRef={flatListRef}
+                                chatType={chatType}
                             />
                         </View>
                     </Animated.View>
@@ -247,4 +241,4 @@ const CoupleChat = () => {
     );
 };
 
-export default CoupleChat;
+export default Chat;
