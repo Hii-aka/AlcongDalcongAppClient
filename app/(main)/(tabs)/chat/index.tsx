@@ -5,6 +5,7 @@ export type Message = {
     id: number;
     sender: "partner" | "AI" | "me";
     text: string;
+    timestamp?: string;
 };
 
 export default function ChatHome() {

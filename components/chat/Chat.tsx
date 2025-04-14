@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faRobot } from '@fortawesome/free-solid-svg-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import dayjs from 'dayjs';
+import Markdown from 'react-native-markdown-display';
 
 type ChatType = 'couple' | 'ai';
 
@@ -85,6 +86,50 @@ const Chat = () => {
         </View>
     );
 
+    const markdownStyles = {
+        body: {
+            color: COLORS.text,
+            fontSize: 15,
+            lineHeight: 24,
+        },
+        paragraph: {
+            marginVertical: 8,
+        },
+        code_inline: {
+            backgroundColor: COLORS.backgroundAlt,
+            color: COLORS.primary,
+            padding: 4,
+            borderRadius: 4,
+        },
+        code_block: {
+            backgroundColor: COLORS.backgroundAlt,
+            color: COLORS.primary,
+            padding: 8,
+            borderRadius: 4,
+            marginVertical: 4,
+        },
+        link: {
+            color: COLORS.primary,
+        },
+        list_item: {
+            marginVertical: 4,
+        },
+        bullet_list: {
+            marginVertical: 4,
+        },
+        ordered_list: {
+            marginVertical: 4,
+        },
+        hardbreak: {
+            height: 1,
+            marginVertical: 4,
+        },
+        softbreak: {
+            height: 1,
+            marginVertical: 2,
+        },
+    };
+
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -113,8 +158,9 @@ const Chat = () => {
                                     size={18}
                                     color={chatType === 'couple' ? COLORS.love : COLORS.textLight}
                                 />
-                                <Text className={`ml-2 font-semibold ${chatType === 'couple' ? 'text-pink-500' : 'text-gray-500'
-                                    }`}>
+                                <Text
+                                    className={`ml-2 font-semibold ${chatType === 'couple' ? 'text-pink-500' : 'text-gray-500'
+                                        }`}>
                                     연인과 대화
                                 </Text>
                             </Pressable>
@@ -128,8 +174,9 @@ const Chat = () => {
                                     size={18}
                                     color={chatType === 'ai' ? COLORS.love : COLORS.textLight}
                                 />
-                                <Text className={`ml-2 font-semibold ${chatType === 'ai' ? 'text-pink-500' : 'text-gray-500'
-                                    }`}>
+                                <Text
+                                    className={`ml-2 font-semibold ${chatType === 'ai' ? 'text-pink-500' : 'text-gray-500'
+                                        }`}>
                                     AI 어시스턴트
                                 </Text>
                             </Pressable>
@@ -191,8 +238,9 @@ const Chat = () => {
                                     <View className="flex-row items-end mb-4 max-w-[80%]">
                                         {item.sender !== 'me' && (
                                             <View className="mr-2">
-                                                <View className={`w-8 h-8 rounded-full items-center justify-center ${chatType === 'couple' ? 'bg-pink-100' : 'bg-blue-100'
-                                                    }`}>
+                                                <View
+                                                    className={`w-8 h-8 rounded-full items-center justify-center ${chatType === 'couple' ? 'bg-pink-100' : 'bg-blue-100'
+                                                        }`}>
                                                     {chatType === 'couple' ? (
                                                         <Ionicons name="heart" size={16} color={COLORS.love} />
                                                     ) : (
@@ -205,19 +253,30 @@ const Chat = () => {
                                         <View>
                                             <View
                                                 className={`p-3 rounded-2xl ${item.sender === 'me'
-                                                        ? 'bg-pink-500'
-                                                        : `bg-white border ${chatType === 'couple' ? 'border-pink-100' : 'border-blue-100'}`
+                                                    ? 'bg-pink-500'
+                                                    : `bg-white border ${chatType === 'couple' ? 'border-pink-100' : 'border-blue-100'}`
                                                     }`}
                                                 style={SHADOWS.small}
                                             >
-                                                <Text
-                                                    className={`${item.sender === 'me' ? "text-white" : "text-gray-800"} text-[15px]`}
-                                                >
-                                                    {item.text}
-                                                </Text>
+                                                {item.sender === 'me' ? (
+                                                    <Text className="text-white text-[15px]">{item.text}</Text>
+                                                ) : (
+                                                    <Markdown
+                                                        style={{
+                                                            ...markdownStyles,
+                                                            body: {
+                                                                ...markdownStyles.body,
+                                                                color: item.sender === 'me' ? 'white' : COLORS.text,
+                                                            },
+                                                        }}
+                                                    >
+                                                        {item.text}
+                                                    </Markdown>
+                                                )}
                                             </View>
-                                            <Text className={`text-xs text-gray-500 mt-1 ${item.sender === 'me' ? 'text-right' : 'text-left'
-                                                }`}>
+                                            <Text
+                                                className={`text-xs text-gray-500 mt-1 ${item.sender === 'me' ? 'text-right' : 'text-left'
+                                                    }`}>
                                                 {renderMessageTime(item.timestamp)}
                                             </Text>
                                         </View>
