@@ -1,5 +1,5 @@
 import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TouchableOpacity, View } from "react-native";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SHADOWS, TAB_BAR } from '@/constants/theme';
@@ -11,10 +11,17 @@ import { faRobot } from '@fortawesome/free-solid-svg-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import dayjs from 'dayjs';
 import Markdown from 'react-native-markdown-display';
+import { useRouter } from 'expo-router';
+
+declare global {
+    var aiMessagesCallback: ((message: Message) => void) | null;
+    var aiUpdateMessageCallback: ((messageId: number, chunk: string) => void) | null;
+}
 
 type ChatType = 'couple' | 'ai';
 
 const Chat = () => {
+    const router = useRouter();
     const insets = useSafeAreaInsets();
     const [chatType, setChatType] = useState<ChatType>('couple');
     const [messagesWithPartner, setMessagesWithPartner] = useState<Message[]>([
@@ -40,40 +47,43 @@ const Chat = () => {
         }
     }, []);
 
+    useEffect(() => {
+        const addAiMessage = (message: Message) => {
+            if (chatType === 'ai') {
+                setMessagesWithAi(prev => [...prev, message]);
+                setTimeout(scrollToBottom, 100);
+            }
+        };
+
+        const updateAiMessage = (messageId: number, chunk: string) => {
+            if (chatType === 'ai') {
+                setMessagesWithAi(prev => {
+                    return prev.map(msg => {
+                        if (msg.id === messageId) {
+                            return {
+                                ...msg,
+                                text: msg.text + chunk
+                            };
+                        }
+                        return msg;
+                    });
+                });
+
+                setTimeout(scrollToBottom, 100);
+            }
+        };
+
+        global.aiMessagesCallback = addAiMessage;
+        global.aiUpdateMessageCallback = updateAiMessage;
+
+        return () => {
+            global.aiMessagesCallback = null;
+            global.aiUpdateMessageCallback = null;
+        };
+    }, [chatType, scrollToBottom]);
+
     const renderMessageTime = (timestamp: string) => {
         return dayjs(timestamp).format('HH:mm');
-    };
-
-    const renderQuickReplies = () => {
-        if (chatType !== 'ai') return null;
-
-        const suggestions = [
-            "로맨틱한 디너 코스",
-            "야외 데이트 추천",
-            "실내 데이트 코스",
-            "특별한 기념일"
-        ];
-
-        return (
-            <View className="py-2">
-                <FlatList
-                    data={suggestions}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    className="px-4"
-                    ItemSeparatorComponent={() => <View className="w-2" />}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity
-                            className="bg-white/90 px-4 py-2 rounded-full border border-pink-100"
-                            style={SHADOWS.small}
-                        >
-                            <Text className="text-pink-500 font-medium">{item}</Text>
-                        </TouchableOpacity>
-                    )}
-                    keyExtractor={(item) => item}
-                />
-            </View>
-        );
     };
 
     const ListEmptyComponent = () => (
@@ -223,12 +233,12 @@ const Chat = () => {
                             contentContainerStyle={{
                                 flexGrow: 1,
                                 paddingHorizontal: 16,
-                                paddingVertical: 16,
+                                paddingBottom: 16,
+                                paddingTop: chatType === 'ai' ? 80 : 16,
                             }}
                             onContentSizeChange={scrollToBottom}
                             onLayout={scrollToBottom}
                             showsVerticalScrollIndicator={false}
-                            ListHeaderComponent={renderQuickReplies}
                             ListEmptyComponent={ListEmptyComponent}
                             renderItem={({ item, index }) => (
                                 <Animated.View
@@ -293,6 +303,20 @@ const Chat = () => {
                                 chatType={chatType}
                             />
                         </View>
+
+                        {chatType === 'ai' && (
+                            <View
+                                className="absolute top-[136px] left-0 right-0 px-4 py-2 bg-white/95 border-b border-pink-100 z-10">
+                                <TouchableOpacity
+                                    className="bg-pink-500 px-4 py-2 rounded-xl border-pink-400 flex-row items-center justify-center"
+                                    style={SHADOWS.medium}
+                                    onPress={() => router.push("/(main)/(tabs)/chat/option" as any)}
+                                >
+                                    <Ionicons name="options-outline" size={18} color="#FFFFFF" />
+                                    <Text className="text-white font-semibold ml-2 text-sm">선택한 옵션으로 데이트 코스 추천받기</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     </Animated.View>
                 </LinearGradient>
             </View>
