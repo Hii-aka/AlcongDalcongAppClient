@@ -1,5 +1,5 @@
-import { Platform } from 'react-native';
 import { RecommendationOptions } from '@/components/chat/RecommendationOptions';
+import { Platform } from 'react-native';
 
 // 일반 AI 채팅 요청
 const requestAiChat = async (question: string, onChunk: (chunk: string) => void) => {
@@ -10,10 +10,8 @@ const requestAiChat = async (question: string, onChunk: (chunk: string) => void)
         xhr.open('POST', `${baseUrl}/llm/chat`);
         xhr.setRequestHeader('Content-Type', 'application/json');
 
-        let buffer = '';
         let lastProcessedIndex = 0;
         let lastChunk = '';
-        let isListStart = false;
 
         xhr.onreadystatechange = () => {
             if (xhr.readyState === 3 || xhr.readyState === 4) {
@@ -30,19 +28,10 @@ const requestAiChat = async (question: string, onChunk: (chunk: string) => void)
                                 if (lastChunk === '') {
                                     onChunk('\n\n');
                                 } else {
-                                    onChunk(' ');
+                                    onChunk('\n');
                                 }
                             } else {
-                                if (chunk.trim() === '-' || chunk.trim() === '*') {
-                                    isListStart = true;
-                                    onChunk('\n' + chunk);
-                                } else if (isListStart && chunk.trim() === ' ') {
-                                    onChunk('\n- ');
-                                    isListStart = false;
-                                } else {
-                                    onChunk(chunk);
-                                    isListStart = false;
-                                }
+                                onChunk(chunk);
                             }
 
                             lastChunk = chunk;
@@ -119,7 +108,6 @@ const requestDateCourseRecommendation = async (options: RecommendationOptions, o
 
         let lastProcessedIndex = 0;
         let lastChunk = '';
-        let isListStart = false;
 
         xhr.onreadystatechange = () => {
             if (xhr.readyState === 3 || xhr.readyState === 4) {
@@ -136,34 +124,11 @@ const requestDateCourseRecommendation = async (options: RecommendationOptions, o
                                 if (lastChunk === '') {
                                     onChunk('\n\n');
                                 } else {
-                                    onChunk(' ');
+                                    onChunk('\n');
                                 }
-
-                                lastChunk = chunk;
-
-                                continue;
+                            } else {
+                                onChunk(chunk);
                             }
-
-                            if (chunk.trim() === '-' || chunk.trim() === '*') {
-                                isListStart = true;
-                                onChunk('\n' + chunk);
-
-                                lastChunk = chunk;
-
-                                continue;
-                            }
-
-                            if (isListStart && chunk.trim() === ' ') {
-                                onChunk('\n- ');
-                                isListStart = false;
-
-                                lastChunk = chunk;
-
-                                continue;
-                            }
-
-                            onChunk(chunk);
-                            isListStart = false;
 
                             lastChunk = chunk;
                         }
@@ -190,5 +155,6 @@ const requestDateCourseRecommendation = async (options: RecommendationOptions, o
 
 export {
     requestAiChat,
-    requestDateCourseRecommendation,
+    requestDateCourseRecommendation
 };
+

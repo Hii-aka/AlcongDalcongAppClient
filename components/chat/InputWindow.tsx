@@ -1,8 +1,8 @@
-import { FlatList, Pressable, TextInput, View } from "react-native";
+import { requestAiChat } from "@/api/ai";
+import { Message } from "@/app/(main)/(tabs)/chat";
 import { Ionicons } from "@expo/vector-icons";
 import { Dispatch, RefObject, SetStateAction, useState } from "react";
-import { Message } from "@/app/(main)/(tabs)/chat";
-import { requestAiChat } from "@/api/ai";
+import { FlatList, Pressable, TextInput, View } from "react-native";
 
 interface InputWindowProps {
     setMessages: Dispatch<SetStateAction<Message[]>>;
@@ -42,8 +42,15 @@ const InputWindow = ({ setMessages, flatListRef, chatType }: InputWindowProps) =
         try {
             await requestAiChat(partnerInput, (chunk) => {
                 aiResponse += chunk;
+
+                let processedResponse = aiResponse
+                    .replace(/^- /gm, '∙ ')
+                    .replace(/^\* /gm, '∙ ')
+                    .replace(/\n- /g, '\n∙ ')
+                    .replace(/\n\* /g, '\n∙ ');
+
                 setMessages(prev => prev.map(msg =>
-                    msg.id === aiMessageId ? { ...msg, text: aiResponse } : msg
+                    msg.id === aiMessageId ? { ...msg, text: processedResponse } : msg
                 ));
 
                 flatListRef.current?.scrollToEnd({ animated: true });

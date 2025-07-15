@@ -1,17 +1,17 @@
-import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TouchableOpacity, View } from "react-native";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from 'expo-linear-gradient';
-import { COLORS, SHADOWS, TAB_BAR } from '@/constants/theme';
-import InputWindow from "@/components/chat/InputWindow";
 import { Message } from "@/app/(main)/(tabs)/chat";
-import Animated, { FadeInDown } from 'react-native-reanimated';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import InputWindow from "@/components/chat/InputWindow";
+import { COLORS, SHADOWS, TAB_BAR } from '@/constants/theme';
+import { Ionicons } from "@expo/vector-icons";
 import { faRobot } from '@fortawesome/free-solid-svg-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import dayjs from 'dayjs';
-import Markdown from 'react-native-markdown-display';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TouchableOpacity, View } from "react-native";
+import Markdown from 'react-native-markdown-display';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 declare global {
     var aiMessagesCallback: ((message: Message) => void) | null;
@@ -60,9 +60,14 @@ const Chat = () => {
                 setMessagesWithAi(prev => {
                     return prev.map(msg => {
                         if (msg.id === messageId) {
+                            const newText = msg.text + chunk;
+                            const processedText = newText
+                                .replace(/^- /gm, '∙ ')
+                                .replace(/\n- /g, '\n∙ ')
+
                             return {
                                 ...msg,
-                                text: msg.text + chunk
+                                text: processedText
                             };
                         }
                         return msg;
